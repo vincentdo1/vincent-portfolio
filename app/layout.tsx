@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono, Inter_Tight } from "next/font/google";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -13,16 +13,22 @@ const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+const interTight = Inter_Tight({
+  variable: "--font-inter-tight",
+  subsets: ["latin"],
+  weight: ["700", "800", "900"],
+});
+
 const siteUrl =
   process.env.VERCEL_ENV === "preview"
     ? `https://${process.env.VERCEL_BRANCH_URL}`
     : process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "http://localhost:3000";
+      : "https://vmd306.com";
 
-const title = "Dev Starter by Zippystarter";
+const title = "Vincent Do — Software Engineer";
 const description =
-  "Dev Starter is an open source, one page developer portfolio template.";
+  "Software Engineer at Boeing. UIUC CS & Chemistry alum. Building real-time systems, full-stack apps, and ML projects.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -32,7 +38,7 @@ export const metadata: Metadata = {
     title,
     description,
     url: "./",
-    siteName: title,
+    siteName: "Vincent Do",
     images: "/og.jpg",
   },
 };
@@ -45,7 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth shadcn">
       <body
-        className={`font-body antialiased ${spaceGrotesk.variable} ${jetBrainsMono.variable}`}
+        className={`font-body antialiased ${spaceGrotesk.variable} ${jetBrainsMono.variable} ${interTight.variable}`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
