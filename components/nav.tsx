@@ -1,87 +1,163 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Download } from "lucide-react";
+import { CornerBrackets } from "@/components/valorant/corner-brackets";
 
-const navLinks = [
-  { label: "About", href: "/#about" },
-  { label: "Experience", href: "/#experience" },
-  { label: "Skills", href: "/#skills" },
-  { label: "Projects", href: "/projects" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
+const sections = [
+  { label: "Home", href: "#hero", id: "hero" },
+  { label: "About", href: "#about", id: "about" },
+  { label: "Experience", href: "#experience", id: "experience" },
+  { label: "Arsenal", href: "#skills", id: "skills" },
+  { label: "Projects", href: "#projects", id: "projects" },
+  { label: "Contact", href: "#contact", id: "contact" },
 ];
 
 export function Nav() {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeId, setActiveId] = useState("hero");
+
+  // highlight active nav link based on which section is in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+    );
+
+    sections.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="mx-auto max-w-7xl px-safe flex items-center justify-between h-16">
-        <Link href="/" className="text-xl font-bold font-mono tracking-tighter uppercase">
-          VD<span className="text-primary">_</span>
-        </Link>
+    <header className="fixed top-0 left-0 w-full z-50">
+      {/* thin top accent strip */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
-        <nav className="hidden md:flex gap-8 text-sm font-medium text-muted-foreground uppercase">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="hover:text-primary transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+      <div className="bg-background/70 backdrop-blur-md border-b border-border/60">
+        <div className="mx-auto max-w-7xl px-safe flex items-center justify-between h-14 relative">
+          {/* Logo block */}
+          <Link href="#hero" className="flex items-center gap-3 group">
+            <div className="relative h-8 w-8 bg-primary/10 border border-primary/40 flex items-center justify-center tactical-chip">
+              <span className="font-display text-lg text-primary leading-none translate-y-px">
+                V
+              </span>
+            </div>
+            <div className="hidden sm:flex flex-col leading-none">
+              <span className="font-display text-base uppercase tracking-widest text-foreground group-hover:text-primary transition-colors">
+                Vincent Do
+              </span>
+              <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.2em]">
+                ID // 0306
+              </span>
+            </div>
+          </Link>
 
-        <div className="flex items-center gap-2">
-          <a
-            href="/resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(
-              buttonVariants({ variant: "outline", size: "sm" }),
-              "hidden md:inline-flex font-mono text-xs border-primary/50 hover:bg-primary/10 hover:text-primary hover:border-primary"
-            )}
-          >
-            resume.pdf
-          </a>
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle navigation"
-          >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
-      </div>
+          {/* Center: section nav */}
+          <nav className="hidden md:flex items-center gap-1">
+            {sections.map((s) => {
+              const active = activeId === s.id;
+              return (
+                <Link
+                  key={s.id}
+                  href={s.href}
+                  className={cn(
+                    "relative px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors",
+                    active
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    {active && (
+                      <span className="tactical-dot animate-pulse-dot" />
+                    )}
+                    {s.label}
+                  </span>
+                  {active && (
+                    <span className="absolute -bottom-px left-2 right-2 h-px bg-primary" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
 
-      {isOpen && (
-        <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-md">
-          <nav className="flex flex-col px-safe py-4 gap-4 text-sm font-medium uppercase">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-muted-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+          {/* Right: status + resume */}
+          <div className="flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-50 animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+              </span>
+              Online
+            </div>
+
             <a
               href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                "font-mono text-xs border-primary/50 w-fit"
-              )}
+              className="hidden md:inline-flex items-center gap-2 h-8 px-4 tactical-chip border border-primary/40 hover:border-primary text-primary font-mono text-[10px] uppercase tracking-[0.2em] transition-colors"
             >
-              resume.pdf
+              <Download className="h-3 w-3" />
+              Resume
+            </a>
+
+            <button
+              className="md:hidden p-2"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle navigation"
+            >
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+
+          {/* corner brackets on the header */}
+          <CornerBrackets size={8} thickness={1} />
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {isOpen && (
+        <div className="md:hidden border-b border-border bg-background/95 backdrop-blur-md">
+          <nav className="flex flex-col px-safe py-4 gap-1">
+            {sections.map((s) => {
+              const active = activeId === s.id;
+              return (
+                <Link
+                  key={s.id}
+                  href={s.href}
+                  className={cn(
+                    "flex items-center gap-3 py-2 font-mono text-xs uppercase tracking-[0.18em] transition-colors",
+                    active ? "text-primary" : "text-muted-foreground"
+                  )}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {active ? (
+                    <span className="tactical-dot animate-pulse-dot" />
+                  ) : (
+                    <span className="h-px w-3 bg-border" />
+                  )}
+                  {s.label}
+                </Link>
+              );
+            })}
+            <a
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-flex w-fit items-center gap-2 h-8 px-4 tactical-chip border border-primary/40 text-primary font-mono text-[10px] uppercase tracking-[0.2em]"
+            >
+              <Download className="h-3 w-3" />
+              Resume
             </a>
           </nav>
         </div>

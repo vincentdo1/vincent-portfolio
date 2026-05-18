@@ -6,9 +6,9 @@
 @theme inline {
   --font-sans: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-  --font-display-family: var(--font-inter-tight);
-  --font-display-weight: 700;
-  --font-display-tracking: var(--tracking-tighter);
+  --font-display-family: var(--font-bebas-neue);
+  --font-display-weight: 400;
+  --font-display-tracking: 0.02em;
   --font-body-family: var(--font-sans);
   --font-body-weight: 400;
   --font-body-tracking: var(--tracking-normal);
@@ -55,74 +55,76 @@
 }
 
 :root {
-  --primary: oklch(0.6 0.2 120);
+  /* light mode kept functional, but design is tuned for dark */
+  --primary: oklch(0.55 0.22 145);
   --primary-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.6 0.2 120);
+  --sidebar-primary: oklch(0.55 0.22 145);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --chart-1: oklch(0.6 0.2 120);
-  --chart-2: oklch(0.5 0.15 120);
-  --chart-3: oklch(0.45 0.1 120);
-  --chart-4: oklch(0.4 0.05 120);
-  --chart-5: oklch(0.35 0.02 120);
-  --radius: 0.5rem;
+  --chart-1: oklch(0.55 0.22 145);
+  --chart-2: oklch(0.5 0.15 145);
+  --chart-3: oklch(0.45 0.1 145);
+  --chart-4: oklch(0.4 0.05 145);
+  --chart-5: oklch(0.35 0.02 145);
+  --radius: 0;
   --background: oklch(0.98 0 0);
-  --foreground: oklch(0.1 0.01 286);
-  --card: oklch(0.96 0.005 286);
-  --card-foreground: oklch(0.1 0.01 286);
+  --foreground: oklch(0.1 0.01 145);
+  --card: oklch(0.96 0.005 145);
+  --card-foreground: oklch(0.1 0.01 145);
   --popover: oklch(0.98 0 0);
-  --popover-foreground: oklch(0.1 0.01 286);
-  --secondary: oklch(0.92 0.01 286);
-  --secondary-foreground: oklch(0.1 0.01 286);
-  --muted: oklch(0.92 0.01 286);
-  --muted-foreground: oklch(0.45 0.01 286);
-  --accent: oklch(0.92 0.01 286);
-  --accent-foreground: oklch(0.6 0.2 120);
-  --destructive: oklch(0.55 0.2 20);
+  --popover-foreground: oklch(0.1 0.01 145);
+  --secondary: oklch(0.92 0.01 145);
+  --secondary-foreground: oklch(0.1 0.01 145);
+  --muted: oklch(0.92 0.01 145);
+  --muted-foreground: oklch(0.45 0.01 145);
+  --accent: oklch(0.92 0.01 145);
+  --accent-foreground: oklch(0.55 0.22 145);
+  --destructive: oklch(0.6 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.88 0.01 286);
-  --input: oklch(0.88 0.01 286);
-  --ring: oklch(0.6 0.2 120);
-  --sidebar: oklch(0.96 0.005 286);
-  --sidebar-foreground: oklch(0.1 0.01 286);
-  --sidebar-accent: oklch(0.92 0.01 286);
-  --sidebar-accent-foreground: oklch(0.1 0.01 286);
-  --sidebar-border: oklch(0.88 0.01 286);
-  --sidebar-ring: oklch(0.6 0.2 120);
+  --border: oklch(0.88 0.01 145);
+  --input: oklch(0.88 0.01 145);
+  --ring: oklch(0.55 0.22 145);
+  --sidebar: oklch(0.96 0.005 145);
+  --sidebar-foreground: oklch(0.1 0.01 145);
+  --sidebar-accent: oklch(0.92 0.01 145);
+  --sidebar-accent-foreground: oklch(0.1 0.01 145);
+  --sidebar-border: oklch(0.88 0.01 145);
+  --sidebar-ring: oklch(0.55 0.22 145);
 }
 
 .dark {
-  --primary: oklch(0.88 0.2 120);
-  --primary-foreground: oklch(0.1 0.02 286);
-  --sidebar-primary: oklch(0.2 0.02 286);
+  /* Valorant-flavored: near-black with green tint, neon green accent */
+  --primary: oklch(0.85 0.24 142);
+  --primary-foreground: oklch(0.08 0.02 145);
+  --sidebar-primary: oklch(0.18 0.02 145);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --chart-1: oklch(0.88 0.2 120);
-  --chart-2: oklch(0.7 0.15 120);
-  --chart-3: oklch(0.6 0.1 120);
-  --chart-4: oklch(0.5 0.05 120);
-  --chart-5: oklch(0.4 0.02 120);
-  --background: oklch(0.1 0.01 286);
-  --foreground: oklch(0.98 0 0);
-  --card: oklch(0.12 0.01 286);
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.12 0.01 286);
-  --popover-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.2 0.02 286);
-  --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.2 0.02 286);
-  --muted-foreground: oklch(0.6 0.01 286);
-  --accent: oklch(0.25 0.02 286);
-  --accent-foreground: oklch(0.88 0.2 120);
-  --destructive: oklch(0.6 0.2 20);
+  --chart-1: oklch(0.85 0.24 142);
+  --chart-2: oklch(0.7 0.18 142);
+  --chart-3: oklch(0.6 0.12 142);
+  --chart-4: oklch(0.5 0.08 142);
+  --chart-5: oklch(0.4 0.04 142);
+  --background: oklch(0.08 0.015 145);
+  --foreground: oklch(0.96 0.01 145);
+  --card: oklch(0.12 0.018 145);
+  --card-foreground: oklch(0.96 0.01 145);
+  --popover: oklch(0.12 0.018 145);
+  --popover-foreground: oklch(0.96 0.01 145);
+  --secondary: oklch(0.18 0.02 145);
+  --secondary-foreground: oklch(0.96 0.01 145);
+  --muted: oklch(0.16 0.018 145);
+  --muted-foreground: oklch(0.6 0.02 145);
+  --accent: oklch(0.22 0.025 145);
+  --accent-foreground: oklch(0.85 0.24 142);
+  --destructive: oklch(0.65 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.25 0.02 286);
-  --input: oklch(0.25 0.02 286);
-  --ring: oklch(0.88 0.2 120);
-  --sidebar: oklch(0.1 0.01 286);
-  --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.2 0.02 286);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.25 0.02 286);
-  --sidebar-ring: oklch(0.88 0.2 120);
+  --border: oklch(0.22 0.025 145);
+  --input: oklch(0.22 0.025 145);
+  --ring: oklch(0.85 0.24 142);
+  --sidebar: oklch(0.08 0.015 145);
+  --sidebar-foreground: oklch(0.96 0.01 145);
+  --sidebar-accent: oklch(0.18 0.02 145);
+  --sidebar-accent-foreground: oklch(0.96 0.01 145);
+  --sidebar-border: oklch(0.22 0.025 145);
+  --sidebar-ring: oklch(0.85 0.24 142);
 }
 
 @media (width >= theme("screens.lg")) {
@@ -138,6 +140,23 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* subtle scan-line texture, dark only */
+  .dark body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 3px,
+      rgba(255, 255, 255, 0.012) 3px,
+      rgba(255, 255, 255, 0.012) 4px
+    );
+    mix-blend-mode: overlay;
   }
 }
 
@@ -156,4 +175,69 @@
   font-family: var(--font-body-family);
   font-weight: var(--font-body-weight);
   letter-spacing: var(--font-body-tracking);
+}
+
+/* ── Valorant-style angular utilities ──────────────────────────────────── */
+
+/* Parallelogram / skewed-cut button: top-right + bottom-left clipped */
+@utility tactical-shape {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% 100%,
+    14px 100%,
+    0 calc(100% - 14px)
+  );
+}
+
+/* Smaller chip with a single notch (top-right) */
+@utility tactical-chip {
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+
+/* Tactical card: top-right and bottom-left chamfered */
+@utility tactical-card {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 18px) 0,
+    100% 18px,
+    100% 100%,
+    18px 100%,
+    0 calc(100% - 18px)
+  );
+}
+
+/* Skewed parallelogram (Valorant agent-select card vibe) */
+@utility skew-card {
+  clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
+}
+
+/* Hex/triangle accent dot */
+@utility tactical-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--primary);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+/* Glow ring used on active items */
+@utility glow-primary {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--primary) 60%, transparent),
+    0 0 24px -4px color-mix(in oklab, var(--primary) 50%, transparent);
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@utility animate-pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
 }

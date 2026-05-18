@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { Space_Grotesk, JetBrains_Mono, Inter_Tight } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -13,10 +13,10 @@ const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const interTight = Inter_Tight({
-  variable: "--font-inter-tight",
+const bebasNeue = Bebas_Neue({
+  variable: "--font-bebas-neue",
   subsets: ["latin"],
-  weight: ["700", "800", "900"],
+  weight: ["400"],
 });
 
 const siteUrl =
@@ -26,7 +26,7 @@ const siteUrl =
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : "https://vmd306.com";
 
-const title = "Vincent Do — Software Engineer";
+const title = "Vincent Do // Software Engineer";
 const description =
   "Software Engineer at Boeing. UIUC CS & Chemistry alum. Building real-time systems, full-stack apps, and ML projects.";
 
@@ -49,11 +49,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="scroll-smooth shadcn">
+    <html lang="en" suppressHydrationWarning className="scroll-smooth shadcn dark">
       <body
-        className={`font-body antialiased ${spaceGrotesk.variable} ${jetBrainsMono.variable} ${interTight.variable}`}
+        className={`font-body antialiased ${spaceGrotesk.variable} ${jetBrainsMono.variable} ${bebasNeue.variable}`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           {children}
         </ThemeProvider>
       </body>

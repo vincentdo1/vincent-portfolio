@@ -1,0 +1,243 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { MapPin, Calendar, Briefcase } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { SectionHeader } from "@/components/valorant/section-header";
+import { CornerBrackets } from "@/components/valorant/corner-brackets";
+
+const experiences = [
+  {
+    company: "Boeing",
+    role: "Software Engineer",
+    period: "Aug 2024 — Present",
+    location: "Berkeley, MO",
+    code: "BCA",
+    current: true,
+    tags: ["C++", "Embedded", "Real-time", "Docker"],
+    summary:
+      "Building real-time message delivery for embedded display systems on production aircraft platforms.",
+    bullets: [
+      "Developed production C++ features delivering real-time message streams to embedded display systems, with automated tests and Dockerized build workflows",
+      "Owned integration and release readiness for a shared framework consumed by 60+ dependent modules, resolving compatibility issues to maintain timing accuracy",
+      "Identified root cause of a long-standing cross-system defect within two weeks of onboarding, tracing a binary data merge edge case",
+      "Spearheaded month-long evaluation of Lockheed Martin software through custom integration, verifying customer requirements at 1.5× the required message rate",
+    ],
+  },
+  {
+    company: "Expedia Group",
+    role: "SDE Intern",
+    period: "May 2023 — Aug 2023",
+    location: "Chicago, IL",
+    code: "EXP",
+    current: false,
+    tags: ["Kotlin", "GraphQL", "Microservices"],
+    summary:
+      "Shipped customer-facing mobile search features across Expedia's Kotlin microservice stack.",
+    bullets: [
+      "Built customer-facing Expedia mobile search features, including VIP Access badges, sort/filter options, and improved error handling to reduce booking search friction",
+      "Implemented GraphQL schema changes across multiple Kotlin microservices, enabling new mobile booking flows across backend and client surfaces",
+      "Built backend support for localized search components across 16 languages, partnering with frontend and localization teams to validate dynamic rendering",
+    ],
+  },
+  {
+    company: "UW–Madison",
+    role: "Biomedical Researcher",
+    period: "May 2021 — Aug 2021",
+    location: "Madison, WI",
+    code: "UWM",
+    current: false,
+    tags: ["Python", "R", "Graph Algos"],
+    summary:
+      "Computational genomics research on rare-disease gene prioritization.",
+    bullets: [
+      "Analyzed 16,813 genes across 169 phenotypes using Python/R, graph traversal, and visualization to identify phenotype–gene associations",
+      "Reduced search space to 25 high-priority Zellweger candidate genes using frequency thresholds, chromosomal-location filtering, and recursive phenotype hierarchy traversal",
+    ],
+  },
+];
+
+export function ExperienceSection() {
+  const [selected, setSelected] = useState(0);
+  const current = experiences[selected];
+
+  return (
+    <section
+      id="experience"
+      className="relative min-h-screen py-24 border-t border-border/60 px-safe"
+    >
+      <div className="mx-auto max-w-7xl">
+        <SectionHeader
+          number="03 // EXPERIENCE"
+          label="Mission Log"
+          title={
+            <>
+              Mission
+              <br />
+              <span className="text-primary">Log_</span>
+            </>
+          }
+          description="A record of deployments across embedded systems, full-stack web, and computational research."
+        />
+
+        <div className="grid lg:grid-cols-[280px_1fr] gap-6 mt-12">
+          {/* Left rail: agent select */}
+          <div className="space-y-3">
+            <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
+              <span className="h-px w-6 bg-primary" />
+              Select Agent
+            </div>
+            {experiences.map((exp, i) => {
+              const isActive = i === selected;
+              return (
+                <motion.button
+                  key={exp.code}
+                  onClick={() => setSelected(i)}
+                  whileHover={{ x: 4 }}
+                  transition={{ duration: 0.15 }}
+                  className={cn(
+                    "w-full text-left relative p-4 border transition-all duration-200 tactical-chip",
+                    isActive
+                      ? "bg-primary/10 border-primary glow-primary"
+                      : "bg-card/40 border-border/60 hover:border-primary/40 hover:bg-card"
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span
+                          className={cn(
+                            "font-mono text-[10px] tracking-widest",
+                            isActive ? "text-primary" : "text-muted-foreground"
+                          )}
+                        >
+                          {exp.code}
+                        </span>
+                        {exp.current && (
+                          <span className="font-mono text-[9px] px-1.5 py-0.5 bg-primary text-primary-foreground uppercase tracking-wider">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className={cn(
+                          "font-display text-xl uppercase leading-tight",
+                          isActive ? "text-foreground" : "text-foreground/80"
+                        )}
+                      >
+                        {exp.company}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                        {exp.role}
+                      </div>
+                    </div>
+                    <div
+                      className={cn(
+                        "font-mono text-[9px] tracking-widest transition-opacity",
+                        isActive ? "text-primary opacity-100" : "opacity-0"
+                      )}
+                    >
+                      ►
+                    </div>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+
+          {/* Right: detail panel */}
+          <div className="relative border border-border/60 bg-card/30 p-6 lg:p-8 min-h-[480px]">
+            <CornerBrackets size={14} thickness={1.5} />
+
+            {/* HUD header strip */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/60">
+              <div className="flex items-center gap-3">
+                <Briefcase className="h-4 w-4 text-primary" />
+                <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                  Dossier // {current.code}
+                </div>
+              </div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                {String(selected + 1).padStart(2, "0")} /{" "}
+                {String(experiences.length).padStart(2, "0")}
+              </div>
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={current.code}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="space-y-6"
+              >
+                <div>
+                  <div className="font-mono text-[11px] text-primary uppercase tracking-[0.25em] mb-2">
+                    {current.role}
+                  </div>
+                  <h3 className="font-display text-4xl md:text-5xl uppercase leading-none">
+                    {current.company}
+                  </h3>
+                  <p className="text-muted-foreground mt-3 max-w-xl">
+                    {current.summary}
+                  </p>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="h-3 w-3 text-primary" />
+                    <span className="font-mono text-xs uppercase tracking-wider">
+                      {current.period}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin className="h-3 w-3 text-primary" />
+                    <span className="font-mono text-xs uppercase tracking-wider">
+                      {current.location}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {current.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 bg-secondary/60 border border-border tactical-chip text-muted-foreground"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4 flex items-center gap-3">
+                    <span className="h-px w-6 bg-primary" />
+                    Field Report
+                  </div>
+                  <ul className="space-y-3">
+                    {current.bullets.map((bullet, j) => (
+                      <motion.li
+                        key={j}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.25, delay: j * 0.06 }}
+                        className="text-sm text-muted-foreground flex gap-3 leading-relaxed"
+                      >
+                        <span className="text-primary mt-1.5 shrink-0 text-xs">
+                          ▸
+                        </span>
+                        {bullet}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

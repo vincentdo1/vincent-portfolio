@@ -1,734 +1,703 @@
+"use client";
+
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Nav } from "@/components/nav";
-import { ProjectImage } from "@/components/project-image";
+import { motion } from "framer-motion";
 import {
   Github,
   Linkedin,
   Mail,
-  ExternalLink,
   ArrowRight,
   MapPin,
   Code2,
-  Database,
-  Cpu,
   Terminal,
+  Cpu,
+  Database,
+  Send,
+  ChevronDown,
 } from "lucide-react";
-import { Container } from "@/components/zippystarter/container";
-
-const experiences = [
-  {
-    company: "Boeing Company",
-    role: "Software Engineer",
-    period: "Aug 2024 – Present",
-    location: "Berkeley, MO",
-    current: true,
-    bullets: [
-      "Developed production C++ features delivering real-time message streams to embedded display systems, with automated tests and Dockerized build workflows",
-      "Owned integration and release readiness for a shared framework consumed by 60+ dependent modules, resolving compatibility issues to maintain timing accuracy",
-      "Identified root cause of a long-standing cross-system defect within two weeks of onboarding, tracing a binary data merge edge case and restoring correct output behavior",
-      "Spearheaded month-long evaluation of Lockheed Martin software through custom integration, verifying customer requirements at 1.5× the required message rate",
-    ],
-  },
-  {
-    company: "Expedia Group",
-    role: "Software Development Engineer Intern",
-    period: "May 2023 – Aug 2023",
-    location: "Chicago, IL",
-    current: false,
-    bullets: [
-      "Built customer-facing Expedia mobile search features, including VIP Access badges, sort/filter options, and improved error handling to reduce booking search friction",
-      "Implemented GraphQL schema changes across multiple Kotlin microservices, enabling new mobile booking flows across backend and client surfaces",
-      "Built backend support for localized search components across 16 languages, partnering with frontend and localization teams to validate dynamic rendering",
-    ],
-  },
-  {
-    company: "University of Wisconsin–Madison",
-    role: "Biomedical Undergraduate Researcher",
-    period: "May 2021 – Aug 2021",
-    location: "Madison, WI",
-    current: false,
-    bullets: [
-      "Analyzed 16,813 genes across 169 phenotypes using Python/R, graph traversal, and visualization to identify phenotype–gene associations",
-      "Reduced search space to 25 high-priority Zellweger candidate genes using frequency thresholds, chromosomal-location filtering, and recursive phenotype hierarchy traversal",
-    ],
-  },
-];
-
-const projects = [
-  {
-    title: "Playable Chess AI",
-    description:
-      "Trained a CNN+LSTM legal move-policy model on 4.18M GM/Magnus positions, achieving 71.2% top-5 accuracy on a 390K-position test set. GPU-accelerated training pipeline reduced per-epoch time from 20+ hours to 15–25 minutes.",
-    tags: ["Python", "PyTorch", "CUDA", "Flask", "Stockfish"],
-    image: "/project-placeholder-1.jpg",
-    link: "https://github.com/vincentdo1/playable-chess-AI",
-    repo: "https://github.com/vincentdo1/playable-chess-AI",
-  },
-  {
-    title: "We-Up",
-    description:
-      "Social accountability app built on Cloudflare Workers with a Hono.js REST API, PostgreSQL/Neon persistence, and Cloudflare Images for authenticated photo upload, storage, and group post retrieval.",
-    tags: ["TypeScript", "Hono.js", "Next.js", "PostgreSQL", "Cloudflare"],
-    image: "/project-placeholder-2.jpg",
-    link: "#",
-    repo: "#",
-  },
-  {
-    title: "Airport Path Finder",
-    description:
-      "BFS, Floyd–Warshall, and betweenness centrality algorithms to analyze connectivity and routing in aviation networks, with WebGL globe rendering of the top 10 most important airports.",
-    tags: ["C++", "React", "WebGL"],
-    image: "/project-placeholder-3.jpg",
-    link: "https://github.com/vincentdo1/airports-global",
-    repo: "https://github.com/vincentdo1/airports-global",
-  },
-];
+import { cn } from "@/lib/utils";
+import { Nav } from "@/components/nav";
+import { SideRail } from "@/components/valorant/side-rail";
+import { CornerBrackets } from "@/components/valorant/corner-brackets";
+import { SectionHeader } from "@/components/valorant/section-header";
+import { ExperienceSection } from "@/components/sections/experience-section";
+import { ProjectsSection } from "@/components/sections/projects-section";
 
 const skills = [
   {
     category: "Languages",
-    icon: <Code2 className="h-8 w-8 mb-2 text-primary" />,
-    label: "POLYGLOT",
-    items: ["C++", "Python", "TypeScript", "JavaScript", "Java", "C#", "SQL", "Kotlin"],
+    icon: <Code2 className="h-4 w-4 text-primary" />,
+    items: [
+      { name: "C++", proficiency: 95 },
+      { name: "Python", proficiency: 92 },
+      { name: "TypeScript", proficiency: 88 },
+      { name: "JavaScript", proficiency: 88 },
+      { name: "Java", proficiency: 75 },
+      { name: "C#", proficiency: 70 },
+      { name: "Kotlin", proficiency: 72 },
+      { name: "SQL", proficiency: 80 },
+    ],
   },
   {
     category: "Frameworks",
-    icon: <Terminal className="h-8 w-8 mb-2 text-primary" />,
-    label: "FRAMEWORKS",
-    items: ["React", "Next.js", "Node.js", "Flask", "PyTorch", "GraphQL", "REST APIs", "CUDA"],
+    icon: <Terminal className="h-4 w-4 text-primary" />,
+    items: [
+      { name: "React", proficiency: 90 },
+      { name: "Next.js", proficiency: 88 },
+      { name: "Node.js", proficiency: 85 },
+      { name: "Flask", proficiency: 82 },
+      { name: "PyTorch", proficiency: 85 },
+      { name: "GraphQL", proficiency: 78 },
+      { name: "REST APIs", proficiency: 90 },
+      { name: "CUDA", proficiency: 70 },
+    ],
   },
   {
-    category: "Tools & Infra",
-    icon: <Database className="h-8 w-8 mb-2 text-primary" />,
-    label: "INFRA",
-    items: ["Docker", "Jenkins", "Git", "Linux", "PostgreSQL", "MongoDB", "GCP", "Cloudflare"],
+    category: "Infrastructure",
+    icon: <Database className="h-4 w-4 text-primary" />,
+    items: [
+      { name: "Docker", proficiency: 85 },
+      { name: "Jenkins", proficiency: 75 },
+      { name: "Git", proficiency: 95 },
+      { name: "Linux", proficiency: 88 },
+      { name: "PostgreSQL", proficiency: 80 },
+      { name: "MongoDB", proficiency: 72 },
+      { name: "GCP", proficiency: 70 },
+      { name: "Cloudflare", proficiency: 75 },
+    ],
   },
 ];
 
-// Update these with your actual hobbies and interests
+// Update with your real hobbies + interests
 const interests = [
-  {
-    emoji: "♟️",
-    label: "Chess",
-    description: "Strategy games and chess engines",
-  },
-  {
-    emoji: "🤖",
-    label: "Machine Learning",
-    description: "Deep learning, CV, and NLP",
-  },
-  {
-    emoji: "⚡",
-    label: "Systems Programming",
-    description: "Embedded & real-time computing",
-  },
-  {
-    emoji: "🎮",
-    label: "Gaming",
-    description: "Add your gaming interests here",
-  },
-  {
-    emoji: "🌍",
-    label: "Travel",
-    description: "Add your travel interests here",
-  },
-  {
-    emoji: "🎵",
-    label: "Music",
-    description: "Add your music interests here",
-  },
+  { code: "01", label: "Chess", description: "Strategy and chess engines" },
+  { code: "02", label: "Machine Learning", description: "Deep learning, CV, NLP" },
+  { code: "03", label: "Systems", description: "Embedded, real-time, low-level" },
+  { code: "04", label: "Gaming", description: "Add your gaming interests" },
+  { code: "05", label: "Travel", description: "Add your travel interests" },
+  { code: "06", label: "Music", description: "Add your music interests" },
+];
+
+const stats = [
+  { label: "Years XP", value: "4+" },
+  { label: "Languages", value: "8" },
+  { label: "Projects", value: "10+" },
+  { label: "GPA", value: "3.6" },
 ];
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground overflow-x-hidden relative">
       <Nav />
+      <SideRail />
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <Container
-        wrapperClassName="relative min-h-screen flex items-center pt-16 overflow-hidden"
-        className="mx-auto max-w-7xl flex-1"
+      {/* ── HERO ─────────────────────────────────────────────────────────── */}
+      <section
+        id="hero"
+        className="relative min-h-screen flex items-center pt-20 px-safe overflow-hidden"
       >
-        <div className="absolute inset-0 z-0">
-          <div className="relative w-[100vw] h-[100vh] bg-background overflow-hidden">
-            <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url('/hero-bg.jpg')] before:absolute before:inset-0 before:bg-primary before:mix-blend-color-dodge dark:before:mix-blend-color" />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/50 to-background" />
+        {/* Grid background */}
+        <div
+          className="absolute inset-0 opacity-[0.06] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(var(--color-foreground) 1px, transparent 1px), linear-gradient(90deg, var(--color-foreground) 1px, transparent 1px)",
+            backgroundSize: "60px 60px",
+          }}
+        />
+
+        {/* Faded background hero img with green tint */}
+        <div className="absolute inset-0 z-0 opacity-30">
+          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url('/hero-bg.jpg')] before:absolute before:inset-0 before:bg-primary before:mix-blend-color-dodge" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
         </div>
 
-        <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-mono">
+        <div className="relative z-10 mx-auto max-w-7xl w-full grid lg:grid-cols-[1.4fr_1fr] gap-12 items-center">
+          {/* Left: name + meta */}
+          <div>
+            {/* Tactical eyebrow */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4 }}
+              className="flex items-center gap-3 mb-6"
+            >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-50 animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
               </span>
-              AVAILABLE FOR NEW OPPORTUNITIES
-            </div>
-            <h1 className="text-6xl md:text-8xl font-display tracking-tighter leading-[0.9]">
-              VINCENT
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-foreground">
-                DO_
+              <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-primary">
+                Agent Online // Available for Hire
               </span>
-            </h1>
-            <p className="md:text-xl text-muted-foreground max-w-md leading-relaxed">
-              Software Engineer at Boeing. UIUC CS &amp; Chemistry alum. I build
-              real-time embedded systems, full-stack web apps, and ML pipelines.
-            </p>
-            <div className="flex gap-4 pt-4 items-center flex-wrap">
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground mb-2">
+                Operator
+              </div>
+              <h1 className="font-display text-7xl md:text-9xl lg:text-[10rem] uppercase leading-[0.85] tracking-tight">
+                Vincent
+                <br />
+                <span className="text-primary">Do_</span>
+              </h1>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-6 max-w-lg space-y-4"
+            >
+              <p className="text-lg text-foreground/90">
+                Software Engineer at{" "}
+                <span className="text-primary font-medium">Boeing</span>.
+                UIUC CS &amp; Chemistry alum. I build real-time embedded
+                systems, full-stack web apps, and ML pipelines.
+              </p>
+              <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest">
+                <MapPin className="h-3 w-3 text-primary" />
+                Berkeley, MO
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="mt-10 flex items-center gap-3 flex-wrap"
+            >
               <Link
                 href="#experience"
-                className={cn("uppercase", buttonVariants({ size: "lg" }))}
+                className="relative inline-flex items-center gap-2 h-12 px-6 tactical-shape bg-primary text-primary-foreground font-mono text-xs uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors group overflow-hidden"
               >
-                View Experience <ArrowRight className="size-4" />
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                <span className="relative z-10 inline-flex items-center gap-2">
+                  Initiate <ArrowRight className="h-3 w-3" />
+                </span>
               </Link>
-              <div className="flex gap-2">
+              <Link
+                href="#contact"
+                className="inline-flex items-center gap-2 h-12 px-6 tactical-shape border border-primary/40 hover:border-primary text-primary font-mono text-xs uppercase tracking-[0.25em] transition-colors"
+              >
+                <Send className="h-3 w-3" />
+                Establish Contact
+              </Link>
+              <div className="flex items-center gap-1 ml-2">
                 <a
                   href="https://github.com/vincentdo1"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
                   aria-label="GitHub"
+                  className="h-10 w-10 flex items-center justify-center border border-border/60 hover:border-primary hover:text-primary text-muted-foreground transition-colors tactical-chip"
                 >
-                  <Github className="h-5 w-5" />
+                  <Github className="h-4 w-4" />
                 </a>
                 <a
                   href="https://linkedin.com/in/vincent-do-uiuc"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
                   aria-label="LinkedIn"
+                  className="h-10 w-10 flex items-center justify-center border border-border/60 hover:border-primary hover:text-primary text-muted-foreground transition-colors tactical-chip"
                 >
-                  <Linkedin className="h-5 w-5" />
+                  <Linkedin className="h-4 w-4" />
                 </a>
                 <a
                   href="mailto:vincentdo306@gmail.com"
-                  className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
                   aria-label="Email"
+                  className="h-10 w-10 flex items-center justify-center border border-border/60 hover:border-primary hover:text-primary text-muted-foreground transition-colors tactical-chip"
                 >
-                  <Mail className="h-5 w-5" />
+                  <Mail className="h-4 w-4" />
                 </a>
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          {/* Stats panel */}
-          <div className="hidden md:block relative h-[500px] w-full border border-border/30 bg-card/10 backdrop-blur-sm p-8">
-            <div className="absolute top-0 left-0 size-4 border-t-2 border-l-2 border-primary" />
-            <div className="absolute top-0 right-0 size-4 border-t-2 border-r-2 border-primary" />
-            <div className="absolute bottom-0 left-0 size-4 border-b-2 border-l-2 border-primary" />
-            <div className="absolute bottom-0 right-0 size-4 border-b-2 border-r-2 border-primary" />
-
-            <div className="h-full w-full flex flex-col justify-between font-mono text-xs text-muted-foreground">
-              <div className="flex justify-between">
-                <span>SYS.STATUS: ONLINE</span>
-                <span>ROLE: SWE @ BOEING</span>
-              </div>
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>LANGUAGES</span>
-                    <span>8</span>
-                  </div>
-                  <div className="h-1 w-full bg-secondary overflow-hidden">
-                    <div className="h-full bg-primary w-[80%]" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>FRAMEWORKS</span>
-                    <span>8+</span>
-                  </div>
-                  <div className="h-1 w-full bg-secondary overflow-hidden">
-                    <div className="h-full bg-primary w-[70%]" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>YRS_EXPERIENCE</span>
-                    <span>4+</span>
-                  </div>
-                  <div className="h-1 w-full bg-secondary overflow-hidden">
-                    <div className="h-full bg-primary w-[40%]" />
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-right">
-                  <span className="block text-4xl font-bold text-foreground">3.6</span>
-                  <span>UIUC_GPA // CS + CHEMISTRY</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
-
-      {/* ── About ────────────────────────────────────────────────────────── */}
-      <Container
-        id="about"
-        component="section"
-        wrapperClassName="py-24 border-t border-border"
-        className="mx-auto max-w-7xl"
-      >
-        <div className="grid md:grid-cols-2 gap-16 items-start">
-          <div>
-            <h2 className="text-4xl md:text-6xl font-display tracking-tighter mb-4">
-              ABOUT
-              <br />
-              ME_
-            </h2>
-            <div className="h-1 w-24 bg-primary mb-8" />
-            <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>
-                I&apos;m a software engineer currently at Boeing in Berkeley, MO, where I
-                work on C++ embedded systems delivering real-time data to flight
-                display hardware. Before that, I interned at Expedia building
-                mobile search features in Kotlin and GraphQL.
-              </p>
-              <p>
-                I graduated from the University of Illinois Urbana-Champaign
-                with a B.S. in Computer Science &amp; Chemistry (GPA 3.6). I&apos;m drawn to
-                problems at the intersection of performance engineering and
-                software correctness — whether that&apos;s real-time message routing,
-                ML training pipelines, or distributed backend services.
-              </p>
-              <p>
-                Outside of work, I enjoy{" "}
-                <span className="text-foreground">chess</span>,{" "}
-                <span className="text-foreground">building side projects</span>,
-                and exploring topics in machine learning and systems programming.
-              </p>
-            </div>
-            <div className="mt-6 flex items-center gap-2 text-sm font-mono text-muted-foreground">
-              <MapPin className="h-4 w-4 text-primary" />
-              Berkeley, MO
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-xl font-display tracking-tighter mb-6 uppercase">
-              Interests
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              {interests.map((item) => (
-                <div
-                  key={item.label}
-                  className="p-4 border border-border bg-card hover:border-primary/50 transition-colors group"
-                >
-                  <div className="text-2xl mb-2">{item.emoji}</div>
-                  <div className="font-mono text-sm font-medium group-hover:text-primary transition-colors">
-                    {item.label}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {item.description}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs font-mono text-muted-foreground mt-4">
-              // update interests[] in app/page.tsx with your real hobbies
-            </p>
-          </div>
-        </div>
-      </Container>
-
-      {/* ── Experience ───────────────────────────────────────────────────── */}
-      <Container
-        id="experience"
-        component="section"
-        wrapperClassName="py-24 bg-secondary/20 border-t border-border"
-        className="mx-auto max-w-7xl"
-      >
-        <h2 className="text-4xl md:text-6xl font-display tracking-tighter mb-4">
-          EXPERIENCE_
-        </h2>
-        <div className="h-1 w-24 bg-primary mb-16" />
-
-        <div className="relative">
-          {/* Timeline line */}
-          <div className="absolute left-0 top-2 bottom-2 w-px bg-border hidden md:block" />
-
-          <div className="space-y-12">
-            {experiences.map((exp, i) => (
-              <div key={i} className="md:pl-10 relative">
-                {/* Timeline dot */}
-                <div
-                  className={cn(
-                    "absolute left-0 top-2 size-2 rounded-full -translate-x-[calc(50%+0.5px)] hidden md:block",
-                    exp.current ? "bg-primary ring-4 ring-primary/20" : "bg-border"
-                  )}
-                />
-                <div className="grid md:grid-cols-[1fr_auto] gap-2 mb-3 items-start">
-                  <div>
-                    <h3 className="text-2xl font-display tracking-tighter">
-                      {exp.role}
-                    </h3>
-                    <div className="text-primary font-mono text-sm mt-1">
-                      {exp.company}
-                    </div>
-                  </div>
-                  <div className="text-right space-y-1">
-                    <div className="font-mono text-xs text-muted-foreground whitespace-nowrap">
-                      {exp.period}
-                    </div>
-                    <div className="flex items-center gap-1 justify-end text-xs text-muted-foreground font-mono">
-                      <MapPin className="h-3 w-3" />
-                      {exp.location}
-                    </div>
-                    {exp.current && (
-                      <Badge
-                        variant="secondary"
-                        className="font-mono text-xs bg-primary/10 text-primary border border-primary/20"
-                      >
-                        CURRENT
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                <ul className="space-y-2">
-                  {exp.bullets.map((bullet, j) => (
-                    <li
-                      key={j}
-                      className="text-muted-foreground text-sm leading-relaxed flex gap-3"
-                    >
-                      <span className="text-primary mt-1.5 shrink-0">▸</span>
-                      {bullet}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Education */}
-        <div className="mt-16 pt-12 border-t border-border">
-          <h3 className="text-2xl font-display tracking-tighter mb-6">
-            EDUCATION_
-          </h3>
-          <div className="grid md:grid-cols-[1fr_auto] gap-4 items-start">
-            <div>
-              <div className="text-xl font-display">
-                University of Illinois Urbana-Champaign
-              </div>
-              <div className="text-primary font-mono text-sm mt-1">
-                B.S. Computer Science &amp; Chemistry
-              </div>
-              <div className="text-muted-foreground text-sm mt-2">
-                Dual degree in CS and Chemistry with a focus on computational methods.
-              </div>
-            </div>
-            <div className="text-right space-y-1">
-              <div className="font-mono text-xs text-muted-foreground">
-                Aug 2020 – May 2024
-              </div>
-              <div className="flex items-center gap-1 justify-end text-xs text-muted-foreground font-mono">
-                <MapPin className="h-3 w-3" />
-                Champaign, IL
-              </div>
-              <div className="font-mono text-sm text-foreground font-bold">
-                GPA: 3.6
-              </div>
-            </div>
-          </div>
-        </div>
-      </Container>
-
-      {/* ── Skills ───────────────────────────────────────────────────────── */}
-      <Container
-        id="skills"
-        component="section"
-        wrapperClassName="py-24 border-t border-border"
-        className="mx-auto max-w-7xl"
-      >
-        <div className="grid md:grid-cols-12 gap-12">
-          <div className="md:col-span-4">
-            <h2 className="text-4xl font-display tracking-tighter mb-6">
-              TECH_STACK
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              From embedded C++ at Boeing to ML pipelines in PyTorch — the
-              tools I reach for every day.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 border border-border bg-background flex flex-col items-center justify-center aspect-square hover:border-primary transition-colors">
-                <Code2 className="h-8 w-8 mb-2 text-primary" />
-                <span className="font-mono text-xs">SYSTEMS</span>
-              </div>
-              <div className="p-4 border border-border bg-background flex flex-col items-center justify-center aspect-square hover:border-primary transition-colors">
-                <Terminal className="h-8 w-8 mb-2 text-primary" />
-                <span className="font-mono text-xs">FULL_STACK</span>
-              </div>
-              <div className="p-4 border border-border bg-background flex flex-col items-center justify-center aspect-square hover:border-primary transition-colors">
-                <Cpu className="h-8 w-8 mb-2 text-primary" />
-                <span className="font-mono text-xs">ML / AI</span>
-              </div>
-              <div className="p-4 border border-border bg-background flex flex-col items-center justify-center aspect-square hover:border-primary transition-colors">
-                <Database className="h-8 w-8 mb-2 text-primary" />
-                <span className="font-mono text-xs">DATABASES</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="md:col-span-8 grid sm:grid-cols-3 gap-8">
-            {skills.map((group) => (
-              <div key={group.category} className="space-y-6">
-                <h3 className="text-xl font-display border-b border-primary/30 pb-2 inline-block">
-                  {group.category}
-                </h3>
-                <ul className="space-y-3">
-                  {group.items.map((skill) => (
-                    <li
-                      key={skill}
-                      className="flex items-center justify-between group"
-                    >
-                      <span className="font-mono text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                        {skill}
-                      </span>
-                      <div className="h-[2px] w-8 bg-secondary group-hover:bg-primary transition-colors" />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Container>
-
-      {/* ── Projects ─────────────────────────────────────────────────────── */}
-      <Container
-        id="projects"
-        component="section"
-        wrapperClassName="py-24 bg-secondary/20 border-t border-border"
-        className="mx-auto max-w-7xl"
-      >
-        <div className="grid justify-between items-end mb-16 gap-4">
-          <div>
-            <h2 className="text-4xl md:text-6xl font-display tracking-tighter mb-4">
-              SELECTED
-              <br />
-              WORKS_
-            </h2>
-            <div className="h-1 w-24 bg-primary" />
-          </div>
-          <p className="text-muted-foreground max-w-sm">
-            A selection of personal projects spanning ML, systems, and full-stack
-            development.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] grid-rows-[repeat(3,auto)] gap-6">
-          {projects.map((project, index) => (
-            <Card
-              key={index}
-              className="pt-0 group bg-card border-border hover:border-primary/50 transition-all duration-300 rounded-none overflow-hidden grid grid-rows-subgrid row-span-3 content-start items-start"
-            >
-              <ProjectImage src={project.image} alt={project.title} />
-              <div className="grid gap-4">
-                <CardHeader className="grid gap-4">
-                  <CardTitle className="text-2xl font-display group-hover:text-primary transition-colors">
-                    {project.title}
-                  </CardTitle>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="font-mono text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
-                    {project.description}
-                  </CardDescription>
-                </CardContent>
-              </div>
-              <CardFooter className="flex justify-between pt-0">
-                {project.link !== "#" ? (
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-display flex items-center hover:text-primary transition-colors gap-2"
-                  >
-                    LIVE DEMO <ExternalLink className="size-3" />
-                  </a>
-                ) : (
-                  <span className="text-sm font-display text-muted-foreground">
-                    PRIVATE
-                  </span>
-                )}
-                {project.repo !== "#" ? (
-                  <a
-                    href={project.repo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-display flex items-center hover:text-primary transition-colors gap-2"
-                  >
-                    CODE <Github className="size-3" />
-                  </a>
-                ) : (
-                  <span className="text-sm font-display text-muted-foreground flex items-center gap-2">
-                    CODE <Github className="size-3" />
-                  </span>
-                )}
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <Link
-            href="/projects"
-            className={cn("uppercase", buttonVariants({ variant: "outline" }))}
+          {/* Right: HUD stat panel */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="hidden lg:block relative"
           >
-            View All Projects <ArrowRight className="size-4" />
-          </Link>
-        </div>
-      </Container>
+            <div className="relative border border-border/60 bg-card/40 backdrop-blur-sm p-6">
+              <CornerBrackets size={14} thickness={1.5} />
 
-      {/* ── Blog / Writing (placeholder) ─────────────────────────────────── */}
-      <Container
-        id="blog"
-        component="section"
-        wrapperClassName="py-24 border-t border-border"
-        className="mx-auto max-w-7xl"
-      >
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-4xl md:text-6xl font-display tracking-tighter mb-4">
-              WRITING_
-            </h2>
-            <div className="h-1 w-24 bg-primary mb-6" />
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              Occasionally I write about things I find interesting — embedded
-              systems, ML experiments, and software engineering lessons learned.
-              More posts coming soon.
-            </p>
-            <Link
-              href="/blog"
-              className={cn("uppercase", buttonVariants({ variant: "outline" }))}
-            >
-              Visit Blog <ArrowRight className="size-4" />
-            </Link>
-          </div>
-          <div className="space-y-4">
-            {[
-              "Coming soon: Lessons from real-time C++ at Boeing",
-              "Coming soon: Training a chess engine on GM games",
-              "Coming soon: Full-stack on Cloudflare Workers",
-            ].map((title, i) => (
-              <div key={i} className="p-4 border border-dashed border-border bg-card/30 opacity-60">
-                <div className="font-mono text-xs text-muted-foreground mb-1">
-                  DRAFT_{String(i + 1).padStart(2, "0")}
+              <div className="flex items-center justify-between mb-6 pb-3 border-b border-border/60">
+                <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                  Operator Profile
                 </div>
-                <div className="text-sm text-muted-foreground">{title}</div>
+                <div className="font-mono text-[10px] text-primary">
+                  ID//0306
+                </div>
               </div>
+
+              <div className="space-y-1 mb-6">
+                <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                  Role
+                </div>
+                <div className="font-display text-xl uppercase">
+                  Software Engineer
+                </div>
+                <div className="font-mono text-xs text-primary uppercase tracking-wider">
+                  Boeing // Defense Systems
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                {stats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="relative border border-border/60 bg-background/40 p-3"
+                  >
+                    <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
+                      {stat.label}
+                    </div>
+                    <div className="font-display text-3xl text-primary leading-none">
+                      {stat.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
+                    <span>Combat Readiness</span>
+                    <span>92%</span>
+                  </div>
+                  <div className="h-1 bg-secondary overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: "92%" }}
+                      transition={{ duration: 1.2, delay: 0.8 }}
+                      className="h-full bg-primary"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
+                    <span>Caffeine</span>
+                    <span>78%</span>
+                  </div>
+                  <div className="h-1 bg-secondary overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: "78%" }}
+                      transition={{ duration: 1.2, delay: 1.0 }}
+                      className="h-full bg-primary"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
+                    <span>Sleep</span>
+                    <span>42%</span>
+                  </div>
+                  <div className="h-1 bg-secondary overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: "42%" }}
+                      transition={{ duration: 1.2, delay: 1.2 }}
+                      className="h-full bg-primary"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-3 border-t border-border/60 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                <span>v1.0.0</span>
+                <span>SYS // STABLE</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 0.6 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          <span>Scroll to Engage</span>
+          <ChevronDown className="h-4 w-4 animate-bounce text-primary" />
+        </motion.div>
+      </section>
+
+      {/* ── ABOUT ────────────────────────────────────────────────────────── */}
+      <section
+        id="about"
+        className="relative py-24 border-t border-border/60 px-safe"
+      >
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader
+            number="02 // ABOUT"
+            label="Operator Bio"
+            title={
+              <>
+                About
+                <br />
+                <span className="text-primary">Operator_</span>
+              </>
+            }
+          />
+
+          <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 mt-12">
+            {/* Left: bio */}
+            <div className="space-y-4 text-muted-foreground leading-relaxed">
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
+              >
+                I&apos;m a software engineer at{" "}
+                <span className="text-foreground">Boeing</span> in Berkeley,
+                MO, working on C++ embedded systems that deliver real-time data
+                to flight display hardware. Before that, I interned at Expedia
+                building mobile search features in Kotlin and GraphQL.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                I graduated from the{" "}
+                <span className="text-foreground">
+                  University of Illinois Urbana-Champaign
+                </span>{" "}
+                with a B.S. in Computer Science &amp; Chemistry. I&apos;m drawn
+                to problems at the intersection of performance engineering and
+                software correctness — real-time message routing, ML training
+                pipelines, distributed backend services.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+              >
+                Outside of work I play{" "}
+                <span className="text-foreground">chess</span>, hack on{" "}
+                <span className="text-foreground">side projects</span>, and
+                read about machine learning and systems programming.
+              </motion.p>
+
+              {/* Education card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+                className="relative mt-8 p-5 border border-border/60 bg-card/40"
+              >
+                <CornerBrackets size={10} thickness={1} />
+                <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">
+                  Training // Education
+                </div>
+                <div className="font-display text-2xl uppercase">UIUC</div>
+                <div className="text-sm text-primary font-mono uppercase tracking-wider mt-1">
+                  B.S. CS &amp; Chemistry
+                </div>
+                <div className="flex justify-between mt-3 font-mono text-xs text-muted-foreground">
+                  <span>2020 — 2024</span>
+                  <span>GPA: 3.6</span>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right: interests grid */}
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6 flex items-center gap-3">
+                <span className="h-px w-6 bg-primary" />
+                Off-Mission // Interests
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {interests.map((item, i) => (
+                  <motion.div
+                    key={item.code}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    whileHover={{ y: -3 }}
+                    className="relative p-4 border border-border/60 bg-card/40 hover:border-primary/60 hover:bg-card transition-colors tactical-chip group cursor-default"
+                  >
+                    <div className="font-mono text-[10px] tracking-widest text-primary mb-2">
+                      {item.code}
+                    </div>
+                    <div className="font-display text-lg uppercase group-hover:text-primary transition-colors">
+                      {item.label}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground mt-1 leading-snug">
+                      {item.description}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              <p className="text-[10px] font-mono text-muted-foreground mt-4 uppercase tracking-widest">
+                <span className="text-primary">▸</span> edit interests[] in
+                app/page.tsx
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── EXPERIENCE (interactive agent-select) ─────────────────────────── */}
+      <ExperienceSection />
+
+      {/* ── SKILLS / ARSENAL ─────────────────────────────────────────────── */}
+      <section
+        id="skills"
+        className="relative py-24 border-t border-border/60 px-safe"
+      >
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader
+            number="04 // ARSENAL"
+            label="Loadout"
+            title={
+              <>
+                The
+                <br />
+                <span className="text-primary">Arsenal_</span>
+              </>
+            }
+            description="From embedded C++ on aircraft to ML pipelines in PyTorch — the kit I deploy with."
+          />
+
+          <div className="grid md:grid-cols-3 gap-6 mt-12">
+            {skills.map((group, i) => (
+              <motion.div
+                key={group.category}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className="relative border border-border/60 bg-card/40 p-6"
+              >
+                <CornerBrackets size={10} thickness={1} />
+
+                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border/60">
+                  {group.icon}
+                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                    {group.category}
+                  </div>
+                  <span className="ml-auto font-mono text-[9px] text-muted-foreground">
+                    {group.items.length}
+                  </span>
+                </div>
+
+                <ul className="space-y-3">
+                  {group.items.map((item) => (
+                    <li key={item.name} className="group">
+                      <div className="flex items-center justify-between text-xs mb-1">
+                        <span className="font-mono uppercase tracking-wider text-foreground/90 group-hover:text-primary transition-colors">
+                          {item.name}
+                        </span>
+                        <span className="font-mono text-[10px] text-muted-foreground">
+                          {item.proficiency}%
+                        </span>
+                      </div>
+                      <div className="h-[2px] bg-secondary overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${item.proficiency}%` }}
+                          viewport={{ once: true }}
+                          transition={{
+                            duration: 0.8,
+                            delay: 0.2 + i * 0.1,
+                            ease: "easeOut",
+                          }}
+                          className="h-full bg-primary"
+                        />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
             ))}
           </div>
         </div>
-      </Container>
+      </section>
 
-      {/* ── Contact CTA ──────────────────────────────────────────────────── */}
-      <Container
+      {/* ── PROJECTS (interactive weapon-select) ──────────────────────────── */}
+      <ProjectsSection />
+
+      {/* ── CONTACT ──────────────────────────────────────────────────────── */}
+      <section
         id="contact"
-        component="section"
-        wrapperClassName="py-24 bg-card border-t border-border"
-        className="mx-auto max-w-7xl"
+        className="relative py-24 border-t border-border/60 px-safe"
       >
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl md:text-6xl font-display tracking-tighter mb-4">
-            LET&apos;S TALK_
-          </h2>
-          <div className="h-1 w-24 bg-primary mx-auto mb-6" />
-          <p className="text-muted-foreground leading-relaxed mb-10">
-            Open to new opportunities, collaborations, and interesting
-            conversations. Reach out via email or connect on LinkedIn.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="mailto:vincentdo306@gmail.com"
-              className={cn("uppercase", buttonVariants({ size: "lg" }))}
-            >
-              <Mail className="size-4" /> Send Email
-            </a>
-            <Link
-              href="/contact"
-              className={cn("uppercase", buttonVariants({ variant: "outline", size: "lg" }))}
-            >
-              Contact Form <ArrowRight className="size-4" />
-            </Link>
-          </div>
-          <div className="flex gap-6 justify-center mt-8">
-            <a
-              href="https://github.com/vincentdo1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-mono text-muted-foreground hover:text-primary transition-colors"
-            >
-              <Github className="h-4 w-4" /> github.com/vincentdo1
-            </a>
-            <a
-              href="https://linkedin.com/in/vincent-do-uiuc"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-mono text-muted-foreground hover:text-primary transition-colors"
-            >
-              <Linkedin className="h-4 w-4" /> LinkedIn
-            </a>
-          </div>
-        </div>
-      </Container>
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader
+            number="06 // CONTACT"
+            label="Establish Comms"
+            title={
+              <>
+                Send
+                <br />
+                <span className="text-primary">Transmission_</span>
+              </>
+            }
+            description="Open to opportunities, collaborations, and interesting conversations."
+          />
 
-      {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <Container
-        component="footer"
-        wrapperClassName="py-8 border-t border-border bg-background"
-        className="mx-auto max-w-7xl"
-      >
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-xs font-mono text-muted-foreground">
-            © {new Date().getFullYear()} VINCENT DO. ALL RIGHTS RESERVED.
-          </div>
-          <div className="flex gap-6 text-xs font-mono text-muted-foreground">
-            <a
-              href="https://github.com/vincentdo1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
-            >
-              GITHUB
-            </a>
-            <a
-              href="https://linkedin.com/in/vincent-do-uiuc"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
-            >
-              LINKEDIN
-            </a>
-            <a
-              href="mailto:vincentdo306@gmail.com"
-              className="hover:text-primary transition-colors"
-            >
-              EMAIL
-            </a>
+          <div className="grid lg:grid-cols-2 gap-6 mt-12">
+            {/* Left: contact links */}
+            <div className="space-y-3">
+              <a
+                href="mailto:vincentdo306@gmail.com"
+                className="group relative block border border-border/60 hover:border-primary/60 bg-card/40 hover:bg-card p-5 transition-colors"
+              >
+                <CornerBrackets size={10} thickness={1} />
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 border border-primary/40 bg-primary/5 flex items-center justify-center tactical-chip text-primary">
+                    <Mail className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
+                      Primary Channel
+                    </div>
+                    <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
+                      Email
+                    </div>
+                    <div className="text-xs text-muted-foreground font-mono mt-0.5">
+                      vincentdo306@gmail.com
+                    </div>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </div>
+              </a>
+
+              <a
+                href="https://linkedin.com/in/vincent-do-uiuc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative block border border-border/60 hover:border-primary/60 bg-card/40 hover:bg-card p-5 transition-colors"
+              >
+                <CornerBrackets size={10} thickness={1} />
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 border border-primary/40 bg-primary/5 flex items-center justify-center tactical-chip text-primary">
+                    <Linkedin className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
+                      Professional Network
+                    </div>
+                    <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
+                      LinkedIn
+                    </div>
+                    <div className="text-xs text-muted-foreground font-mono mt-0.5">
+                      linkedin.com/in/vincent-do-uiuc
+                    </div>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </div>
+              </a>
+
+              <a
+                href="https://github.com/vincentdo1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative block border border-border/60 hover:border-primary/60 bg-card/40 hover:bg-card p-5 transition-colors"
+              >
+                <CornerBrackets size={10} thickness={1} />
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 border border-primary/40 bg-primary/5 flex items-center justify-center tactical-chip text-primary">
+                    <Github className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
+                      Source Repository
+                    </div>
+                    <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
+                      GitHub
+                    </div>
+                    <div className="text-xs text-muted-foreground font-mono mt-0.5">
+                      github.com/vincentdo1
+                    </div>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </div>
+              </a>
+            </div>
+
+            {/* Right: location + CTA */}
+            <div className="relative border border-border/60 bg-card/40 p-8 flex flex-col">
+              <CornerBrackets size={14} thickness={1.5} />
+
+              <div className="flex-1">
+                <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4 flex items-center gap-3">
+                  <span className="h-px w-6 bg-primary" />
+                  Deployment Location
+                </div>
+                <div className="font-display text-4xl uppercase leading-none mb-2">
+                  Berkeley
+                </div>
+                <div className="text-primary font-mono text-sm uppercase tracking-wider">
+                  Missouri // United States
+                </div>
+
+                <div className="mt-8 space-y-3 font-mono text-xs text-muted-foreground">
+                  <div className="flex justify-between">
+                    <span className="uppercase tracking-widest">Status</span>
+                    <span className="text-primary uppercase tracking-widest flex items-center gap-2">
+                      <span className="tactical-dot animate-pulse-dot" />
+                      Available
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="uppercase tracking-widest">Response Time</span>
+                    <span className="uppercase tracking-widest">{"< 24h"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="uppercase tracking-widest">Open to</span>
+                    <span className="uppercase tracking-widest">FT / Contract</span>
+                  </div>
+                </div>
+              </div>
+
+              <a
+                href="mailto:vincentdo306@gmail.com?subject=Hello%20Vincent"
+                className={cn(
+                  "mt-8 relative inline-flex items-center justify-center gap-2 h-12 px-6",
+                  "tactical-shape bg-primary text-primary-foreground",
+                  "font-mono text-xs uppercase tracking-[0.25em]",
+                  "hover:bg-primary/90 transition-colors group overflow-hidden"
+                )}
+              >
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                <span className="relative z-10 inline-flex items-center gap-2">
+                  <Send className="h-3 w-3" />
+                  Transmit Message
+                </span>
+              </a>
+            </div>
           </div>
         </div>
-      </Container>
+      </section>
+
+      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
+      <footer className="border-t border-border/60 py-8 px-safe">
+        <div className="mx-auto max-w-7xl flex flex-col md:flex-row justify-between items-center gap-4 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <span className="tactical-dot" />
+            <span>© {new Date().getFullYear()} Vincent Do</span>
+            <span className="hidden md:inline text-primary/60">›</span>
+            <span className="hidden md:inline">All Rights Reserved</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span>System v1.0.0</span>
+            <Cpu className="h-3 w-3 text-primary" />
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
