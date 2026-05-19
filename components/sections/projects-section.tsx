@@ -71,7 +71,7 @@ export function ProjectsSection() {
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           number="05 // PROJECTS"
-          label="Loadout"
+          label="Featured"
           title={
             <>
               Selected
@@ -166,7 +166,7 @@ export function ProjectsSection() {
                           className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-primary/40 hover:border-primary text-primary font-mono text-[10px] uppercase tracking-[0.2em] transition-colors"
                         >
                           <Github className="h-3 w-3" />
-                          Source
+                          Code
                         </a>
                       ) : (
                         <span className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-border text-muted-foreground font-mono text-[10px] uppercase tracking-[0.2em]">
@@ -181,7 +181,7 @@ export function ProjectsSection() {
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 h-9 px-4 tactical-chip bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
                         >
-                          Deploy <ExternalLink className="h-3 w-3" />
+                          Live Demo <ExternalLink className="h-3 w-3" />
                         </a>
                       )}
                     </div>
@@ -195,7 +195,7 @@ export function ProjectsSection() {
           <div className="space-y-3">
             <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
               <span className="h-px w-6 bg-primary" />
-              Arsenal
+              All Projects
             </div>
             {projects.map((p, i) => {
               const isActive = i === selected;

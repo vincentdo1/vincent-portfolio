@@ -127,7 +127,7 @@ export default function Home() {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
               </span>
               <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-primary">
-                Agent Online // Available for Hire
+                Available for Hire
               </span>
             </motion.div>
 
@@ -137,7 +137,7 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground mb-2">
-                Operator
+                Hello, I&apos;m
               </div>
               <h1 className="font-display text-7xl md:text-9xl lg:text-[10rem] uppercase leading-[0.85] tracking-tight">
                 Vincent
@@ -176,7 +176,7 @@ export default function Home() {
               >
                 <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                 <span className="relative z-10 inline-flex items-center gap-2">
-                  Initiate <ArrowRight className="h-3 w-3" />
+                  View Work <ArrowRight className="h-3 w-3" />
                 </span>
               </Link>
               <Link
@@ -184,7 +184,7 @@ export default function Home() {
                 className="inline-flex items-center gap-2 h-12 px-6 tactical-shape border border-primary/40 hover:border-primary text-primary font-mono text-xs uppercase tracking-[0.25em] transition-colors"
               >
                 <Send className="h-3 w-3" />
-                Establish Contact
+                Get in Touch
               </Link>
               <div className="flex items-center gap-1 ml-2">
                 <a
@@ -228,7 +228,7 @@ export default function Home() {
 
               <div className="flex items-center justify-between mb-6 pb-3 border-b border-border/60">
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                  Operator Profile
+                  Profile
                 </div>
                 <div className="font-mono text-[10px] text-primary">
                   ID//0306
@@ -243,7 +243,7 @@ export default function Home() {
                   Software Engineer
                 </div>
                 <div className="font-mono text-xs text-primary uppercase tracking-wider">
-                  Boeing // Defense Systems
+                  Boeing
                 </div>
               </div>
 
@@ -266,7 +266,7 @@ export default function Home() {
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                    <span>Combat Readiness</span>
+                    <span>Focus</span>
                     <span>92%</span>
                   </div>
                   <div className="h-1 bg-secondary overflow-hidden">
@@ -310,7 +310,7 @@ export default function Home() {
 
               <div className="mt-6 pt-3 border-t border-border/60 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                 <span>v1.0.0</span>
-                <span>SYS // STABLE</span>
+                <span>Build // Stable</span>
               </div>
             </div>
           </motion.div>
@@ -323,7 +323,7 @@ export default function Home() {
           transition={{ delay: 1.5, duration: 0.6 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
         >
-          <span>Scroll to Engage</span>
+          <span>Scroll to Explore</span>
           <ChevronDown className="h-4 w-4 animate-bounce text-primary" />
         </motion.div>
       </section>
@@ -336,12 +336,12 @@ export default function Home() {
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             number="02 // ABOUT"
-            label="Operator Bio"
+            label="Background"
             title={
               <>
                 About
                 <br />
-                <span className="text-primary">Operator_</span>
+                <span className="text-primary">Me_</span>
               </>
             }
           />
@@ -398,7 +398,7 @@ export default function Home() {
               >
                 <CornerBrackets size={10} thickness={1} />
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2">
-                  Training // Education
+                  Education
                 </div>
                 <div className="font-display text-2xl uppercase">UIUC</div>
                 <div className="text-sm text-primary font-mono uppercase tracking-wider mt-1">
@@ -415,7 +415,7 @@ export default function Home() {
             <div>
               <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6 flex items-center gap-3">
                 <span className="h-px w-6 bg-primary" />
-                Off-Mission // Interests
+                Interests
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {interests.map((item, i) => (
@@ -459,16 +459,16 @@ export default function Home() {
       >
         <div className="mx-auto max-w-7xl">
           <SectionHeader
-            number="04 // ARSENAL"
-            label="Loadout"
+            number="04 // SKILLS"
+            label="Tech Stack"
             title={
               <>
-                The
+                Tech
                 <br />
-                <span className="text-primary">Arsenal_</span>
+                <span className="text-primary">Stack_</span>
               </>
             }
-            description="From embedded C++ on aircraft to ML pipelines in PyTorch — the kit I deploy with."
+            description="From C++ at work to ML pipelines in PyTorch — the tools I reach for daily."
           />
 
           <div className="grid md:grid-cols-3 gap-6 mt-12">
@@ -537,12 +537,12 @@ export default function Home() {
         <div className="mx-auto max-w-7xl">
           <SectionHeader
             number="06 // CONTACT"
-            label="Establish Comms"
+            label="Get in Touch"
             title={
               <>
-                Send
+                Let&apos;s
                 <br />
-                <span className="text-primary">Transmission_</span>
+                <span className="text-primary">Talk_</span>
               </>
             }
             description="Open to opportunities, collaborations, and interesting conversations."
@@ -562,7 +562,7 @@ export default function Home() {
                   </div>
                   <div className="flex-1">
                     <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
-                      Primary Channel
+                      Send a Message
                     </div>
                     <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
                       Email
@@ -588,7 +588,7 @@ export default function Home() {
                   </div>
                   <div className="flex-1">
                     <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
-                      Professional Network
+                      Connect
                     </div>
                     <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
                       LinkedIn
@@ -614,7 +614,7 @@ export default function Home() {
                   </div>
                   <div className="flex-1">
                     <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
-                      Source Repository
+                      Open Source
                     </div>
                     <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
                       GitHub
@@ -635,7 +635,7 @@ export default function Home() {
               <div className="flex-1">
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4 flex items-center gap-3">
                   <span className="h-px w-6 bg-primary" />
-                  Deployment Location
+                  Based in
                 </div>
                 <div className="font-display text-4xl uppercase leading-none mb-2">
                   Berkeley
@@ -675,7 +675,7 @@ export default function Home() {
                 <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                 <span className="relative z-10 inline-flex items-center gap-2">
                   <Send className="h-3 w-3" />
-                  Transmit Message
+                  Send Message
                 </span>
               </a>
             </div>
@@ -693,7 +693,7 @@ export default function Home() {
             <span className="hidden md:inline">All Rights Reserved</span>
           </div>
           <div className="flex items-center gap-2">
-            <span>System v1.0.0</span>
+            <span>v1.0.0</span>
             <Cpu className="h-3 w-3 text-primary" />
           </div>
         </div>

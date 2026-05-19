@@ -17,7 +17,7 @@ const experiences = [
     current: true,
     tags: ["C++", "Embedded", "Real-time", "Docker"],
     summary:
-      "Building real-time message delivery for embedded display systems on production aircraft platforms.",
+      "Building real-time message delivery for embedded display systems.",
     bullets: [
       "Developed production C++ features delivering real-time message streams to embedded display systems, with automated tests and Dockerized build workflows",
       "Owned integration and release readiness for a shared framework consumed by 60+ dependent modules, resolving compatibility issues to maintain timing accuracy",
@@ -70,15 +70,15 @@ export function ExperienceSection() {
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           number="03 // EXPERIENCE"
-          label="Mission Log"
+          label="Work History"
           title={
             <>
-              Mission
+              Work
               <br />
-              <span className="text-primary">Log_</span>
+              <span className="text-primary">History_</span>
             </>
           }
-          description="A record of deployments across embedded systems, full-stack web, and computational research."
+          description="Roles across embedded systems, full-stack web, and computational research."
         />
 
         <div className="grid lg:grid-cols-[280px_1fr] gap-6 mt-12">
@@ -86,7 +86,7 @@ export function ExperienceSection() {
           <div className="space-y-3">
             <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
               <span className="h-px w-6 bg-primary" />
-              Select Agent
+              Select Role
             </div>
             {experiences.map((exp, i) => {
               const isActive = i === selected;
@@ -155,7 +155,7 @@ export function ExperienceSection() {
               <div className="flex items-center gap-3">
                 <Briefcase className="h-4 w-4 text-primary" />
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                  Dossier // {current.code}
+                  Role // {current.code}
                 </div>
               </div>
               <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
@@ -214,7 +214,7 @@ export function ExperienceSection() {
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4 flex items-center gap-3">
                     <span className="h-px w-6 bg-primary" />
-                    Field Report
+                    Highlights
                   </div>
                   <ul className="space-y-3">
                     {current.bullets.map((bullet, j) => (
