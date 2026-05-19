@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import disposableDomainsList from "disposable-email-domains";
 
 /**
  * Contact form endpoint.
@@ -16,10 +17,17 @@ import { Resend } from "resend";
  *    domain. To send from `@vmd306.com`, verify the domain in the Resend
  *    dashboard (add the SPF/DKIM/DMARC DNS records they show you) and then
  *    set RESEND_FROM_EMAIL above.
- * 5. For Vercel deployments, add the same env vars in your Vercel project
- *    settings → Environment Variables.
+ * 5. For Vercel / Cloudflare deployments, add the same env vars in your
+ *    project's Environment Variables panel.
  *
  * Without RESEND_API_KEY, this route returns a 500 with a clear error.
+ *
+ * Spam / fake-email defenses (in addition to the dialog's honeypot + min-time):
+ *   - Reject obvious bot submissions silently (URL in name field) so bots
+ *     don't retry.
+ *   - Reject disposable email services (mailinator, guerrillamail, etc).
+ *   - Verify the email's domain has MX records via Cloudflare DNS-over-HTTPS.
+ *     Fails open if the DNS check itself errors out (no false positives).
  */
 
 const FROM_EMAIL =
@@ -27,6 +35,37 @@ const FROM_EMAIL =
 const TO_EMAIL = process.env.RESEND_TO_EMAIL || "vincentdo306@gmail.com";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const urlInTextRegex = /(https?:\/\/|www\.)/i;
+
+const disposableDomains = new Set<string>(
+  disposableDomainsList.map((d) => d.toLowerCase())
+);
+
+/**
+ * Resolve MX records via Cloudflare's DNS-over-HTTPS endpoint. Works on
+ * both Node and edge runtimes (Cloudflare Workers, Vercel Edge). Returns
+ * true if the domain has at least one MX record, false otherwise.
+ * Fails open (returns true) on network errors — we don't want to block
+ * legitimate users when DNS is flaky.
+ */
+async function domainHasMx(domain: string): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(
+        domain
+      )}&type=MX`,
+      {
+        headers: { Accept: "application/dns-json" },
+        signal: AbortSignal.timeout(3000),
+      }
+    );
+    if (!res.ok) return true;
+    const data = (await res.json()) as { Answer?: unknown[] };
+    return Array.isArray(data.Answer) && data.Answer.length > 0;
+  } catch {
+    return true;
+  }
+}
 
 export async function POST(req: Request) {
   const apiKey = process.env.RESEND_API_KEY;
@@ -44,10 +83,7 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json(
-      { error: "Invalid JSON body." },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
   const { name, email, message, company, openedAt } = (body ?? {}) as Record<
@@ -55,7 +91,7 @@ export async function POST(req: Request) {
     unknown
   >;
 
-  // ── Bot checks (silent success so bots don't retry) ──────────────────────
+  // ── Silent bot rejections (200 OK so bots don't learn / retry) ──────────
   // Honeypot — only bots see/fill this field.
   if (typeof company === "string" && company.trim()) {
     return NextResponse.json({ ok: true });
@@ -64,7 +100,12 @@ export async function POST(req: Request) {
   if (typeof openedAt === "number" && Date.now() - openedAt < 2000) {
     return NextResponse.json({ ok: true });
   }
+  // URL in name — no human types `http://` into their name. Spambot signature.
+  if (typeof name === "string" && urlInTextRegex.test(name)) {
+    return NextResponse.json({ ok: true });
+  }
 
+  // ── User-facing validation errors ────────────────────────────────────────
   if (
     typeof name !== "string" ||
     typeof email !== "string" ||
@@ -94,6 +135,27 @@ export async function POST(req: Request) {
     );
   }
 
+  const emailDomain = email.split("@")[1]?.toLowerCase() ?? "";
+
+  if (disposableDomains.has(emailDomain)) {
+    return NextResponse.json(
+      {
+        error:
+          "Please use a real email address — disposable addresses aren't accepted.",
+      },
+      { status: 400 }
+    );
+  }
+
+  if (!(await domainHasMx(emailDomain))) {
+    return NextResponse.json(
+      {
+        error: `That email domain (${emailDomain}) doesn't appear to receive mail. Please double-check the address.`,
+      },
+      { status: 400 }
+    );
+  }
+
   try {
     const resend = new Resend(apiKey);
     const result = await resend.emails.send({
@@ -107,7 +169,10 @@ export async function POST(req: Request) {
     if (result.error) {
       console.error("[contact] resend error:", result.error);
       return NextResponse.json(
-        { error: result.error.message || "Email provider rejected the message." },
+        {
+          error:
+            result.error.message || "Email provider rejected the message.",
+        },
         { status: 502 }
       );
     }

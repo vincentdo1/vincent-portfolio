@@ -17,7 +17,7 @@ const experiences = [
     current: true,
     tags: ["C++", "Embedded", "Real-time", "Docker"],
     summary:
-      "Real-time C++ features for embedded display systems. Own integration and release readiness for a framework consumed by 60+ modules.",
+      "Real-time C++ and Ada features for data processing and embedded display systems. Own integration and release readiness for a framework consumed by 60+ modules.",
   },
   {
     company: "Expedia Group",

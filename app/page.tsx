@@ -56,7 +56,7 @@ export default function Home() {
   const [contactOpen, setContactOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground overflow-x-hidden relative">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-foreground overflow-x-hidden relative">
       <Nav />
       <SideRail />
       <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
@@ -110,11 +110,11 @@ export default function Home() {
                 Software Engineer at{" "}
                 <span className="text-primary font-medium">Boeing</span>.
                 UIUC CS &amp; Chemistry alum. I build real-time embedded
-                systems, full-stack web apps, and ML pipelines.
+                systems, full-stack web apps, and ML pipelines and products.
               </p>
               <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest">
                 <MapPin className="h-3 w-3 text-primary" />
-                Berkeley, MO
+                St. Louis, MO
               </div>
             </motion.div>
 
@@ -312,10 +312,10 @@ export default function Home() {
                 transition={{ duration: 0.4 }}
               >
                 I&apos;m a software engineer at{" "}
-                <span className="text-foreground">Boeing</span> in Berkeley,
-                MO, working on C++ embedded systems that deliver real-time data
-                to flight display hardware. Before that, I interned at Expedia
-                building mobile search features in Kotlin and GraphQL.
+                <span className="text-foreground">Boeing</span>, based in St.
+                Louis, working on C++ embedded systems that deliver real-time
+                data to flight display hardware. Before that, I interned at
+                Expedia building mobile search features in Kotlin and GraphQL.
               </motion.p>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -329,8 +329,8 @@ export default function Home() {
                 </span>{" "}
                 with a B.S. in Computer Science &amp; Chemistry. I&apos;m drawn
                 to problems at the intersection of performance engineering and
-                software correctness — real-time message routing, ML training
-                pipelines, distributed backend services.
+                software correctness — distributed backend services, ML training
+                pipelines, delivering final products.
               </motion.p>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -338,10 +338,11 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
-                Outside of work I play{" "}
-                <span className="text-foreground">chess</span>, hack on{" "}
+                Outside of work I participate in{" "}
+                <span className="text-foreground">volleyball</span> tournaments, hack on{" "}
                 <span className="text-foreground">side projects</span>, and
-                read about machine learning and systems programming.
+                keep myself up to date on modern technology. I also enjoy thinking about the intersection
+                between software and chemistry.
               </motion.p>
 
               {/* Education card */}
@@ -360,9 +361,8 @@ export default function Home() {
                 <div className="text-sm text-primary font-mono uppercase tracking-wider mt-1">
                   B.S. CS &amp; Chemistry
                 </div>
-                <div className="flex justify-between mt-3 font-mono text-xs text-muted-foreground">
-                  <span>2020 — 2024</span>
-                  <span>GPA: 3.6</span>
+                <div className="mt-3 font-mono text-xs text-muted-foreground">
+                  2020 — 2024
                 </div>
               </motion.div>
             </div>
@@ -527,7 +527,7 @@ export default function Home() {
                   Based in
                 </div>
                 <div className="font-display text-4xl uppercase leading-none mb-2">
-                  Berkeley
+                  St. Louis
                 </div>
                 <div className="text-primary font-mono text-sm uppercase tracking-wider">
                   Missouri // United States
