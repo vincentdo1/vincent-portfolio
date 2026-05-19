@@ -110,7 +110,7 @@ export default function Home() {
                 Software Engineer at{" "}
                 <span className="text-primary font-medium">Boeing</span>.
                 UIUC CS &amp; Chemistry alum. I build real-time embedded
-                systems, full-stack web apps, and ML pipelines.
+                systems, full-stack web apps, and ML pipelines and products.
               </p>
               <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest">
                 <MapPin className="h-3 w-3 text-primary" />
@@ -329,8 +329,8 @@ export default function Home() {
                 </span>{" "}
                 with a B.S. in Computer Science &amp; Chemistry. I&apos;m drawn
                 to problems at the intersection of performance engineering and
-                software correctness — real-time message routing, ML training
-                pipelines, distributed backend services.
+                software correctness — distributed backend services, ML training
+                pipelines, delivering final products.
               </motion.p>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -338,10 +338,11 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
-                Outside of work I play{" "}
-                <span className="text-foreground">chess</span>, hack on{" "}
+                Outside of work I participate in{" "}
+                <span className="text-foreground">volleyball</span> tournaments, hack on{" "}
                 <span className="text-foreground">side projects</span>, and
-                read about machine learning and systems programming.
+                keep myself up to date on modern technology. I also enjoy thinking about the intersection
+                between software and chemistry.
               </motion.p>
 
               {/* Education card */}
