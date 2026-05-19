@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Vincent/github/vincent-portfolio/**)",
+      "Bash(npm install *)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\Vincent\\\\github\\\\vincent-portfolio\\\\components\\\\valorant\" \"C:\\\\Users\\\\Vincent\\\\github\\\\vincent-portfolio\\\\components\\\\sections\")",
+      "Bash(npx tsc *)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(npx eslint *)",
+      "Bash(echo \"TSC=$?\")",
+      "Bash(npx next *)"
+    ]
+  }
+}

@@ -3,12 +3,25 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, Github, Lock } from "lucide-react";
+import { ExternalLink, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/valorant/section-header";
 import { CornerBrackets } from "@/components/valorant/corner-brackets";
 
-const projects = [
+type Project = {
+  title: string;
+  code: string;
+  classification: string;
+  description: string;
+  tags: string[];
+  image: string;
+  link: string;
+  repo: string;
+  stats: { label: string; value: string }[];
+  upcoming?: boolean;
+};
+
+const projects: Project[] = [
   {
     title: "Playable Chess AI",
     code: "AI-001",
@@ -17,7 +30,7 @@ const projects = [
       "Trained a CNN+LSTM legal move-policy model on 4.18M GM/Magnus Carlsen positions, achieving 71.2% top-5 accuracy on a 390K-position held-out test set. GPU-accelerated PyTorch training pipeline with mixed precision and custom IterableDataset reduced per-epoch time from 20+ hours on CPU to 15–25 minutes on GPU.",
     tags: ["Python", "PyTorch", "CUDA", "Flask", "Stockfish"],
     image: "/project-placeholder-1.jpg",
-    link: "https://github.com/vincentdo1/playable-chess-AI",
+    link: "https://vincentdo1.github.io/playable-chess-AI/",
     repo: "https://github.com/vincentdo1/playable-chess-AI",
     stats: [
       { label: "Top-5 Acc", value: "71.2%" },
@@ -26,35 +39,69 @@ const projects = [
     ],
   },
   {
-    title: "We-Up",
-    code: "FS-002",
-    classification: "FULL-STACK // SOCIAL",
+    title: "Exploding Chickens",
+    code: "GM-002",
+    classification: "GAMES // MULTIPLAYER",
     description:
-      "Social accountability app where groups post daily photo check-ins to shared prompts. Built a Hono.js REST API on Cloudflare Workers with PostgreSQL/Neon persistence, with Cloudflare Images for authenticated photo upload, storage, and retrieval.",
-    tags: ["TypeScript", "Hono.js", "Next.js", "PostgreSQL", "Cloudflare"],
+      "Real-time multiplayer card game inspired by Exploding Kittens. Built a Node.js backend with asynchronous game logic and persistent session state via MongoDB, keeping gameplay consistent across concurrent players. 1000+ games played.",
+    tags: ["Node.js", "MongoDB", "Real-time"],
     image: "/project-placeholder-2.jpg",
-    link: "#",
+    link: "https://chickens.rakerman.com",
     repo: "#",
     stats: [
-      { label: "Stack", value: "Edge" },
-      { label: "Auth", value: "Auth0" },
-      { label: "DB", value: "Neon" },
+      { label: "Games", value: "1000+" },
+      { label: "Backend", value: "Node.js" },
+      { label: "Storage", value: "MongoDB" },
     ],
   },
   {
-    title: "Airport Path Finder",
-    code: "GR-003",
+    title: "Volleyball Motion Tracker",
+    code: "CV-003",
+    classification: "COMPUTER VISION // SPORTS",
+    // TODO: replace with real description, tags, stats, and links
+    description:
+      "TBD — computer-vision motion tracking for volleyball footage. Add what you track (player position, ball trajectory, play classification) and the techniques you used.",
+    tags: ["Python", "OpenCV", "TBD"],
+    image: "/project-placeholder-3.jpg",
+    link: "#",
+    repo: "#",
+    stats: [
+      { label: "FPS", value: "TBD" },
+      { label: "Model", value: "TBD" },
+      { label: "Output", value: "TBD" },
+    ],
+  },
+  {
+    title: "Airport Paths",
+    code: "GR-004",
     classification: "GRAPH // VISUALIZATION",
     description:
-      "Graph algorithms applied to global aviation networks. Implemented BFS, Floyd–Warshall, and betweenness centrality to analyze connectivity and routing patterns, with WebGL-based globe rendering of the top 10 most-connected airports.",
+      "BFS, Floyd–Warshall, and betweenness centrality applied to aviation networks. Identifies the top 10 most-connected airports and renders the routes on a WebGL globe.",
     tags: ["C++", "React", "WebGL"],
     image: "/project-placeholder-3.jpg",
-    link: "https://github.com/vincentdo1/airports-global",
-    repo: "https://github.com/vincentdo1/airports-global",
+    link: "https://vincentdo1.github.io/airports-paths/",
+    repo: "#",
     stats: [
       { label: "Algos", value: "3" },
-      { label: "Nodes", value: "3K+" },
+      { label: "Top", value: "10" },
       { label: "Render", value: "WebGL" },
+    ],
+  },
+  {
+    title: "Helium Hydride Visualizer",
+    code: "CHM-005",
+    classification: "CHEMISTRY // 3D",
+    description:
+      "Upcoming: a 3D visualization of the helium hydride molecule (HeH⁺) — the first molecule believed to have formed in the early universe. Plans for interactive orbital rendering and bonding visualization.",
+    tags: ["Three.js", "WebGL", "Chemistry"],
+    image: "/project-placeholder-1.jpg",
+    link: "#",
+    repo: "#",
+    upcoming: true,
+    stats: [
+      { label: "Status", value: "Planning" },
+      { label: "Stack", value: "TBD" },
+      { label: "Type", value: "3D" },
     ],
   },
 ];
@@ -66,11 +113,11 @@ export function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="relative min-h-screen py-24 border-t border-border/60 px-safe"
+      className="relative py-24 border-t border-border/60 px-safe"
     >
       <div className="mx-auto max-w-7xl">
         <SectionHeader
-          number="05 // PROJECTS"
+          number="04 // PROJECTS"
           label="Featured"
           title={
             <>
@@ -79,7 +126,7 @@ export function ProjectsSection() {
               <span className="text-primary">Works_</span>
             </>
           }
-          description="Personal projects spanning ML, systems, and full-stack engineering."
+          description="Personal projects spanning ML, systems, computer vision, and chemistry visualization."
         />
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-6 mt-12">
@@ -111,6 +158,14 @@ export function ProjectsSection() {
                     <span className="tactical-dot animate-pulse-dot" />
                     {current.classification}
                   </div>
+
+                  {/* Upcoming badge */}
+                  {current.upcoming && (
+                    <div className="absolute top-4 right-32 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.25em] px-2 py-1 bg-primary/10 border border-primary/40 text-primary">
+                      <Clock className="h-3 w-3" />
+                      In Development
+                    </div>
+                  )}
 
                   {/* Code label */}
                   <div className="absolute top-4 right-4 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
@@ -158,31 +213,25 @@ export function ProjectsSection() {
                       ))}
                     </div>
                     <div className="flex items-center gap-3">
-                      {current.repo !== "#" ? (
-                        <a
-                          href={current.repo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-primary/40 hover:border-primary text-primary font-mono text-[10px] uppercase tracking-[0.2em] transition-colors"
-                        >
-                          <Github className="h-3 w-3" />
-                          Code
-                        </a>
-                      ) : (
-                        <span className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-border text-muted-foreground font-mono text-[10px] uppercase tracking-[0.2em]">
-                          <Lock className="h-3 w-3" />
-                          Private
+                      {current.upcoming ? (
+                        <span className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-dashed border-primary/40 text-muted-foreground font-mono text-[10px] uppercase tracking-[0.2em]">
+                          <Clock className="h-3 w-3" />
+                          Coming Soon
                         </span>
-                      )}
-                      {current.link !== "#" && (
+                      ) : current.link !== "#" ? (
                         <a
                           href={current.link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 h-9 px-4 tactical-chip bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
                         >
-                          Live Demo <ExternalLink className="h-3 w-3" />
+                          Visit Site <ExternalLink className="h-3 w-3" />
                         </a>
+                      ) : (
+                        <span className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-dashed border-border text-muted-foreground font-mono text-[10px] uppercase tracking-[0.2em]">
+                          <Clock className="h-3 w-3" />
+                          Not Deployed
+                        </span>
                       )}
                     </div>
                   </div>
@@ -209,7 +258,9 @@ export function ProjectsSection() {
                     "w-full text-left relative p-4 border transition-all duration-200 tactical-chip",
                     isActive
                       ? "bg-primary/10 border-primary glow-primary"
-                      : "bg-card/40 border-border/60 hover:border-primary/40 hover:bg-card"
+                      : p.upcoming
+                        ? "bg-card/20 border-dashed border-border/60 hover:border-primary/40"
+                        : "bg-card/40 border-border/60 hover:border-primary/40 hover:bg-card"
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -223,11 +274,20 @@ export function ProjectsSection() {
                         >
                           {p.code}
                         </span>
+                        {p.upcoming && (
+                          <span className="font-mono text-[9px] uppercase tracking-widest text-primary/80">
+                            <Clock className="h-2.5 w-2.5 inline" /> Soon
+                          </span>
+                        )}
                       </div>
                       <div
                         className={cn(
                           "font-display text-lg uppercase leading-tight",
-                          isActive ? "text-foreground" : "text-foreground/80"
+                          isActive
+                            ? "text-foreground"
+                            : p.upcoming
+                              ? "text-foreground/60"
+                              : "text-foreground/80"
                         )}
                       >
                         {p.title}
@@ -240,19 +300,6 @@ export function ProjectsSection() {
                 </motion.button>
               );
             })}
-
-            {/* Future slot */}
-            <div className="p-4 border border-dashed border-border/60 bg-card/20 opacity-50 tactical-chip">
-              <div className="font-mono text-[10px] tracking-widest text-muted-foreground mb-1">
-                SLOT_04
-              </div>
-              <div className="font-display text-lg uppercase leading-tight text-muted-foreground">
-                Empty
-              </div>
-              <div className="text-[10px] font-mono text-muted-foreground mt-0.5">
-                Add next project
-              </div>
-            </div>
           </div>
         </div>
       </div>

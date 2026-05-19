@@ -10,7 +10,6 @@ const sections = [
   { label: "Home", href: "#hero", id: "hero" },
   { label: "About", href: "#about", id: "about" },
   { label: "Experience", href: "#experience", id: "experience" },
-  { label: "Skills", href: "#skills", id: "skills" },
   { label: "Projects", href: "#projects", id: "projects" },
   { label: "Contact", href: "#contact", id: "contact" },
 ];
@@ -57,7 +56,7 @@ export function Nav() {
                 Vincent Do
               </span>
               <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.2em]">
-                ID // 0306
+                ID // 306
               </span>
             </div>
           </Link>

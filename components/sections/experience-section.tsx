@@ -17,13 +17,7 @@ const experiences = [
     current: true,
     tags: ["C++", "Embedded", "Real-time", "Docker"],
     summary:
-      "Building real-time message delivery for embedded display systems.",
-    bullets: [
-      "Developed production C++ features delivering real-time message streams to embedded display systems, with automated tests and Dockerized build workflows",
-      "Owned integration and release readiness for a shared framework consumed by 60+ dependent modules, resolving compatibility issues to maintain timing accuracy",
-      "Identified root cause of a long-standing cross-system defect within two weeks of onboarding, tracing a binary data merge edge case",
-      "Spearheaded month-long evaluation of Lockheed Martin software through custom integration, verifying customer requirements at 1.5× the required message rate",
-    ],
+      "Real-time C++ features for embedded display systems. Own integration and release readiness for a framework consumed by 60+ modules.",
   },
   {
     company: "Expedia Group",
@@ -34,12 +28,7 @@ const experiences = [
     current: false,
     tags: ["Kotlin", "GraphQL", "Microservices"],
     summary:
-      "Shipped customer-facing mobile search features across Expedia's Kotlin microservice stack.",
-    bullets: [
-      "Built customer-facing Expedia mobile search features, including VIP Access badges, sort/filter options, and improved error handling to reduce booking search friction",
-      "Implemented GraphQL schema changes across multiple Kotlin microservices, enabling new mobile booking flows across backend and client surfaces",
-      "Built backend support for localized search components across 16 languages, partnering with frontend and localization teams to validate dynamic rendering",
-    ],
+      "Shipped customer-facing mobile search features in Kotlin and GraphQL across multiple microservices. Localized components for 16 languages.",
   },
   {
     company: "UW–Madison",
@@ -50,11 +39,7 @@ const experiences = [
     current: false,
     tags: ["Python", "R", "Graph Algos"],
     summary:
-      "Computational genomics research on rare-disease gene prioritization.",
-    bullets: [
-      "Analyzed 16,813 genes across 169 phenotypes using Python/R, graph traversal, and visualization to identify phenotype–gene associations",
-      "Reduced search space to 25 high-priority Zellweger candidate genes using frequency thresholds, chromosomal-location filtering, and recursive phenotype hierarchy traversal",
-    ],
+      "Computational genomics — analyzed 16,813 genes across 169 phenotypes with Python/R and graph traversal to surface rare-disease candidates.",
   },
 ];
 
@@ -65,7 +50,7 @@ export function ExperienceSection() {
   return (
     <section
       id="experience"
-      className="relative min-h-screen py-24 border-t border-border/60 px-safe"
+      className="relative py-24 border-t border-border/60 px-safe"
     >
       <div className="mx-auto max-w-7xl">
         <SectionHeader
@@ -82,7 +67,7 @@ export function ExperienceSection() {
         />
 
         <div className="grid lg:grid-cols-[280px_1fr] gap-6 mt-12">
-          {/* Left rail: agent select */}
+          {/* Left rail: role select */}
           <div className="space-y-3">
             <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
               <span className="h-px w-6 bg-primary" />
@@ -147,7 +132,7 @@ export function ExperienceSection() {
           </div>
 
           {/* Right: detail panel */}
-          <div className="relative border border-border/60 bg-card/30 p-6 lg:p-8 min-h-[480px]">
+          <div className="relative border border-border/60 bg-card/30 p-6 lg:p-8">
             <CornerBrackets size={14} thickness={1.5} />
 
             {/* HUD header strip */}
@@ -180,7 +165,7 @@ export function ExperienceSection() {
                   <h3 className="font-display text-4xl md:text-5xl uppercase leading-none">
                     {current.company}
                   </h3>
-                  <p className="text-muted-foreground mt-3 max-w-xl">
+                  <p className="text-muted-foreground mt-3 max-w-xl leading-relaxed">
                     {current.summary}
                   </p>
                 </div>
@@ -209,29 +194,6 @@ export function ExperienceSection() {
                       {tag}
                     </span>
                   ))}
-                </div>
-
-                <div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-4 flex items-center gap-3">
-                    <span className="h-px w-6 bg-primary" />
-                    Highlights
-                  </div>
-                  <ul className="space-y-3">
-                    {current.bullets.map((bullet, j) => (
-                      <motion.li
-                        key={j}
-                        initial={{ opacity: 0, x: -12 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.25, delay: j * 0.06 }}
-                        className="text-sm text-muted-foreground flex gap-3 leading-relaxed"
-                      >
-                        <span className="text-primary mt-1.5 shrink-0 text-xs">
-                          ▸
-                        </span>
-                        {bullet}
-                      </motion.li>
-                    ))}
-                  </ul>
                 </div>
               </motion.div>
             </AnimatePresence>

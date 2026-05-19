@@ -8,9 +8,8 @@ const sections = [
   { id: "hero", number: "01", label: "Home" },
   { id: "about", number: "02", label: "About" },
   { id: "experience", number: "03", label: "Experience" },
-  { id: "skills", number: "04", label: "Skills" },
-  { id: "projects", number: "05", label: "Projects" },
-  { id: "contact", number: "06", label: "Contact" },
+  { id: "projects", number: "04", label: "Projects" },
+  { id: "contact", number: "05", label: "Contact" },
 ];
 
 /**
