@@ -56,7 +56,7 @@ export default function Home() {
   const [contactOpen, setContactOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground overflow-x-hidden relative">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-foreground overflow-x-hidden relative">
       <Nav />
       <SideRail />
       <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
@@ -114,7 +114,7 @@ export default function Home() {
               </p>
               <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest">
                 <MapPin className="h-3 w-3 text-primary" />
-                Berkeley, MO
+                St. Louis, MO
               </div>
             </motion.div>
 
@@ -312,10 +312,10 @@ export default function Home() {
                 transition={{ duration: 0.4 }}
               >
                 I&apos;m a software engineer at{" "}
-                <span className="text-foreground">Boeing</span> in Berkeley,
-                MO, working on C++ embedded systems that deliver real-time data
-                to flight display hardware. Before that, I interned at Expedia
-                building mobile search features in Kotlin and GraphQL.
+                <span className="text-foreground">Boeing</span>, based in St.
+                Louis, working on C++ embedded systems that deliver real-time
+                data to flight display hardware. Before that, I interned at
+                Expedia building mobile search features in Kotlin and GraphQL.
               </motion.p>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -527,7 +527,7 @@ export default function Home() {
                   Based in
                 </div>
                 <div className="font-display text-4xl uppercase leading-none mb-2">
-                  Berkeley
+                  St. Louis
                 </div>
                 <div className="text-primary font-mono text-sm uppercase tracking-wider">
                   Missouri // United States

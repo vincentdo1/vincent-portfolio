@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description,
     url: "./",
     siteName: "Vincent Do",
-    images: "/og.jpg",
+    // og:image is auto-generated from app/opengraph-image.tsx
   },
 };
 

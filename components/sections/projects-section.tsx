@@ -58,17 +58,17 @@ const projects: Project[] = [
     title: "Volleyball Motion Tracker",
     code: "CV-003",
     classification: "COMPUTER VISION // SPORTS",
-    // TODO: replace with real description, tags, stats, and links
     description:
-      "TBD — computer-vision motion tracking for volleyball footage. Add what you track (player position, ball trajectory, play classification) and the techniques you used.",
-    tags: ["Python", "OpenCV", "TBD"],
+      "Upcoming: computer-vision motion tracking for volleyball footage — player position, ball trajectory, and play classification.",
+    tags: ["Python", "OpenCV", "Computer Vision"],
     image: "/project-placeholder-3.jpg",
     link: "#",
     repo: "#",
+    upcoming: true,
     stats: [
-      { label: "FPS", value: "TBD" },
-      { label: "Model", value: "TBD" },
-      { label: "Output", value: "TBD" },
+      { label: "Status", value: "Soon" },
+      { label: "Stack", value: "Python" },
+      { label: "Type", value: "CV" },
     ],
   },
   {
