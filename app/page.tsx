@@ -361,9 +361,8 @@ export default function Home() {
                 <div className="text-sm text-primary font-mono uppercase tracking-wider mt-1">
                   B.S. CS &amp; Chemistry
                 </div>
-                <div className="flex justify-between mt-3 font-mono text-xs text-muted-foreground">
-                  <span>2020 — 2024</span>
-                  <span>GPA: 3.6</span>
+                <div className="mt-3 font-mono text-xs text-muted-foreground">
+                  2020 — 2024
                 </div>
               </motion.div>
             </div>
