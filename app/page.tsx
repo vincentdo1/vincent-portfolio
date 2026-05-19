@@ -78,7 +78,7 @@ export default function Home() {
 
         {/* Faded background hero img with green tint */}
         <div className="absolute inset-0 z-0 opacity-30">
-          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url('/hero-bg.jpg')] before:absolute before:inset-0 before:bg-primary before:mix-blend-color-dodge" />
+          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url(/hero-bg.jpg)] before:absolute before:inset-0 before:bg-primary before:mix-blend-color-dodge" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
         </div>
 

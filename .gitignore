@@ -15,6 +15,7 @@ playwright/.cache/
 # next.js
 .next/
 out/
+.open-next/
 
 # production
 build
@@ -30,9 +31,13 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.dev.vars*
 
 # vercel
 .vercel
+
+# cloudflare
+.wrangler/
 
 # typescript
 *.tsbuildinfo
