@@ -15,6 +15,8 @@ type Project = {
   description: string;
   tags: string[];
   image: string;
+  /** Optional video URL — when present, autoplays as a muted, looping preview in place of the image. */
+  video?: string;
   link: string;
   repo: string;
   stats: { label: string; value: string }[];
@@ -59,14 +61,15 @@ const projects: Project[] = [
     code: "CV-003",
     classification: "COMPUTER VISION // SPORTS",
     description:
-      "Upcoming: computer-vision motion tracking for volleyball footage — player position, ball trajectory, and play classification.",
+      "In-progress: computer-vision pipeline for volleyball footage — tracking player position, ball trajectory, and spike performance. Preview clip shows live attack analysis.",
     tags: ["Python", "OpenCV", "Computer Vision"],
     image: "/project-placeholder-3.jpg",
+    video: "/projects/volleyball-tracker.mp4",
     link: "#",
     repo: "#",
     upcoming: true,
     stats: [
-      { label: "Status", value: "Soon" },
+      { label: "Status", value: "WIP" },
       { label: "Stack", value: "Python" },
       { label: "Type", value: "CV" },
     ],
@@ -143,15 +146,31 @@ export function ProjectsSection() {
                 transition={{ duration: 0.3 }}
                 className="grid"
               >
-                {/* Image area with diagonal cuts */}
+                {/* Image / video preview area */}
                 <div className="relative aspect-[16/9] overflow-hidden border-b border-border/60 bg-secondary">
-                  <Image
-                    src={current.image}
-                    alt={current.title}
-                    fill
-                    className="object-cover grayscale opacity-50"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-background via-background/40 to-transparent" />
+                  {current.video ? (
+                    // re-key forces a fresh mount when switching projects so
+                    // each video starts from the beginning instead of resuming
+                    <video
+                      key={current.code}
+                      src={current.video}
+                      poster={current.image}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Image
+                      src={current.image}
+                      alt={current.title}
+                      fill
+                      className="object-cover grayscale opacity-50"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-background via-background/40 to-transparent pointer-events-none" />
 
                   {/* Classification badge */}
                   <div className="absolute top-4 left-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-primary">
