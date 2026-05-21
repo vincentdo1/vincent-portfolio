@@ -31,7 +31,8 @@ const projects: Project[] = [
     description:
       "Trained a CNN+LSTM legal move-policy model on 4.18M GM/Magnus Carlsen positions, achieving 71.2% top-5 accuracy on a 390K-position held-out test set. GPU-accelerated PyTorch training pipeline with mixed precision and custom IterableDataset reduced per-epoch time from 20+ hours on CPU to 15–25 minutes on GPU.",
     tags: ["Python", "PyTorch", "CUDA", "Flask", "Stockfish"],
-    image: "/project-placeholder-1.jpg",
+    image: "/projects/chess-network-poster.png",
+    video: "/projects/chess-network.mp4",
     link: "https://vincentdo1.github.io/playable-chess-AI/",
     repo: "https://github.com/vincentdo1/playable-chess-AI",
     stats: [

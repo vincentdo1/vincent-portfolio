@@ -13,7 +13,7 @@ const experiences = [
     role: "Software Engineer",
     period: "Aug 2024 — Present",
     location: "Berkeley, MO",
-    code: "BCA",
+    code: "BDS",
     current: true,
     tags: ["C++", "Embedded", "Real-time", "Docker"],
     summary:
