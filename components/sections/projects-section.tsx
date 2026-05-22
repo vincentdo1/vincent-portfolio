@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { ExternalLink, Clock, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/valorant/section-header";
 import { CornerBrackets } from "@/components/valorant/corner-brackets";
-import { AirportGlobe, GLOBE_CDN } from "@/components/globe/airport-globe-dynamic";
+import { AirportGlobe } from "@/components/globe/airport-globe-dynamic";
+import { GLOBE_CDN } from "@/components/globe/constants";
 
 type Project = {
   title: string;
@@ -16,9 +17,7 @@ type Project = {
   description: string;
   tags: string[];
   image: string;
-  /** Optional video URL — when present, autoplays as a muted, looping preview in place of the image. */
   video?: string;
-  /** When true, renders the interactive WebGL airport globe in place of image/video. */
   globe?: boolean;
   link: string;
   repo: string;
@@ -115,16 +114,24 @@ const projects: Project[] = [
 ];
 
 function preloadGlobe() {
-  import("@/components/globe/airport-globe");
+  void import("@/components/globe/airport-globe");
   [
-    { rel: "prefetch", as: "script",  href: GLOBE_CDN },
-    { rel: "prefetch", as: "image",   href: "/projects/earth-night.jpg" },
-    { rel: "prefetch", as: "fetch",   href: "/projects/airport-nodes.json" },
-    { rel: "prefetch", as: "fetch",   href: "/projects/airport-arcs-preview.json" },
-  ].forEach(({ rel, as, href }) => {
-    const l = document.createElement("link");
-    l.rel = rel; l.setAttribute("as", as); l.href = href;
-    document.head.appendChild(l);
+    { as: "script", href: GLOBE_CDN },
+    { as: "image", href: "/projects/earth-night.jpg" },
+    { as: "fetch", href: "/projects/airport-nodes.json" },
+    { as: "fetch", href: "/projects/airport-arcs-preview.json" },
+  ].forEach(({ as, href }) => {
+    const exists = Array.from(
+      document.head.querySelectorAll<HTMLLinkElement>('link[rel="prefetch"]'),
+    ).some((link) => link.getAttribute("href") === href);
+    if (exists) return;
+
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.as = as;
+    link.href = href;
+    if (as === "fetch") link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
   });
 }
 
@@ -142,7 +149,7 @@ export function ProjectsSection() {
   return (
     <section
       id="projects"
-      className="relative py-24 border-t border-border/60 px-safe"
+      className="relative content-auto py-24 border-t border-border/60 px-safe"
     >
       <div className="mx-auto max-w-7xl">
         <SectionHeader
@@ -159,12 +166,11 @@ export function ProjectsSection() {
         />
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-6 mt-12">
-          {/* Left: featured preview */}
           <div className="relative border border-border/60 bg-card/30 overflow-hidden">
             <CornerBrackets size={14} thickness={1.5} />
 
             <AnimatePresence mode="wait">
-              <motion.div
+              <m.div
                 key={current.code}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -172,18 +178,18 @@ export function ProjectsSection() {
                 transition={{ duration: 0.3 }}
                 className="grid"
               >
-                {/* Image / video preview area */}
                 <div className="relative aspect-[16/9] overflow-hidden border-b border-border/60 bg-secondary">
                   {current.globe ? (
                     <AirportGlobe />
                   ) : current.video ? (
-                    // re-key forces a fresh mount when switching projects so
-                    // each video starts from the beginning instead of resuming
                     <video
                       key={current.code}
                       src={current.video}
                       poster={current.image}
-                      autoPlay loop muted playsInline
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
                       preload="metadata"
                       className="absolute inset-0 w-full h-full object-cover"
                     />
@@ -192,6 +198,8 @@ export function ProjectsSection() {
                       src={current.image}
                       alt={current.title}
                       fill
+                      sizes="(min-width: 1280px) 860px, (min-width: 1024px) calc(100vw - 380px), calc(100vw - 2rem)"
+                      quality={75}
                       className="object-cover grayscale opacity-50"
                     />
                   )}
@@ -200,7 +208,7 @@ export function ProjectsSection() {
                       "absolute inset-0 pointer-events-none",
                       current.globe
                         ? "bg-gradient-to-tr from-background/60 via-background/10 to-transparent"
-                        : "bg-gradient-to-tr from-background via-background/40 to-transparent"
+                        : "bg-gradient-to-tr from-background via-background/40 to-transparent",
                     )}
                   />
 
@@ -211,13 +219,11 @@ export function ProjectsSection() {
                     </div>
                   )}
 
-                  {/* Classification badge */}
                   <div className="absolute top-4 left-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-primary">
                     <span className="tactical-dot animate-pulse-dot" />
                     {current.classification}
                   </div>
 
-                  {/* Upcoming badge */}
                   {current.upcoming && (
                     <div className="absolute top-4 right-32 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.25em] px-2 py-1 bg-primary/10 border border-primary/40 text-primary">
                       <Clock className="h-3 w-3" />
@@ -225,12 +231,10 @@ export function ProjectsSection() {
                     </div>
                   )}
 
-                  {/* Code label */}
                   <div className="absolute top-4 right-4 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
                     {current.code}
                   </div>
 
-                  {/* Big title overlay */}
                   <div className="absolute bottom-6 left-6 right-6">
                     <h3 className="font-display text-4xl md:text-6xl uppercase leading-none text-foreground">
                       {current.title}
@@ -238,13 +242,11 @@ export function ProjectsSection() {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="p-6 lg:p-8 grid gap-6">
                   <p className="text-muted-foreground leading-relaxed">
                     {current.description}
                   </p>
 
-                  {/* Stats row */}
                   <div className="grid grid-cols-3 gap-3 border-y border-border/60 py-4">
                     {current.stats.map((stat) => (
                       <div key={stat.label}>
@@ -258,7 +260,6 @@ export function ProjectsSection() {
                     ))}
                   </div>
 
-                  {/* Tags + actions */}
                   <div className="flex items-end justify-between gap-4 flex-wrap">
                     <div className="flex flex-wrap gap-2">
                       {current.tags.map((tag) => (
@@ -294,11 +295,10 @@ export function ProjectsSection() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             </AnimatePresence>
           </div>
 
-          {/* Right: project list */}
           <div className="space-y-3">
             <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
               <span className="h-px w-6 bg-primary" />
@@ -307,10 +307,11 @@ export function ProjectsSection() {
             {projects.map((p, i) => {
               const isActive = i === selected;
               return (
-                <motion.button
+                <m.button
                   key={p.code}
                   onClick={() => setSelected(i)}
                   onMouseEnter={p.globe ? onGlobeButtonHover : undefined}
+                  onFocus={p.globe ? onGlobeButtonHover : undefined}
                   whileHover={{ x: -4 }}
                   transition={{ duration: 0.15 }}
                   className={cn(
@@ -319,7 +320,7 @@ export function ProjectsSection() {
                       ? "bg-primary/10 border-primary glow-primary"
                       : p.upcoming
                         ? "bg-card/20 border-dashed border-border/60 hover:border-primary/40"
-                        : "bg-card/40 border-border/60 hover:border-primary/40 hover:bg-card"
+                        : "bg-card/40 border-border/60 hover:border-primary/40 hover:bg-card",
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -328,7 +329,7 @@ export function ProjectsSection() {
                         <span
                           className={cn(
                             "font-mono text-[10px] tracking-widest",
-                            isActive ? "text-primary" : "text-muted-foreground"
+                            isActive ? "text-primary" : "text-muted-foreground",
                           )}
                         >
                           {p.code}
@@ -346,7 +347,7 @@ export function ProjectsSection() {
                             ? "text-foreground"
                             : p.upcoming
                               ? "text-foreground/60"
-                              : "text-foreground/80"
+                              : "text-foreground/80",
                         )}
                       >
                         {p.title}
@@ -356,7 +357,7 @@ export function ProjectsSection() {
                       </div>
                     </div>
                   </div>
-                </motion.button>
+                </m.button>
               );
             })}
           </div>

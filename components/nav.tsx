@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Menu, X, Download } from "lucide-react";
@@ -14,27 +14,12 @@ const sections = [
   { label: "Contact", href: "#contact", id: "contact" },
 ];
 
-export function Nav() {
+interface NavProps {
+  activeId: string;
+}
+
+export function Nav({ activeId }: NavProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeId, setActiveId] = useState("hero");
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveId(entry.target.id);
-        });
-      },
-      { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
-    );
-
-    sections.forEach((s) => {
-      const el = document.getElementById(s.id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
@@ -69,7 +54,7 @@ export function Nav() {
                     "relative px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors",
                     active
                       ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -108,9 +93,14 @@ export function Nav() {
             <button
               className="md:hidden p-2"
               onClick={() => setIsOpen(!isOpen)}
+              aria-expanded={isOpen}
               aria-label="Toggle navigation"
             >
-              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
 
@@ -129,7 +119,7 @@ export function Nav() {
                   href={s.href}
                   className={cn(
                     "flex items-center gap-3 py-2 font-mono text-xs uppercase tracking-[0.18em] transition-colors",
-                    active ? "text-primary" : "text-muted-foreground"
+                    active ? "text-primary" : "text-muted-foreground",
                   )}
                   onClick={() => setIsOpen(false)}
                 >

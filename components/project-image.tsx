@@ -16,13 +16,15 @@ export function ProjectImage({ src, alt }: ProjectImageProps) {
     <div
       className={cn(
         "bg-primary relative aspect-square overflow-hidden border-b border-border transition-opacity duration-500",
-        loaded ? "opacity-100" : "opacity-0"
+        loaded ? "opacity-100" : "opacity-0",
       )}
     >
       <Image
         src={src}
         alt={alt}
         fill
+        sizes="(min-width: 768px) 33vw, 100vw"
+        quality={75}
         onLoad={() => setLoaded(true)}
         className="object-cover group-hover:scale-105 transition-transform duration-500 grayscale mix-blend-luminosity dark:mix-blend-darken"
       />

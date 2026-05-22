@@ -1,11 +1,7 @@
 import dynamic from "next/dynamic";
 
-export const GLOBE_CDN = "https://unpkg.com/globe.gl@2.46.1/dist/globe.gl.min.js";
-
 export const AirportGlobe = dynamic(
-  () =>
-    import(/* webpackPrefetch: true, webpackChunkName: "airport-globe" */ "./airport-globe")
-      .then((mod) => mod.AirportGlobe),
+  () => import("./airport-globe").then((mod) => mod.AirportGlobe),
   {
     ssr: false,
     loading: () => (
@@ -15,5 +11,5 @@ export const AirportGlobe = dynamic(
         </span>
       </div>
     ),
-  }
+  },
 );

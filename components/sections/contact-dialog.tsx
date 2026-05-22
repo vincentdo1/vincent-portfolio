@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { X, Send, Mail, Loader2, AlertCircle } from "lucide-react";
 import { CornerBrackets } from "@/components/valorant/corner-brackets";
 import { cn } from "@/lib/utils";
@@ -20,12 +20,11 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
     name: "",
     email: "",
     message: "",
-    company: "", // honeypot
+    company: "",
   });
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // timestamp used for server-side bot timing check
   const openedAtRef = useRef<number>(0);
   useEffect(() => {
     if (open) openedAtRef.current = Date.now();
@@ -50,7 +49,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
   }, [open]);
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
@@ -87,7 +86,6 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
   function handleClose() {
     if (status === "sending") return;
     onClose();
-    // reset a moment after close so transition isn't jumpy
     setTimeout(() => {
       setStatus("idle");
       setErrorMsg(null);
@@ -106,7 +104,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
           aria-modal="true"
           aria-labelledby="contact-dialog-title"
         >
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -115,7 +113,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
             className="absolute inset-0 bg-background/85 backdrop-blur-md"
           />
 
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.96, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 12 }}
@@ -147,7 +145,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                   className={cn(
                     "inline-flex items-center gap-2 h-10 px-5 tactical-shape",
                     "bg-primary text-primary-foreground font-mono text-[11px]",
-                    "uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors"
+                    "uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors",
                   )}
                 >
                   Close
@@ -276,7 +274,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                       "bg-primary text-primary-foreground font-mono text-[11px]",
                       "uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors",
                       "disabled:opacity-60 disabled:cursor-wait",
-                      "group overflow-hidden"
+                      "group overflow-hidden",
                     )}
                   >
                     <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
@@ -297,7 +295,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                 </div>
               </form>
             )}
-          </motion.div>
+          </m.div>
         </div>
       )}
     </AnimatePresence>

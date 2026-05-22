@@ -140,6 +140,7 @@
 
   body {
     @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
   }
 
   /* subtle scan-line texture, dark only */
@@ -156,7 +157,7 @@
       rgba(255, 255, 255, 0.012) 3px,
       rgba(255, 255, 255, 0.012) 4px
     );
-    mix-blend-mode: overlay;
+    opacity: 0.75;
   }
 }
 
@@ -175,6 +176,11 @@
   font-family: var(--font-body-family);
   font-weight: var(--font-body-weight);
   letter-spacing: var(--font-body-tracking);
+}
+
+@utility content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
 }
 
 /* ── Valorant-style angular utilities ──────────────────────────────────── */
@@ -240,4 +246,15 @@
 
 @utility animate-pulse-dot {
   animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

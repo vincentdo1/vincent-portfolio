@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { MapPin, Calendar, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/valorant/section-header";
@@ -50,7 +50,7 @@ export function ExperienceSection() {
   return (
     <section
       id="experience"
-      className="relative py-24 border-t border-border/60 px-safe"
+      className="relative content-auto py-24 border-t border-border/60 px-safe"
     >
       <div className="mx-auto max-w-7xl">
         <SectionHeader
@@ -75,7 +75,7 @@ export function ExperienceSection() {
             {experiences.map((exp, i) => {
               const isActive = i === selected;
               return (
-                <motion.button
+                <m.button
                   key={exp.code}
                   onClick={() => setSelected(i)}
                   whileHover={{ x: 4 }}
@@ -84,7 +84,7 @@ export function ExperienceSection() {
                     "w-full text-left relative p-4 border transition-all duration-200 tactical-chip",
                     isActive
                       ? "bg-primary/10 border-primary glow-primary"
-                      : "bg-card/40 border-border/60 hover:border-primary/40 hover:bg-card"
+                      : "bg-card/40 border-border/60 hover:border-primary/40 hover:bg-card",
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -93,7 +93,7 @@ export function ExperienceSection() {
                         <span
                           className={cn(
                             "font-mono text-[10px] tracking-widest",
-                            isActive ? "text-primary" : "text-muted-foreground"
+                            isActive ? "text-primary" : "text-muted-foreground",
                           )}
                         >
                           {exp.code}
@@ -107,7 +107,7 @@ export function ExperienceSection() {
                       <div
                         className={cn(
                           "font-display text-xl uppercase leading-tight",
-                          isActive ? "text-foreground" : "text-foreground/80"
+                          isActive ? "text-foreground" : "text-foreground/80",
                         )}
                       >
                         {exp.company}
@@ -119,13 +119,13 @@ export function ExperienceSection() {
                     <div
                       className={cn(
                         "font-mono text-[9px] tracking-widest transition-opacity",
-                        isActive ? "text-primary opacity-100" : "opacity-0"
+                        isActive ? "text-primary opacity-100" : "opacity-0",
                       )}
                     >
                       ►
                     </div>
                   </div>
-                </motion.button>
+                </m.button>
               );
             })}
           </div>
@@ -147,7 +147,7 @@ export function ExperienceSection() {
             </div>
 
             <AnimatePresence mode="wait">
-              <motion.div
+              <m.div
                 key={current.code}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -192,7 +192,7 @@ export function ExperienceSection() {
                     </span>
                   ))}
                 </div>
-              </motion.div>
+              </m.div>
             </AnimatePresence>
           </div>
         </div>

@@ -6,17 +6,20 @@ import "./globals.css";
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const jetBrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const bebasNeue = Bebas_Neue({
   variable: "--font-bebas-neue",
   subsets: ["latin"],
   weight: ["400"],
+  display: "swap",
 });
 
 const siteUrl =
@@ -49,15 +52,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="scroll-smooth shadcn dark">
-      <head>
-        <link rel="prefetch" as="script" href="https://unpkg.com/globe.gl@2.46.1/dist/globe.gl.min.js" />
-        <link rel="prefetch" as="image" href="/projects/earth-night.jpg" />
-      </head>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className="scroll-smooth shadcn dark"
+    >
       <body
         className={`font-body antialiased ${spaceGrotesk.variable} ${jetBrainsMono.variable} ${bebasNeue.variable}`}
       >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+        >
           {children}
         </ThemeProvider>
       </body>
