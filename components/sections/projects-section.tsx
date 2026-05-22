@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, Clock } from "lucide-react";
+import { ExternalLink, Clock, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/valorant/section-header";
 import { CornerBrackets } from "@/components/valorant/corner-brackets";
+import { AirportGlobe } from "@/components/globe/airport-globe-dynamic";
 
 type Project = {
   title: string;
@@ -17,6 +18,8 @@ type Project = {
   image: string;
   /** Optional video URL — when present, autoplays as a muted, looping preview in place of the image. */
   video?: string;
+  /** When true, renders the interactive WebGL airport globe in place of image/video. */
+  globe?: boolean;
   link: string;
   repo: string;
   stats: { label: string; value: string }[];
@@ -29,16 +32,16 @@ const projects: Project[] = [
     code: "AI-001",
     classification: "ML // GAMES",
     description:
-      "Trained a CNN+LSTM legal move-policy model on 4.18M GM/Magnus Carlsen positions, achieving 71.2% top-5 accuracy on a 390K-position held-out test set. GPU-accelerated PyTorch training pipeline with mixed precision and custom IterableDataset reduced per-epoch time from 20+ hours on CPU to 15–25 minutes on GPU.",
+      "Trained a CNN+LSTM legal move-policy model on 4.18M GM/Magnus Carlsen positions. GPU-accelerated PyTorch training pipeline reducing per-epoch time from 20+ hours on CPU to 15–25 minutes on GPU.",
     tags: ["Python", "PyTorch", "CUDA", "Flask", "Stockfish"],
     image: "/projects/chess-network-poster.png",
     video: "/projects/chess-network.mp4",
     link: "https://vincentdo1.github.io/playable-chess-AI/",
     repo: "https://github.com/vincentdo1/playable-chess-AI",
     stats: [
-      { label: "Top-5 Acc", value: "71.2%" },
+      { label: "Architecture", value: "CNN/LSTM" },
       { label: "Train Set", value: "4.18M" },
-      { label: "Speedup", value: "60x" },
+      { label: "Optimization", value: "60x" },
     ],
   },
   {
@@ -46,13 +49,13 @@ const projects: Project[] = [
     code: "GM-002",
     classification: "GAMES // MULTIPLAYER",
     description:
-      "Real-time multiplayer card game inspired by Exploding Kittens. Built a Node.js backend with asynchronous game logic and persistent session state via MongoDB, keeping gameplay consistent across concurrent players. 1000+ games played.",
+      "First personal project. Real-time multiplayer card game. Built a Node.js backend with asynchronous game logic and persistent session state via MongoDB, keeping gameplay consistent across concurrent players. 1600+ games played.",
     tags: ["Node.js", "MongoDB", "Real-time"],
     image: "/project-placeholder-2.jpg",
     link: "https://chickens.rakerman.com",
     repo: "#",
     stats: [
-      { label: "Games", value: "1000+" },
+      { label: "Games", value: "1600+" },
       { label: "Backend", value: "Node.js" },
       { label: "Storage", value: "MongoDB" },
     ],
@@ -83,6 +86,7 @@ const projects: Project[] = [
       "BFS, Floyd–Warshall, and betweenness centrality applied to aviation networks. Identifies the top 10 most-connected airports and renders the routes on a WebGL globe.",
     tags: ["C++", "React", "WebGL"],
     image: "/project-placeholder-3.jpg",
+    globe: true,
     link: "https://vincentdo1.github.io/airports-paths/",
     repo: "#",
     stats: [
@@ -149,7 +153,9 @@ export function ProjectsSection() {
               >
                 {/* Image / video preview area */}
                 <div className="relative aspect-[16/9] overflow-hidden border-b border-border/60 bg-secondary">
-                  {current.video ? (
+                  {current.globe ? (
+                    <AirportGlobe />
+                  ) : current.video ? (
                     // re-key forces a fresh mount when switching projects so
                     // each video starts from the beginning instead of resuming
                     <video
@@ -171,7 +177,23 @@ export function ProjectsSection() {
                       className="object-cover grayscale opacity-50"
                     />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-background via-background/40 to-transparent pointer-events-none" />
+                  {/* Lighter gradient over globe so the sphere stays visible */}
+                  <div
+                    className={cn(
+                      "absolute inset-0 pointer-events-none",
+                      current.globe
+                        ? "bg-gradient-to-tr from-background/60 via-background/10 to-transparent"
+                        : "bg-gradient-to-tr from-background via-background/40 to-transparent"
+                    )}
+                  />
+
+                  {/* Drag-to-rotate hint — only for globe */}
+                  {current.globe && (
+                    <div className="absolute bottom-[5.5rem] right-4 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-primary/50 pointer-events-none select-none">
+                      <RotateCcw className="h-2.5 w-2.5" />
+                      Drag to rotate
+                    </div>
+                  )}
 
                   {/* Classification badge */}
                   <div className="absolute top-4 left-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-primary">

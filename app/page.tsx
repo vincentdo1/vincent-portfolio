@@ -34,12 +34,12 @@ const interests: Interest[] = [
   {
     code: "01",
     label: "Chess",
-    description: "Strategy and chess engines",
+    description: "National Master Title and ML/AI",
     link: "https://www.chess.com/member/vmd306",
     linkLabel: "chess.com/vmd306",
   },
-  { code: "02", label: "Machine Learning", description: "Deep learning, CV, NLP" },
-  { code: "03", label: "Systems", description: "Embedded, real-time, low-level" },
+  { code: "02", label: "Cooking", description: "Anything but baking" },
+  { code: "03", label: "Coding", description: "Building passionate projects" },
   { code: "04", label: "Gaming", description: "Pokémon and Valorant" },
   { code: "05", label: "Volleyball", description: "On the court when I can" },
   { code: "06", label: "Music", description: "K-pop and piano" },
@@ -47,8 +47,8 @@ const interests: Interest[] = [
 
 const stats = [
   { label: "Years XP", value: "2" },
-  { label: "Languages", value: "8" },
-  { label: "Projects", value: "10+" },
+  { label: "Languages", value: "5" },
+  { label: "Projects", value: "5+" },
   { label: "Companies", value: "3" },
 ];
 
