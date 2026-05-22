@@ -213,16 +213,16 @@ export function ProjectsSection() {
                   />
 
                   {current.globe && (
-                    <div className="absolute bottom-[5.5rem] right-4 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-primary/50 pointer-events-none select-none">
+                    <div className="hidden sm:flex absolute bottom-[5.5rem] right-4 items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-primary/50 pointer-events-none select-none">
                       <RotateCcw className="h-2.5 w-2.5" />
                       Drag to rotate
                     </div>
                   )}
 
-                  <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-start justify-between gap-2">
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 min-w-0">
-                      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-primary">
-                        <span className="tactical-dot animate-pulse-dot" />
+                  <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-start gap-2">
+                    <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                      <div className="flex items-center gap-2 min-w-0 max-w-full font-mono text-[10px] uppercase tracking-[0.25em] text-primary">
+                        <span className="tactical-dot animate-pulse-dot shrink-0" />
                         <span className="truncate">
                           {current.classification}
                         </span>
@@ -257,7 +257,7 @@ export function ProjectsSection() {
                         <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-muted-foreground mb-1 truncate">
                           {stat.label}
                         </div>
-                        <div className="font-display text-xl sm:text-2xl text-primary break-words">
+                        <div className="font-display text-base sm:text-xl md:text-2xl text-primary leading-none">
                           {stat.value}
                         </div>
                       </div>

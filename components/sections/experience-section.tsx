@@ -130,17 +130,17 @@ export function ExperienceSection() {
             })}
           </div>
 
-          <div className="relative border border-border/60 bg-card/30 p-6 lg:p-8">
+          <div className="relative border border-border/60 bg-card/30 p-5 sm:p-6 lg:p-8">
             <CornerBrackets size={14} thickness={1.5} />
 
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/60">
-              <div className="flex items-center gap-3">
-                <Briefcase className="h-4 w-4 text-primary" />
-                <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-border/60">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <Briefcase className="h-4 w-4 text-primary shrink-0" />
+                <div className="font-mono text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-muted-foreground truncate">
                   Role // {current.code}
                 </div>
               </div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+              <div className="font-mono text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-muted-foreground shrink-0">
                 {String(selected + 1).padStart(2, "0")} /{" "}
                 {String(experiences.length).padStart(2, "0")}
               </div>
@@ -159,7 +159,7 @@ export function ExperienceSection() {
                   <div className="font-mono text-[11px] text-primary uppercase tracking-[0.25em] mb-2">
                     {current.role}
                   </div>
-                  <h3 className="font-display text-4xl md:text-5xl uppercase leading-none">
+                  <h3 className="font-display text-3xl sm:text-4xl md:text-5xl uppercase leading-none break-words">
                     {current.company}
                   </h3>
                   <p className="text-muted-foreground mt-3 max-w-xl leading-relaxed">
