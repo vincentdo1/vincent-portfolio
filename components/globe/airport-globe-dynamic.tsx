@@ -1,12 +1,18 @@
 /**
  * SSR-safe dynamic wrapper for AirportGlobe.
- * react-globe.gl uses three.js which requires browser APIs — this ensures it
- * is never evaluated during Next.js server rendering.
+ *
+ * webpackPrefetch: true — the browser downloads the three.js / react-globe.gl
+ * chunk as an idle background task right after the page finishes loading, so
+ * it's already in the browser cache by the time the user clicks Airport Paths.
  */
 import dynamic from "next/dynamic";
 
 export const AirportGlobe = dynamic(
-  () => import("./airport-globe").then((mod) => mod.AirportGlobe),
+  () =>
+    import(
+      /* webpackPrefetch: true, webpackChunkName: "airport-globe" */
+      "./airport-globe"
+    ).then((mod) => mod.AirportGlobe),
   {
     ssr: false,
     loading: () => (

@@ -90,8 +90,8 @@ const projects: Project[] = [
     link: "https://vincentdo1.github.io/airports-paths/",
     repo: "#",
     stats: [
-      { label: "Algos", value: "3" },
-      { label: "Top", value: "10" },
+      { label: "Airports", value: "14110" },
+      { label: "Paths", value: "37595" },
       { label: "Render", value: "WebGL" },
     ],
   },
@@ -113,6 +113,25 @@ const projects: Project[] = [
     ],
   },
 ];
+
+/** Kick off the globe chunk + texture download the moment the user hovers. */
+function preloadGlobe() {
+  // Dynamic import triggers webpack to start fetching the chunk immediately
+  import("@/components/globe/airport-globe");
+  // Touch the texture so the browser schedules a prefetch if not already done
+  const link = document.createElement("link");
+  link.rel = "prefetch";
+  link.as = "image";
+  link.href = "/projects/earth-night.jpg";
+  document.head.appendChild(link);
+}
+
+let globePreloaded = false;
+function onGlobeButtonHover() {
+  if (globePreloaded) return;
+  globePreloaded = true;
+  preloadGlobe();
+}
 
 export function ProjectsSection() {
   const [selected, setSelected] = useState(0);
@@ -294,6 +313,7 @@ export function ProjectsSection() {
                 <motion.button
                   key={p.code}
                   onClick={() => setSelected(i)}
+                  onMouseEnter={p.globe ? onGlobeButtonHover : undefined}
                   whileHover={{ x: -4 }}
                   transition={{ duration: 0.15 }}
                   className={cn(
