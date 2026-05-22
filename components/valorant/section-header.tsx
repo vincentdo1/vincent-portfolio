@@ -11,10 +11,6 @@ interface SectionHeaderProps {
   className?: string;
 }
 
-/**
- * Valorant-style section header with index number, eyebrow label, big display title.
- * Animates in when scrolled into view.
- */
 export function SectionHeader({
   number,
   label,

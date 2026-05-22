@@ -67,7 +67,6 @@ export function ExperienceSection() {
         />
 
         <div className="grid lg:grid-cols-[280px_1fr] gap-6 mt-12">
-          {/* Left rail: role select */}
           <div className="space-y-3">
             <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
               <span className="h-px w-6 bg-primary" />
@@ -131,11 +130,9 @@ export function ExperienceSection() {
             })}
           </div>
 
-          {/* Right: detail panel */}
           <div className="relative border border-border/60 bg-card/30 p-6 lg:p-8">
             <CornerBrackets size={14} thickness={1.5} />
 
-            {/* HUD header strip */}
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/60">
               <div className="flex items-center gap-3">
                 <Briefcase className="h-4 w-4 text-primary" />

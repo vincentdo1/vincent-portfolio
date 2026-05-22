@@ -9,10 +9,6 @@ interface TacticalButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   children: React.ReactNode;
 }
 
-/**
- * Valorant-style action button — angular cut corners, primary fill or ghost,
- * with a subtle sweep animation on hover.
- */
 export const TacticalButton = forwardRef<HTMLButtonElement, TacticalButtonProps>(
   ({ variant = "primary", size = "md", children, className, ...props }, ref) => {
     const sizeClass = {
@@ -40,7 +36,6 @@ export const TacticalButton = forwardRef<HTMLButtonElement, TacticalButtonProps>
         )}
         {...props}
       >
-        {/* sweep highlight */}
         <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         <span className="relative z-10 inline-flex items-center gap-2">{children}</span>
       </button>

@@ -7,10 +7,6 @@ interface CornerBracketsProps {
   thickness?: number;
 }
 
-/**
- * L-shaped bracket accents at the four corners of the parent (which must be relative).
- * Mirrors the corner brackets seen on Valorant HUD panels.
- */
 export function CornerBrackets({
   className,
   size = 12,

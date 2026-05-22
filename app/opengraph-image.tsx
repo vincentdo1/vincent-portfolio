@@ -4,13 +4,6 @@ export const alt = "Vincent Do — Software Engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/**
- * Dynamically-generated OG image used by social previews (LinkedIn,
- * Twitter/X, etc.). Next.js serves this at /opengraph-image. The version
- * is fingerprinted in the URL on each deploy, so social caches will
- * eventually refresh — for an instant refresh, paste your URL into
- * LinkedIn's Post Inspector (https://www.linkedin.com/post-inspector/).
- */
 export default async function OgImage() {
   return new ImageResponse(
     (

@@ -61,12 +61,10 @@ export default function Home() {
       <SideRail />
       <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
 
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section
         id="hero"
         className="relative min-h-screen flex items-center pt-20 px-safe overflow-hidden"
       >
-        {/* Grid background */}
         <div
           className="absolute inset-0 opacity-[0.06] pointer-events-none"
           style={{
@@ -76,14 +74,12 @@ export default function Home() {
           }}
         />
 
-        {/* Faded background hero img with green tint */}
         <div className="absolute inset-0 z-0 opacity-30">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-[url(/hero-bg.jpg)] before:absolute before:inset-0 before:bg-primary before:mix-blend-color-dodge" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
         </div>
 
         <div className="relative z-10 mx-auto max-w-7xl w-full grid lg:grid-cols-[1.4fr_1fr] gap-12 items-center">
-          {/* Left: name + meta */}
           <div>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -172,7 +168,6 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* Right: HUD stat panel */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -272,7 +267,6 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -284,7 +278,6 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ── ABOUT ────────────────────────────────────────────────────────── */}
       <section
         id="about"
         className="relative py-24 border-t border-border/60 px-safe"
@@ -303,7 +296,6 @@ export default function Home() {
           />
 
           <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 mt-12">
-            {/* Left: bio */}
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -345,7 +337,6 @@ export default function Home() {
                 between software and chemistry.
               </motion.p>
 
-              {/* Education card */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -367,7 +358,6 @@ export default function Home() {
               </motion.div>
             </div>
 
-            {/* Right: interests grid */}
             <div>
               <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6 flex items-center gap-3">
                 <span className="h-px w-6 bg-primary" />
@@ -411,13 +401,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── EXPERIENCE ───────────────────────────────────────────────────── */}
       <ExperienceSection />
 
-      {/* ── PROJECTS ─────────────────────────────────────────────────────── */}
       <ProjectsSection />
 
-      {/* ── CONTACT ──────────────────────────────────────────────────────── */}
       <section
         id="contact"
         className="relative py-24 border-t border-border/60 px-safe"
@@ -437,7 +424,6 @@ export default function Home() {
           />
 
           <div className="grid lg:grid-cols-2 gap-6 mt-12">
-            {/* Left: contact links */}
             <div className="space-y-3">
               <button
                 type="button"
@@ -517,7 +503,6 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Right: location + CTA */}
             <div className="relative border border-border/60 bg-card/40 p-8 flex flex-col">
               <CornerBrackets size={14} thickness={1.5} />
 
@@ -573,7 +558,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <footer className="border-t border-border/60 py-8 px-safe">
         <div className="mx-auto max-w-7xl flex flex-col md:flex-row justify-between items-center gap-4 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
           <div className="flex items-center gap-3">

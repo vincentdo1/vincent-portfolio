@@ -15,31 +15,22 @@ const RECIPIENT = "vincentdo306@gmail.com";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
-/**
- * Quick-message popup that posts to /api/contact (Resend-backed).
- * Setup for the Resend API key lives in app/api/contact/route.ts.
- * A direct mailto: link is also offered as a fallback.
- */
 export function ContactDialog({ open, onClose }: ContactDialogProps) {
   const [form, setForm] = useState({
     name: "",
     email: "",
     message: "",
-    // Honeypot — bots fill anything they see; humans never touch this.
-    company: "",
+    company: "", // honeypot
   });
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Record when the dialog opened — submissions that arrive faster than
-  // a human could possibly type are dropped server-side. A ref avoids
-  // pointless re-renders when the timestamp changes.
+  // timestamp used for server-side bot timing check
   const openedAtRef = useRef<number>(0);
   useEffect(() => {
     if (open) openedAtRef.current = Date.now();
   }, [open]);
 
-  // close on Escape (disabled while sending so user doesn't lose draft mid-send)
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
@@ -49,7 +40,6 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
     return () => document.removeEventListener("keydown", handler);
   }, [open, onClose, status]);
 
-  // lock body scroll when open
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -116,7 +106,6 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
           aria-modal="true"
           aria-labelledby="contact-dialog-title"
         >
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -126,7 +115,6 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
             className="absolute inset-0 bg-background/85 backdrop-blur-md"
           />
 
-          {/* Dialog */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -244,7 +232,6 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                     />
                   </div>
 
-                  {/* Honeypot field — hidden from humans, irresistible to bots */}
                   <div
                     aria-hidden="true"
                     className="absolute -left-[9999px] opacity-0 pointer-events-none"

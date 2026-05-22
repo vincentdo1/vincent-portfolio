@@ -18,7 +18,6 @@ export function Nav() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeId, setActiveId] = useState("hero");
 
-  // highlight active nav link based on which section is in view
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -39,12 +38,10 @@ export function Nav() {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
-      {/* thin top accent strip */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
       <div className="bg-background/70 backdrop-blur-md border-b border-border/60">
         <div className="mx-auto max-w-7xl px-safe flex items-center justify-between h-14 relative">
-          {/* Logo block */}
           <Link href="#hero" className="flex items-center gap-3 group">
             <div className="relative h-8 w-8 bg-primary/10 border border-primary/40 flex items-center justify-center tactical-chip">
               <span className="font-display text-lg text-primary leading-none translate-y-px">
@@ -61,7 +58,6 @@ export function Nav() {
             </div>
           </Link>
 
-          {/* Center: section nav */}
           <nav className="hidden md:flex items-center gap-1">
             {sections.map((s) => {
               const active = activeId === s.id;
@@ -90,7 +86,6 @@ export function Nav() {
             })}
           </nav>
 
-          {/* Right: status + resume */}
           <div className="flex items-center gap-3">
             <div className="hidden lg:flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               <span className="relative flex h-2 w-2">
@@ -119,12 +114,10 @@ export function Nav() {
             </button>
           </div>
 
-          {/* corner brackets on the header */}
           <CornerBrackets size={8} thickness={1} />
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden border-b border-border bg-background/95 backdrop-blur-md">
           <nav className="flex flex-col px-safe py-4 gap-1">

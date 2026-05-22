@@ -12,10 +12,6 @@ const sections = [
   { id: "contact", number: "05", label: "Contact" },
 ];
 
-/**
- * Vertical section indicator on the right side of the viewport — like a
- * Valorant round counter. Always visible, click any number to jump.
- */
 export function SideRail() {
   const [activeId, setActiveId] = useState("hero");
 
