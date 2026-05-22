@@ -52,7 +52,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="scroll-smooth shadcn dark">
       {/* Prefetch globe assets as idle background tasks */}
       <head>
-        <link rel="prefetch" as="image" href="/projects/earth-night.jpg" />
+        <link rel="prefetch" as="script" href="https://unpkg.com/globe.gl@2.46.2/dist/globe.gl.min.js" />
+        <link rel="prefetch" as="image"  href="/projects/earth-night.jpg" />
       </head>
       <body
         className={`font-body antialiased ${spaceGrotesk.variable} ${jetBrainsMono.variable} ${bebasNeue.variable}`}

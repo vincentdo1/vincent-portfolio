@@ -7,7 +7,7 @@ import { ExternalLink, Clock, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/valorant/section-header";
 import { CornerBrackets } from "@/components/valorant/corner-brackets";
-import { AirportGlobe } from "@/components/globe/airport-globe-dynamic";
+import { AirportGlobe, GLOBE_CDN } from "@/components/globe/airport-globe-dynamic";
 
 type Project = {
   title: string;
@@ -114,16 +114,19 @@ const projects: Project[] = [
   },
 ];
 
-/** Kick off the globe chunk + texture download the moment the user hovers. */
+/** Kick off the globe chunk + CDN script + texture on first hover. */
 function preloadGlobe() {
-  // Dynamic import triggers webpack to start fetching the chunk immediately
   import("@/components/globe/airport-globe");
-  // Touch the texture so the browser schedules a prefetch if not already done
-  const link = document.createElement("link");
-  link.rel = "prefetch";
-  link.as = "image";
-  link.href = "/projects/earth-night.jpg";
-  document.head.appendChild(link);
+  [
+    { rel: "prefetch", as: "script",  href: GLOBE_CDN },
+    { rel: "prefetch", as: "image",   href: "/projects/earth-night.jpg" },
+    { rel: "prefetch", as: "fetch",   href: "/projects/airport-nodes.json" },
+    { rel: "prefetch", as: "fetch",   href: "/projects/airport-arcs-preview.json" },
+  ].forEach(({ rel, as, href }) => {
+    const l = document.createElement("link");
+    l.rel = rel; l.setAttribute("as", as); l.href = href;
+    document.head.appendChild(l);
+  });
 }
 
 let globePreloaded = false;

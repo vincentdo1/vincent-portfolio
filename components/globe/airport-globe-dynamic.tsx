@@ -1,11 +1,14 @@
 /**
- * SSR-safe dynamic wrapper for AirportGlobe.
+ * SSR-safe wrapper. globe.gl loads from CDN at runtime (no npm install),
+ * so the three.js bundle never enters the Cloudflare Workers server function.
  *
- * webpackPrefetch: true — the browser downloads the three.js / react-globe.gl
- * chunk as an idle background task right after the page finishes loading, so
- * it's already in the browser cache by the time the user clicks Airport Paths.
+ * webpackPrefetch causes the browser to fetch the component JS chunk as an
+ * idle background task right after page load.
  */
 import dynamic from "next/dynamic";
+
+export const GLOBE_CDN =
+  "https://unpkg.com/globe.gl@2.46.2/dist/globe.gl.min.js";
 
 export const AirportGlobe = dynamic(
   () =>
