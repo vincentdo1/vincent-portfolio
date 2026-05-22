@@ -3,11 +3,9 @@
 import Globe from "react-globe.gl";
 import { useRef, useEffect, useState, useCallback } from "react";
 import type { GlobeMethods } from "react-globe.gl";
-// Bundled at build time — zero fetch round-trips on mount
-import rawNodes from "../../public/projects/airport-nodes.json";
-import rawArcs from "../../public/projects/airport-arcs-preview.json";
 
 /* ─── types ─────────────────────────────────────────────────────────── */
+type RawNode = { id: string; lat: number; lng: number };
 type ArcDatum = {
   startLat: number;
   startLng: number;
@@ -15,19 +13,12 @@ type ArcDatum = {
   endLng: number;
   color: string[];
 };
+type NodeDatum = RawNode & { color: string; size: number };
 
-/* ─── data — computed once when the module is first loaded ───────────── */
+/* ─── constants ──────────────────────────────────────────────────────── */
 const TOP_10 = new Set([
   "PEK", "IST", "SVO", "DEL", "URC", "ICN", "DXB", "KUL", "CCU", "YYZ",
 ]);
-
-const NODES = rawNodes.map((n) => ({
-  ...n,
-  color: TOP_10.has(n.id) ? "#ef4444" : "rgba(255,255,255,0.55)",
-  size:  TOP_10.has(n.id) ? 0.5       : 0.07,
-}));
-
-const ARCS = rawArcs as unknown as ArcDatum[];
 
 /* ─── arc color helper ───────────────────────────────────────────────── */
 const arcColor = (d: object) => {
@@ -41,7 +32,9 @@ const arcColor = (d: object) => {
 export function AirportGlobe() {
   const globeEl      = useRef<GlobeMethods | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [size, setSize] = useState({ w: 0, h: 0 });
+  const [size, setSize]   = useState({ w: 0, h: 0 });
+  const [nodes, setNodes] = useState<NodeDatum[]>([]);
+  const [arcs, setArcs]   = useState<ArcDatum[]>([]);
 
   /* measure once on mount, then track resizes */
   useEffect(() => {
@@ -51,10 +44,27 @@ export function AirportGlobe() {
       const r = el.getBoundingClientRect();
       setSize({ w: Math.round(r.width), h: Math.round(r.height) });
     };
-    measure();                          // synchronous — sets size before first paint
+    measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
+  }, []);
+
+  /* fetch data — kept as fetch() so it never enters the server bundle */
+  useEffect(() => {
+    Promise.all([
+      fetch("/projects/airport-nodes.json").then((r) => r.json()),
+      fetch("/projects/airport-arcs-preview.json").then((r) => r.json()),
+    ]).then(([rawNodes, rawArcs]: [RawNode[], ArcDatum[]]) => {
+      setNodes(
+        rawNodes.map((n) => ({
+          ...n,
+          color: TOP_10.has(n.id) ? "#ef4444" : "rgba(255,255,255,0.55)",
+          size:  TOP_10.has(n.id) ? 0.5       : 0.07,
+        }))
+      );
+      setArcs(rawArcs);
+    });
   }, []);
 
   /* configure globe after WebGL context is ready */
@@ -65,7 +75,6 @@ export function AirportGlobe() {
       ctrl.autoRotateSpeed = 0.38;
       ctrl.enableZoom      = false;
     }
-    // Center on South/Central Asia — where most top-10 hubs cluster
     globeEl.current?.pointOfView({ lat: 26, lng: 80, altitude: 2.05 }, 0);
   }, []);
 
@@ -76,19 +85,18 @@ export function AirportGlobe() {
           ref={globeEl}
           width={size.w}
           height={size.h}
-          /* local texture — no CDN round-trip */
           globeImageUrl="/projects/earth-night.jpg"
           backgroundColor="rgba(3,4,20,1)"
           atmosphereColor="rgba(239,68,68,0.22)"
           atmosphereAltitude={0.11}
           /* airport dots */
-          pointsData={NODES}
+          pointsData={nodes}
           pointColor="color"
           pointAltitude="size"
           pointRadius={0.32}
           pointsMerge
           /* animated routes */
-          arcsData={ARCS}
+          arcsData={arcs}
           arcColor={arcColor}
           arcDashLength={0.38}
           arcDashGap={0.14}
