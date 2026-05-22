@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Menu, X, Download } from "lucide-react";
@@ -14,37 +14,19 @@ const sections = [
   { label: "Contact", href: "#contact", id: "contact" },
 ];
 
-export function Nav() {
+interface NavProps {
+  activeId: string;
+}
+
+export function Nav({ activeId }: NavProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeId, setActiveId] = useState("hero");
-
-  // highlight active nav link based on which section is in view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveId(entry.target.id);
-        });
-      },
-      { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
-    );
-
-    sections.forEach((s) => {
-      const el = document.getElementById(s.id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
-      {/* thin top accent strip */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
       <div className="bg-background/70 backdrop-blur-md border-b border-border/60">
         <div className="mx-auto max-w-7xl px-safe flex items-center justify-between h-14 relative">
-          {/* Logo block */}
           <Link href="#hero" className="flex items-center gap-3 group">
             <div className="relative h-8 w-8 bg-primary/10 border border-primary/40 flex items-center justify-center tactical-chip">
               <span className="font-display text-lg text-primary leading-none translate-y-px">
@@ -61,7 +43,6 @@ export function Nav() {
             </div>
           </Link>
 
-          {/* Center: section nav */}
           <nav className="hidden md:flex items-center gap-1">
             {sections.map((s) => {
               const active = activeId === s.id;
@@ -73,7 +54,7 @@ export function Nav() {
                     "relative px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors",
                     active
                       ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -90,7 +71,6 @@ export function Nav() {
             })}
           </nav>
 
-          {/* Right: status + resume */}
           <div className="flex items-center gap-3">
             <div className="hidden lg:flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               <span className="relative flex h-2 w-2">
@@ -113,18 +93,21 @@ export function Nav() {
             <button
               className="md:hidden p-2"
               onClick={() => setIsOpen(!isOpen)}
+              aria-expanded={isOpen}
               aria-label="Toggle navigation"
             >
-              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
 
-          {/* corner brackets on the header */}
           <CornerBrackets size={8} thickness={1} />
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden border-b border-border bg-background/95 backdrop-blur-md">
           <nav className="flex flex-col px-safe py-4 gap-1">
@@ -136,7 +119,7 @@ export function Nav() {
                   href={s.href}
                   className={cn(
                     "flex items-center gap-3 py-2 font-mono text-xs uppercase tracking-[0.18em] transition-colors",
-                    active ? "text-primary" : "text-muted-foreground"
+                    active ? "text-primary" : "text-muted-foreground",
                   )}
                   onClick={() => setIsOpen(false)}
                 >

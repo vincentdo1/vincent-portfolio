@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface SectionHeaderProps {
@@ -11,10 +11,6 @@ interface SectionHeaderProps {
   className?: string;
 }
 
-/**
- * Valorant-style section header with index number, eyebrow label, big display title.
- * Animates in when scrolled into view.
- */
 export function SectionHeader({
   number,
   label,
@@ -24,7 +20,7 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <div className={cn("mb-12", className)}>
-      <motion.div
+      <m.div
         initial={{ opacity: 0, x: -30 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: "-80px" }}
@@ -36,8 +32,8 @@ export function SectionHeader({
         <div className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
           {label}
         </div>
-      </motion.div>
-      <motion.h2
+      </m.div>
+      <m.h2
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
@@ -45,9 +41,9 @@ export function SectionHeader({
         className="font-display text-5xl md:text-7xl lg:text-8xl uppercase leading-none"
       >
         {title}
-      </motion.h2>
+      </m.h2>
       {description && (
-        <motion.p
+        <m.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -55,7 +51,7 @@ export function SectionHeader({
           className="text-muted-foreground max-w-lg mt-4"
         >
           {description}
-        </motion.p>
+        </m.p>
       )}
     </div>
   );
