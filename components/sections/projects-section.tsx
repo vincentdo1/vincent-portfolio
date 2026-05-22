@@ -65,7 +65,7 @@ const projects: Project[] = [
     classification: "COMPUTER VISION // SPORTS",
     description:
       "In-progress: computer-vision pipeline for volleyball footage — tracking player position, ball trajectory, and spike performance. Preview clip shows live attack analysis.",
-    tags: ["Python", "OpenCV", "Computer Vision"],
+    tags: ["Python", "YOLOv8", "Ultralytics", "OpenCV", "Computer Vision"],
     image: "/project-placeholder-3.jpg",
     video: "/projects/volleyball-tracker.mp4",
     link: "#",
@@ -73,7 +73,7 @@ const projects: Project[] = [
     upcoming: true,
     stats: [
       { label: "Status", value: "WIP" },
-      { label: "Stack", value: "Python" },
+      { label: "Stack", value: "YOLOv8" },
       { label: "Type", value: "CV" },
     ],
   },
@@ -219,41 +219,45 @@ export function ProjectsSection() {
                     </div>
                   )}
 
-                  <div className="absolute top-4 left-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-primary">
-                    <span className="tactical-dot animate-pulse-dot" />
-                    {current.classification}
-                  </div>
-
-                  {current.upcoming && (
-                    <div className="absolute top-4 right-32 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.25em] px-2 py-1 bg-primary/10 border border-primary/40 text-primary">
-                      <Clock className="h-3 w-3" />
-                      In Development
+                  <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-start justify-between gap-2">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 min-w-0">
+                      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-primary">
+                        <span className="tactical-dot animate-pulse-dot" />
+                        <span className="truncate">
+                          {current.classification}
+                        </span>
+                      </div>
+                      {current.upcoming && (
+                        <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.25em] px-2 py-0.5 bg-primary/10 border border-primary/40 text-primary">
+                          <Clock className="h-3 w-3" />
+                          In Development
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  <div className="absolute top-4 right-4 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                    {current.code}
+                    <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground shrink-0">
+                      {current.code}
+                    </div>
                   </div>
 
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <h3 className="font-display text-4xl md:text-6xl uppercase leading-none text-foreground">
+                  <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
+                    <h3 className="font-display text-2xl sm:text-3xl md:text-5xl lg:text-6xl uppercase leading-[0.95] text-foreground break-words">
                       {current.title}
                     </h3>
                   </div>
                 </div>
 
-                <div className="p-6 lg:p-8 grid gap-6">
-                  <p className="text-muted-foreground leading-relaxed">
+                <div className="p-4 sm:p-6 lg:p-8 grid gap-5 sm:gap-6">
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                     {current.description}
                   </p>
 
-                  <div className="grid grid-cols-3 gap-3 border-y border-border/60 py-4">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3 border-y border-border/60 py-4">
                     {current.stats.map((stat) => (
-                      <div key={stat.label}>
-                        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
+                      <div key={stat.label} className="min-w-0">
+                        <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-muted-foreground mb-1 truncate">
                           {stat.label}
                         </div>
-                        <div className="font-display text-2xl text-primary">
+                        <div className="font-display text-xl sm:text-2xl text-primary break-words">
                           {stat.value}
                         </div>
                       </div>

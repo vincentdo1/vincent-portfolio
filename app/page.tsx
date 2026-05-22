@@ -126,7 +126,7 @@ export default function Home() {
                 <div className="font-mono text-[11px] uppercase tracking-[0.3em] text-muted-foreground mb-2">
                   Hello, I&apos;m
                 </div>
-                <h1 className="font-display text-7xl md:text-9xl lg:text-[10rem] uppercase leading-[0.85] tracking-tight">
+                <h1 className="font-display text-6xl sm:text-7xl md:text-9xl lg:text-[10rem] uppercase leading-[0.85] tracking-tight break-words">
                   Vincent
                   <br />
                   <span className="text-primary">Do_</span>
