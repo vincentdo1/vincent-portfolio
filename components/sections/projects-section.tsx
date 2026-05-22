@@ -114,7 +114,6 @@ const projects: Project[] = [
   },
 ];
 
-/** Kick off the globe chunk + CDN script + texture on first hover. */
 function preloadGlobe() {
   import("@/components/globe/airport-globe");
   [
@@ -184,10 +183,7 @@ export function ProjectsSection() {
                       key={current.code}
                       src={current.video}
                       poster={current.image}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
+                      autoPlay loop muted playsInline
                       preload="metadata"
                       className="absolute inset-0 w-full h-full object-cover"
                     />
@@ -199,7 +195,6 @@ export function ProjectsSection() {
                       className="object-cover grayscale opacity-50"
                     />
                   )}
-                  {/* Lighter gradient over globe so the sphere stays visible */}
                   <div
                     className={cn(
                       "absolute inset-0 pointer-events-none",
@@ -209,7 +204,6 @@ export function ProjectsSection() {
                     )}
                   />
 
-                  {/* Drag-to-rotate hint — only for globe */}
                   {current.globe && (
                     <div className="absolute bottom-[5.5rem] right-4 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-primary/50 pointer-events-none select-none">
                       <RotateCcw className="h-2.5 w-2.5" />
