@@ -7,7 +7,7 @@
 import { useEffect, useRef } from "react";
 
 const GLOBE_CDN =
-  "https://unpkg.com/globe.gl@2.46.2/dist/globe.gl.min.js";
+  "https://unpkg.com/globe.gl@2.46.1/dist/globe.gl.min.js";
 
 const TOP_10 = new Set([
   "PEK", "IST", "SVO", "DEL", "URC", "ICN", "DXB", "KUL", "CCU", "YYZ",

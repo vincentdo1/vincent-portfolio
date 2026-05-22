@@ -8,7 +8,7 @@
 import dynamic from "next/dynamic";
 
 export const GLOBE_CDN =
-  "https://unpkg.com/globe.gl@2.46.2/dist/globe.gl.min.js";
+  "https://unpkg.com/globe.gl@2.46.1/dist/globe.gl.min.js";
 
 export const AirportGlobe = dynamic(
   () =>
