@@ -13,7 +13,6 @@ import {
   MapPin,
   Cpu,
   Send,
-  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Nav } from "@/components/nav";
@@ -311,7 +310,7 @@ export default function Home() {
                         <span className="font-mono text-[9px] uppercase tracking-widest text-primary w-12 shrink-0">
                           {row.label}
                         </span>
-                        <span className="font-mono text-[11px] text-foreground/85 truncate">
+                        <span className="font-mono text-[11px] text-foreground/85 leading-snug">
                           {row.items}
                         </span>
                       </div>
@@ -345,7 +344,7 @@ export default function Home() {
                 </div>
 
                 <div className="mt-5 pt-3 border-t border-border/60 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  <span>v2.0.0</span>
+                  <span>v1.0.0</span>
                   <span className="flex items-center gap-2 text-primary">
                     <span className="tactical-dot animate-pulse-dot" />
                     Open // SWE Roles
@@ -355,15 +354,6 @@ export default function Home() {
             </m.div>
           </div>
 
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 0.6 }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
-          >
-            <span>Scroll to Explore</span>
-            <ChevronDown className="h-4 w-4 animate-bounce text-primary" />
-          </m.div>
         </section>
 
         <section
