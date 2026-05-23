@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Nav } from "@/components/nav";
-import { SideRail } from "@/components/valorant/side-rail";
 import { CornerBrackets } from "@/components/valorant/corner-brackets";
 import { SectionHeader } from "@/components/valorant/section-header";
 import { ExperienceSection } from "@/components/sections/experience-section";
@@ -79,7 +78,6 @@ export default function Home() {
     <LazyMotion features={domAnimation} strict>
       <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 selection:text-foreground overflow-x-hidden relative">
         <Nav activeId={activeId} />
-        <SideRail activeId={activeId} />
         {contactOpen && (
           <ContactDialog
             open={contactOpen}
