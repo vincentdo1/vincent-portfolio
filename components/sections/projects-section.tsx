@@ -94,12 +94,12 @@ const projects: Project[] = [
       { label: "Render", value: "WebGL" },
     ],
   },
-  {
+  /*{
     title: "Shafa API",
     code: "API-005",
     classification: "BACKEND // API",
     description:
-      "Paginated REST API for items and outfits built with Hono.js, Drizzle ORM, PostgreSQL/Neon, and Cloudflare Workers. Added smoke tests and local database tooling for release confidence.",
+      "Developing REST API for items and outfits built with Hono.js, Drizzle ORM, PostgreSQL/Neon, and Cloudflare Workers. Added smoke tests and local database tooling for release confidence.",
     tags: ["TypeScript", "Hono.js", "PostgreSQL", "Cloudflare"],
     image: "/project-placeholder-1.jpg",
     link: "https://shafa.app",
@@ -109,7 +109,7 @@ const projects: Project[] = [
       { label: "DB", value: "Neon" },
       { label: "Runtime", value: "Workers" },
     ],
-  },
+  },*/
 ];
 
 function preloadGlobe() {

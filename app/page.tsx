@@ -48,7 +48,7 @@ const interests: Interest[] = [
   {
     code: "01",
     label: "Chess",
-    description: "National Master; search, strategy, and ML curiosity",
+    description: "National Master; Congress Recognition",
     link: "https://www.chess.com/member/vmd306",
     linkLabel: "chess.com/vmd306",
   },
@@ -64,8 +64,8 @@ const interests: Interest[] = [
   },
   {
     code: "04",
-    label: "Music",
-    description: "K-pop, piano, and pattern memory",
+    label: "Gaming",
+    description: "Pokémon enthusiast and sharp shooter in Valorant",
   },
 ];
 
