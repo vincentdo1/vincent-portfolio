@@ -11,35 +11,35 @@ const experiences = [
   {
     company: "Boeing",
     role: "Software Engineer",
-    period: "Aug 2024 — Present",
+    period: "Aug 2024 - Present",
     location: "Berkeley, MO",
-    code: "BDS",
+    code: "BOE",
     current: true,
-    tags: ["C++", "Embedded", "Real-time", "Docker"],
+    tags: ["C++", "Ada", "Real-time", "Docker"],
     summary:
-      "Real-time C++ and Ada features for data processing and embedded display systems. Own integration and release readiness for a framework consumed by 60+ modules.",
+      "Production C++ and Ada features for real-time message streams, automated tests, and Dockerized builds. Own integration and release readiness for shared systems consumed by 60+ modules.",
   },
   {
     company: "Expedia Group",
     role: "SDE Intern",
-    period: "May 2023 — Aug 2023",
+    period: "May 2023 - Aug 2023",
     location: "Chicago, IL",
     code: "EXP",
     current: false,
-    tags: ["Kotlin", "GraphQL", "Microservices"],
+    tags: ["Kotlin", "GraphQL", "Microservices", "Mobile"],
     summary:
-      "Shipped customer-facing mobile search features in Kotlin and GraphQL across multiple microservices. Localized components for 16 languages.",
+      "Shipped customer-facing mobile search features across Kotlin microservices, GraphQL APIs, and localized frontend flows for 16 languages.",
   },
   {
-    company: "UW–Madison",
+    company: "UW-Madison",
     role: "Biomedical Researcher",
-    period: "May 2021 — Aug 2021",
+    period: "May 2021 - Aug 2021",
     location: "Madison, WI",
     code: "UWM",
     current: false,
-    tags: ["Python", "R", "Graph Algos"],
+    tags: ["Python", "R", "Graph Algos", "Data Viz"],
     summary:
-      "Computational genomics — analyzed 16,813 genes across 169 phenotypes with Python/R and graph traversal to surface rare-disease candidates.",
+      "Computational genomics: analyzed 16,813 genes across 169 phenotypes with Python/R and graph traversal to surface rare-disease candidates.",
   },
 ];
 
@@ -63,7 +63,7 @@ export function ExperienceSection() {
               <span className="text-primary">History_</span>
             </>
           }
-          description="Roles across embedded systems, full-stack web, and computational research."
+          description="Production systems, consumer product features, and data-heavy research."
         />
 
         <div className="grid lg:grid-cols-[280px_1fr] gap-6 mt-12">

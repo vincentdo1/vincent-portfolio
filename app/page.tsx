@@ -13,7 +13,6 @@ import {
   MapPin,
   Cpu,
   Send,
-  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Nav } from "@/components/nav";
@@ -48,22 +47,44 @@ const interests: Interest[] = [
   {
     code: "01",
     label: "Chess",
-    description: "National Master Title and ML/AI",
+    description: "National Master; Congress Recognition",
     link: "https://www.chess.com/member/vmd306",
     linkLabel: "chess.com/vmd306",
   },
-  { code: "02", label: "Cooking", description: "Anything but baking" },
-  { code: "03", label: "Coding", description: "Building passionate projects" },
-  { code: "04", label: "Gaming", description: "Pokémon and Valorant" },
-  { code: "05", label: "Volleyball", description: "On the court when I can" },
-  { code: "06", label: "Music", description: "K-pop and piano" },
+  {
+    code: "02",
+    label: "Cooking",
+    description: "Process, taste, and quick iteration",
+  },
+  {
+    code: "03",
+    label: "Volleyball",
+    description: "Competitive reps away from the keyboard",
+  },
+  {
+    code: "04",
+    label: "Gaming",
+    description: "Pokémon enthusiast and sharp shooter in Valorant",
+  },
 ];
 
-const stats = [
-  { label: "Years XP", value: "2" },
-  { label: "Languages", value: "5" },
-  { label: "Projects", value: "5+" },
-  { label: "Companies", value: "3" },
+const trajectory = [
+  { tag: "Now", company: "Boeing", note: "SWE" },
+  { tag: "2023", company: "Expedia", note: "SDE Intern" },
+  { tag: "Edu", company: "UIUC", note: "CS + Chem" },
+];
+
+const stack = [
+  { label: "Lang", items: "C++ · Python · TypeScript · Kotlin" },
+  { label: "ML/AI", items: "PyTorch · CUDA · CNN" },
+  { label: "Web", items: "React · Node.js · GraphQL · PostgreSQL" },
+  { label: "Infra", items: "Docker · Jenkins · Cloudflare · Linux" },
+];
+
+const impact = [
+  { value: "60+", label: "Modules on shared framework" },
+  { value: "4.18M", label: "Positions trained · CNN+LSTM" },
+  { value: "16", label: "Languages shipped at Expedia" },
 ];
 
 export default function Home() {
@@ -138,10 +159,10 @@ export default function Home() {
                 className="mt-6 max-w-lg space-y-4"
               >
                 <p className="text-lg text-foreground/90">
-                  Software Engineer at{" "}
-                  <span className="text-primary font-medium">Boeing</span>. UIUC
-                  CS &amp; Chemistry alum. I build real-time embedded systems,
-                  full-stack web apps, and ML pipelines and products.
+                  Software engineer focused on backend systems, AI/ML, and
+                  full-stack product engineering. Current SWE at{" "}
+                  <span className="text-primary font-medium">Boeing</span>,
+                  former Expedia SDE intern, UIUC CS &amp; Chemistry alum.
                 </p>
                 <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest">
                   <MapPin className="h-3 w-3 text-primary" />
@@ -233,88 +254,106 @@ export default function Home() {
                     Software Engineer
                   </div>
                   <div className="font-mono text-xs text-primary uppercase tracking-wider">
-                    Boeing
+                    Backend // AI/ML // Full-Stack
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  {stats.map((stat) => (
-                    <div
-                      key={stat.label}
-                      className="relative border border-border/60 bg-background/40 p-3"
-                    >
-                      <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
-                        {stat.label}
+                <div className="mb-5">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2 flex items-center gap-2">
+                    <span className="h-px w-4 bg-primary" />
+                    Trajectory
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {trajectory.map((item, i) => {
+                      const isNow = i === 0;
+                      return (
+                        <div
+                          key={item.company}
+                          className={cn(
+                            "relative border p-2.5",
+                            isNow
+                              ? "border-primary/50 bg-primary/5"
+                              : "border-border/60 bg-background/40",
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              "font-mono text-[9px] uppercase tracking-widest mb-1",
+                              isNow ? "text-primary" : "text-muted-foreground",
+                            )}
+                          >
+                            {item.tag}
+                          </div>
+                          <div className="font-display text-base uppercase leading-none">
+                            {item.company}
+                          </div>
+                          <div className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground mt-1">
+                            {item.note}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="mb-5">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2 flex items-center gap-2">
+                    <span className="h-px w-4 bg-primary" />
+                    Stack
+                  </div>
+                  <div className="border border-border/60 bg-background/40 divide-y divide-border/60">
+                    {stack.map((row) => (
+                      <div
+                        key={row.label}
+                        className="flex items-center gap-3 px-3 py-2"
+                      >
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-primary w-12 shrink-0">
+                          {row.label}
+                        </span>
+                        <span className="font-mono text-[11px] text-foreground/85 leading-snug">
+                          {row.items}
+                        </span>
                       </div>
-                      <div className="font-display text-3xl text-primary leading-none">
-                        {stat.value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                      <span>Focus</span>
-                      <span>92%</span>
-                    </div>
-                    <div className="h-1 bg-secondary overflow-hidden">
-                      <m.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "92%" }}
-                        transition={{ duration: 1.2, delay: 0.8 }}
-                        className="h-full bg-primary"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                      <span>Caffeine</span>
-                      <span>78%</span>
-                    </div>
-                    <div className="h-1 bg-secondary overflow-hidden">
-                      <m.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "78%" }}
-                        transition={{ duration: 1.2, delay: 1.0 }}
-                        className="h-full bg-primary"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                      <span>Sleep</span>
-                      <span>42%</span>
-                    </div>
-                    <div className="h-1 bg-secondary overflow-hidden">
-                      <m.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "42%" }}
-                        transition={{ duration: 1.2, delay: 1.2 }}
-                        className="h-full bg-primary"
-                      />
-                    </div>
+                    ))}
                   </div>
                 </div>
 
-                <div className="mt-6 pt-3 border-t border-border/60 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2 flex items-center gap-2">
+                    <span className="h-px w-4 bg-primary" />
+                    Impact
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {impact.map((item, i) => (
+                      <m.div
+                        key={item.value}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.8 + i * 0.1 }}
+                        className="relative border border-border/60 bg-background/40 p-2.5"
+                      >
+                        <div className="font-display text-2xl text-primary leading-none">
+                          {item.value}
+                        </div>
+                        <div className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground mt-1.5 leading-tight">
+                          {item.label}
+                        </div>
+                      </m.div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-5 pt-3 border-t border-border/60 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                   <span>v1.0.0</span>
-                  <span>Build // Stable</span>
+                  <span className="flex items-center gap-2 text-primary">
+                    <span className="tactical-dot animate-pulse-dot" />
+                    Open // SWE Roles
+                  </span>
                 </div>
               </div>
             </m.div>
           </div>
 
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 0.6 }}
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
-          >
-            <span>Scroll to Explore</span>
-            <ChevronDown className="h-4 w-4 animate-bounce text-primary" />
-          </m.div>
         </section>
 
         <section
@@ -342,11 +381,12 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4 }}
                 >
-                  I&apos;m a software engineer at{" "}
-                  <span className="text-foreground">Boeing</span>, based in St.
-                  Louis, working on C++ embedded systems that deliver real-time
-                  data to flight display hardware. Before that, I interned at
-                  Expedia building mobile search features in Kotlin and GraphQL.
+                  I&apos;m a software engineer building production software
+                  across backend systems, ML/AI pipelines, and full-stack
+                  product surfaces. At{" "}
+                  <span className="text-foreground">Boeing</span>, I work on
+                  real-time C++ and Ada features with automated tests,
+                  Dockerized builds, and release ownership for shared systems.
                 </m.p>
                 <m.p
                   initial={{ opacity: 0, y: 20 }}
@@ -358,10 +398,10 @@ export default function Home() {
                   <span className="text-foreground">
                     University of Illinois Urbana-Champaign
                   </span>{" "}
-                  with a B.S. in Computer Science &amp; Chemistry. I&apos;m
-                  drawn to problems at the intersection of performance
-                  engineering and software correctness — distributed backend
-                  services, ML training pipelines, delivering final products.
+                  with a B.S. in Computer Science &amp; Chemistry. Before my
+                  current role, I shipped customer-facing Expedia mobile search
+                  features across Kotlin microservices, GraphQL APIs, and
+                  localized frontend flows.
                 </m.p>
                 <m.p
                   initial={{ opacity: 0, y: 20 }}
@@ -369,13 +409,9 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.2 }}
                 >
-                  Outside of work I participate in{" "}
-                  <span className="text-foreground">volleyball</span>{" "}
-                  tournaments, hack on{" "}
-                  <span className="text-foreground">side projects</span>, and
-                  keep myself up to date on modern technology. I also enjoy
-                  thinking about the intersection between software and
-                  chemistry.
+                  I like work where correctness, performance, and user impact
+                  all matter: APIs that scale, model pipelines that can be
+                  trusted, and interfaces that make complex systems feel clear.
                 </m.p>
 
                 <m.div
@@ -394,7 +430,7 @@ export default function Home() {
                     B.S. CS &amp; Chemistry
                   </div>
                   <div className="mt-3 font-mono text-xs text-muted-foreground">
-                    2020 — 2024
+                    2020 - 2024
                   </div>
                 </m.div>
               </div>
@@ -402,9 +438,9 @@ export default function Home() {
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6 flex items-center gap-3">
                   <span className="h-px w-6 bg-primary" />
-                  Interests
+                  Beyond Code
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {interests.map((item, i) => (
                     <m.div
                       key={item.code}
@@ -461,7 +497,7 @@ export default function Home() {
                   <span className="text-primary">Talk_</span>
                 </>
               }
-              description="Open to opportunities, collaborations, and interesting conversations."
+              description="Open to backend, AI/ML, GenAI, frontend, and full-stack SWE roles."
             />
 
             <div className="grid lg:grid-cols-2 gap-6 mt-12">
@@ -580,7 +616,7 @@ export default function Home() {
                     <div className="flex justify-between">
                       <span className="uppercase tracking-widest">Open to</span>
                       <span className="uppercase tracking-widest">
-                        All FT Software Roles
+                        Backend / AI / Full-Stack
                       </span>
                     </div>
                   </div>
