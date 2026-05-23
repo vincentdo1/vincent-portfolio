@@ -69,11 +69,23 @@ const interests: Interest[] = [
   },
 ];
 
-const stats = [
-  { label: "Backend", value: "APIs" },
-  { label: "AI/ML", value: "PyTorch" },
-  { label: "Product", value: "React" },
-  { label: "Systems", value: "C++" },
+const trajectory = [
+  { tag: "Now", company: "Boeing", note: "SWE" },
+  { tag: "2023", company: "Expedia", note: "SDE Intern" },
+  { tag: "Edu", company: "UIUC", note: "CS + Chem" },
+];
+
+const stack = [
+  { label: "Lang", items: "C++ · Python · TypeScript · Kotlin" },
+  { label: "ML/AI", items: "PyTorch · CUDA · CNN" },
+  { label: "Web", items: "React · Node.js · GraphQL · PostgreSQL" },
+  { label: "Infra", items: "Docker · Jenkins · Cloudflare · Linux" },
+];
+
+const impact = [
+  { value: "60+", label: "Modules on shared framework" },
+  { value: "4.18M", label: "Positions trained · CNN+LSTM" },
+  { value: "16", label: "Languages shipped at Expedia" },
 ];
 
 export default function Home() {
@@ -247,70 +259,97 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  {stats.map((stat) => (
-                    <div
-                      key={stat.label}
-                      className="relative border border-border/60 bg-background/40 p-3"
-                    >
-                      <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
-                        {stat.label}
-                      </div>
-                      <div className="font-display text-3xl text-primary leading-none">
-                        {stat.value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                      <span>Backend</span>
-                      <span>92%</span>
-                    </div>
-                    <div className="h-1 bg-secondary overflow-hidden">
-                      <m.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "92%" }}
-                        transition={{ duration: 1.2, delay: 0.8 }}
-                        className="h-full bg-primary"
-                      />
-                    </div>
+                <div className="mb-5">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2 flex items-center gap-2">
+                    <span className="h-px w-4 bg-primary" />
+                    Trajectory
                   </div>
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                      <span>AI/ML</span>
-                      <span>88%</span>
-                    </div>
-                    <div className="h-1 bg-secondary overflow-hidden">
-                      <m.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "88%" }}
-                        transition={{ duration: 1.2, delay: 1.0 }}
-                        className="h-full bg-primary"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                      <span>Product</span>
-                      <span>84%</span>
-                    </div>
-                    <div className="h-1 bg-secondary overflow-hidden">
-                      <m.div
-                        initial={{ width: 0 }}
-                        animate={{ width: "84%" }}
-                        transition={{ duration: 1.2, delay: 1.2 }}
-                        className="h-full bg-primary"
-                      />
-                    </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {trajectory.map((item, i) => {
+                      const isNow = i === 0;
+                      return (
+                        <div
+                          key={item.company}
+                          className={cn(
+                            "relative border p-2.5",
+                            isNow
+                              ? "border-primary/50 bg-primary/5"
+                              : "border-border/60 bg-background/40",
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              "font-mono text-[9px] uppercase tracking-widest mb-1",
+                              isNow ? "text-primary" : "text-muted-foreground",
+                            )}
+                          >
+                            {item.tag}
+                          </div>
+                          <div className="font-display text-base uppercase leading-none">
+                            {item.company}
+                          </div>
+                          <div className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground mt-1">
+                            {item.note}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
-                <div className="mt-6 pt-3 border-t border-border/60 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                <div className="mb-5">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2 flex items-center gap-2">
+                    <span className="h-px w-4 bg-primary" />
+                    Stack
+                  </div>
+                  <div className="border border-border/60 bg-background/40 divide-y divide-border/60">
+                    {stack.map((row) => (
+                      <div
+                        key={row.label}
+                        className="flex items-center gap-3 px-3 py-2"
+                      >
+                        <span className="font-mono text-[9px] uppercase tracking-widest text-primary w-12 shrink-0">
+                          {row.label}
+                        </span>
+                        <span className="font-mono text-[11px] text-foreground/85 truncate">
+                          {row.items}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-2 flex items-center gap-2">
+                    <span className="h-px w-4 bg-primary" />
+                    Impact
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {impact.map((item, i) => (
+                      <m.div
+                        key={item.value}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.8 + i * 0.1 }}
+                        className="relative border border-border/60 bg-background/40 p-2.5"
+                      >
+                        <div className="font-display text-2xl text-primary leading-none">
+                          {item.value}
+                        </div>
+                        <div className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground mt-1.5 leading-tight">
+                          {item.label}
+                        </div>
+                      </m.div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-5 pt-3 border-t border-border/60 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                   <span>v2.0.0</span>
-                  <span>Open // SWE Roles</span>
+                  <span className="flex items-center gap-2 text-primary">
+                    <span className="tactical-dot animate-pulse-dot" />
+                    Open // SWE Roles
+                  </span>
                 </div>
               </div>
             </m.div>
