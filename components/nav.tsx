@@ -38,7 +38,7 @@ export function Nav({ activeId }: NavProps) {
                 Vincent Do
               </span>
               <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-[0.2em]">
-                ID // 306
+                SWE // AI/ML
               </span>
             </div>
           </Link>

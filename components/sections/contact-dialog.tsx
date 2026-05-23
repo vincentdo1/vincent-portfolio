@@ -165,7 +165,8 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                     Get in <span className="text-primary">Touch_</span>
                   </h3>
                   <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                    Fill this out and it&apos;ll land straight in my inbox.
+                    Send a role, team, or project note and it&apos;ll land in my
+                    inbox.
                   </p>
                 </div>
 
@@ -224,7 +225,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                       onChange={handleChange}
                       required
                       disabled={sending}
-                      placeholder="What's up?"
+                      placeholder="Tell me what you're hiring for."
                       rows={5}
                       className="w-full px-3 py-2 bg-background border border-border focus:border-primary outline-none text-sm font-mono placeholder:text-muted-foreground/50 transition-colors resize-none disabled:opacity-60"
                     />

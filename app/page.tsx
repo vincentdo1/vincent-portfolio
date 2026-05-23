@@ -48,22 +48,32 @@ const interests: Interest[] = [
   {
     code: "01",
     label: "Chess",
-    description: "National Master Title and ML/AI",
+    description: "National Master; search, strategy, and ML curiosity",
     link: "https://www.chess.com/member/vmd306",
     linkLabel: "chess.com/vmd306",
   },
-  { code: "02", label: "Cooking", description: "Anything but baking" },
-  { code: "03", label: "Coding", description: "Building passionate projects" },
-  { code: "04", label: "Gaming", description: "Pokémon and Valorant" },
-  { code: "05", label: "Volleyball", description: "On the court when I can" },
-  { code: "06", label: "Music", description: "K-pop and piano" },
+  {
+    code: "02",
+    label: "Cooking",
+    description: "Process, taste, and quick iteration",
+  },
+  {
+    code: "03",
+    label: "Volleyball",
+    description: "Competitive reps away from the keyboard",
+  },
+  {
+    code: "04",
+    label: "Music",
+    description: "K-pop, piano, and pattern memory",
+  },
 ];
 
 const stats = [
-  { label: "Years XP", value: "2" },
-  { label: "Languages", value: "5" },
-  { label: "Projects", value: "5+" },
-  { label: "Companies", value: "3" },
+  { label: "Backend", value: "APIs" },
+  { label: "AI/ML", value: "PyTorch" },
+  { label: "Product", value: "React" },
+  { label: "Systems", value: "C++" },
 ];
 
 export default function Home() {
@@ -138,10 +148,10 @@ export default function Home() {
                 className="mt-6 max-w-lg space-y-4"
               >
                 <p className="text-lg text-foreground/90">
-                  Software Engineer at{" "}
-                  <span className="text-primary font-medium">Boeing</span>. UIUC
-                  CS &amp; Chemistry alum. I build real-time embedded systems,
-                  full-stack web apps, and ML pipelines and products.
+                  Software engineer focused on backend systems, AI/ML, and
+                  full-stack product engineering. Current SWE at{" "}
+                  <span className="text-primary font-medium">Boeing</span>,
+                  former Expedia SDE intern, UIUC CS &amp; Chemistry alum.
                 </p>
                 <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest">
                   <MapPin className="h-3 w-3 text-primary" />
@@ -233,7 +243,7 @@ export default function Home() {
                     Software Engineer
                   </div>
                   <div className="font-mono text-xs text-primary uppercase tracking-wider">
-                    Boeing
+                    Backend // AI/ML // Full-Stack
                   </div>
                 </div>
 
@@ -256,7 +266,7 @@ export default function Home() {
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                      <span>Focus</span>
+                      <span>Backend</span>
                       <span>92%</span>
                     </div>
                     <div className="h-1 bg-secondary overflow-hidden">
@@ -270,13 +280,13 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                      <span>Caffeine</span>
-                      <span>78%</span>
+                      <span>AI/ML</span>
+                      <span>88%</span>
                     </div>
                     <div className="h-1 bg-secondary overflow-hidden">
                       <m.div
                         initial={{ width: 0 }}
-                        animate={{ width: "78%" }}
+                        animate={{ width: "88%" }}
                         transition={{ duration: 1.2, delay: 1.0 }}
                         className="h-full bg-primary"
                       />
@@ -284,13 +294,13 @@ export default function Home() {
                   </div>
                   <div>
                     <div className="flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                      <span>Sleep</span>
-                      <span>42%</span>
+                      <span>Product</span>
+                      <span>84%</span>
                     </div>
                     <div className="h-1 bg-secondary overflow-hidden">
                       <m.div
                         initial={{ width: 0 }}
-                        animate={{ width: "42%" }}
+                        animate={{ width: "84%" }}
                         transition={{ duration: 1.2, delay: 1.2 }}
                         className="h-full bg-primary"
                       />
@@ -299,8 +309,8 @@ export default function Home() {
                 </div>
 
                 <div className="mt-6 pt-3 border-t border-border/60 flex justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  <span>v1.0.0</span>
-                  <span>Build // Stable</span>
+                  <span>v2.0.0</span>
+                  <span>Open // SWE Roles</span>
                 </div>
               </div>
             </m.div>
@@ -342,11 +352,12 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4 }}
                 >
-                  I&apos;m a software engineer at{" "}
-                  <span className="text-foreground">Boeing</span>, based in St.
-                  Louis, working on C++ embedded systems that deliver real-time
-                  data to flight display hardware. Before that, I interned at
-                  Expedia building mobile search features in Kotlin and GraphQL.
+                  I&apos;m a software engineer building production software
+                  across backend systems, ML/AI pipelines, and full-stack
+                  product surfaces. At{" "}
+                  <span className="text-foreground">Boeing</span>, I work on
+                  real-time C++ and Ada features with automated tests,
+                  Dockerized builds, and release ownership for shared systems.
                 </m.p>
                 <m.p
                   initial={{ opacity: 0, y: 20 }}
@@ -358,10 +369,10 @@ export default function Home() {
                   <span className="text-foreground">
                     University of Illinois Urbana-Champaign
                   </span>{" "}
-                  with a B.S. in Computer Science &amp; Chemistry. I&apos;m
-                  drawn to problems at the intersection of performance
-                  engineering and software correctness — distributed backend
-                  services, ML training pipelines, delivering final products.
+                  with a B.S. in Computer Science &amp; Chemistry. Before my
+                  current role, I shipped customer-facing Expedia mobile search
+                  features across Kotlin microservices, GraphQL APIs, and
+                  localized frontend flows.
                 </m.p>
                 <m.p
                   initial={{ opacity: 0, y: 20 }}
@@ -369,13 +380,9 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.2 }}
                 >
-                  Outside of work I participate in{" "}
-                  <span className="text-foreground">volleyball</span>{" "}
-                  tournaments, hack on{" "}
-                  <span className="text-foreground">side projects</span>, and
-                  keep myself up to date on modern technology. I also enjoy
-                  thinking about the intersection between software and
-                  chemistry.
+                  I like work where correctness, performance, and user impact
+                  all matter: APIs that scale, model pipelines that can be
+                  trusted, and interfaces that make complex systems feel clear.
                 </m.p>
 
                 <m.div
@@ -394,7 +401,7 @@ export default function Home() {
                     B.S. CS &amp; Chemistry
                   </div>
                   <div className="mt-3 font-mono text-xs text-muted-foreground">
-                    2020 — 2024
+                    2020 - 2024
                   </div>
                 </m.div>
               </div>
@@ -402,9 +409,9 @@ export default function Home() {
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6 flex items-center gap-3">
                   <span className="h-px w-6 bg-primary" />
-                  Interests
+                  Beyond Code
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {interests.map((item, i) => (
                     <m.div
                       key={item.code}
@@ -461,7 +468,7 @@ export default function Home() {
                   <span className="text-primary">Talk_</span>
                 </>
               }
-              description="Open to opportunities, collaborations, and interesting conversations."
+              description="Open to backend, AI/ML, GenAI, frontend, and full-stack SWE roles."
             />
 
             <div className="grid lg:grid-cols-2 gap-6 mt-12">
@@ -580,7 +587,7 @@ export default function Home() {
                     <div className="flex justify-between">
                       <span className="uppercase tracking-widest">Open to</span>
                       <span className="uppercase tracking-widest">
-                        All FT Software Roles
+                        Backend / AI / Full-Stack
                       </span>
                     </div>
                   </div>

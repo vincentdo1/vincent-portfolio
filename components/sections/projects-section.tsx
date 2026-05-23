@@ -31,7 +31,7 @@ const projects: Project[] = [
     code: "AI-001",
     classification: "ML // GAMES",
     description:
-      "Trained a CNN+LSTM legal move-policy model on 4.18M GM/Magnus Carlsen positions. GPU-accelerated PyTorch training pipeline reducing per-epoch time from 20+ hours on CPU to 15–25 minutes on GPU.",
+      "Trained a CNN+LSTM legal move-policy model on 4.18M GM/Magnus positions, reaching 71.2% top-5 accuracy. Built a CUDA/PyTorch pipeline that cut epoch time from 20+ hours on CPU to 15-25 minutes.",
     tags: ["Python", "PyTorch", "CUDA", "Flask", "Stockfish"],
     image: "/projects/chess-network-poster.png",
     video: "/projects/chess-network.mp4",
@@ -46,9 +46,9 @@ const projects: Project[] = [
   {
     title: "Exploding Chickens",
     code: "GM-002",
-    classification: "GAMES // MULTIPLAYER",
+    classification: "REAL-TIME // BACKEND",
     description:
-      "First personal project. Real-time multiplayer card game. Built a Node.js backend with asynchronous game logic and persistent session state via MongoDB, keeping gameplay consistent across concurrent players. 1600+ games played.",
+      "Real-time multiplayer card game with asynchronous Node.js game logic and persistent MongoDB session state. Kept gameplay consistent across concurrent players with 1600+ games played.",
     tags: ["Node.js", "MongoDB", "Real-time"],
     image: "/project-placeholder-2.jpg",
     link: "https://chickens.rakerman.com",
@@ -64,7 +64,7 @@ const projects: Project[] = [
     code: "CV-003",
     classification: "COMPUTER VISION // SPORTS",
     description:
-      "In-progress: computer-vision pipeline for volleyball footage — tracking player position, ball trajectory, and spike performance. Preview clip shows live attack analysis.",
+      "In-progress computer-vision pipeline for volleyball footage: player position, ball trajectory, and spike-performance tracking with YOLOv8 and OpenCV.",
     tags: ["Python", "YOLOv8", "Ultralytics", "OpenCV", "Computer Vision"],
     image: "/project-placeholder-3.jpg",
     video: "/projects/volleyball-tracker.mp4",
@@ -82,7 +82,7 @@ const projects: Project[] = [
     code: "GR-004",
     classification: "GRAPH // VISUALIZATION",
     description:
-      "BFS, Floyd–Warshall, and betweenness centrality applied to aviation networks. Identifies the top 10 most-connected airports and renders the routes on a WebGL globe.",
+      "BFS, Floyd-Warshall, and betweenness centrality applied to 14,110 airports and 37,595 routes, rendered on an interactive WebGL globe.",
     tags: ["C++", "React", "WebGL"],
     image: "/project-placeholder-3.jpg",
     globe: true,
@@ -95,20 +95,19 @@ const projects: Project[] = [
     ],
   },
   {
-    title: "Helium Hydride Visualizer",
-    code: "CHM-005",
-    classification: "CHEMISTRY // 3D",
+    title: "Shafa API",
+    code: "API-005",
+    classification: "BACKEND // API",
     description:
-      "Upcoming: a 3D visualization of the helium hydride molecule (HeH⁺) — the first molecule believed to have formed in the early universe. Plans for interactive orbital rendering and bonding visualization.",
-    tags: ["Three.js", "WebGL", "Chemistry"],
+      "Paginated REST API for items and outfits built with Hono.js, Drizzle ORM, PostgreSQL/Neon, and Cloudflare Workers. Added smoke tests and local database tooling for release confidence.",
+    tags: ["TypeScript", "Hono.js", "PostgreSQL", "Cloudflare"],
     image: "/project-placeholder-1.jpg",
-    link: "#",
+    link: "https://shafa.app",
     repo: "#",
-    upcoming: true,
     stats: [
-      { label: "Status", value: "Planning" },
-      { label: "Stack", value: "TBD" },
-      { label: "Type", value: "3D" },
+      { label: "API", value: "REST" },
+      { label: "DB", value: "Neon" },
+      { label: "Runtime", value: "Workers" },
     ],
   },
 ];
@@ -162,7 +161,7 @@ export function ProjectsSection() {
               <span className="text-primary">Works_</span>
             </>
           }
-          description="Personal projects spanning ML, systems, computer vision, and chemistry visualization."
+          description="Focused projects across ML, backend APIs, real-time systems, and data visualization."
         />
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-6 mt-12">
