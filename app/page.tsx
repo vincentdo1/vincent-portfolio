@@ -54,7 +54,7 @@ const interests: Interest[] = [
   {
     code: "02",
     label: "Cooking",
-    description: "Cooking for friends and testing new recipes",
+    description: "Cooking for family and testing new recipes",
   },
   {
     code: "03",
@@ -64,7 +64,7 @@ const interests: Interest[] = [
   {
     code: "04",
     label: "Gaming",
-    description: "Pokemon, Valorant, and game systems",
+    description: "Pokemon and Valorant",
   },
 ];
 
@@ -350,7 +350,7 @@ export default function Home() {
                   <span>v1.0.0</span>
                   <span className="flex items-center gap-2 text-primary">
                     <span className="tactical-dot animate-pulse-dot" />
-                    Open // Conversations
+                    Open // SWE Roles
                   </span>
                 </div>
               </div>
@@ -383,11 +383,12 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4 }}
                 >
-                  I build production software where reliability matters: backend
-                  systems, ML/AI pipelines, and full-stack product surfaces. At{" "}
+                  I&apos;m a software engineer building production software
+                  across backend systems, ML/AI pipelines, and full-stack
+                  product surfaces. At{" "}
                   <span className="text-foreground">Boeing</span>, I work on
                   real-time C++ and Ada features with automated tests,
-                  Dockerized builds, and releases for shared systems.
+                  Dockerized builds, and release ownership for shared systems.
                 </m.p>
                 <m.p
                   initial={{ opacity: 0, y: 20 }}
@@ -399,8 +400,8 @@ export default function Home() {
                   <span className="text-foreground">
                     University of Illinois Urbana-Champaign
                   </span>{" "}
-                  with a B.S. in Computer Science &amp; Chemistry. Before
-                  Boeing, I shipped customer-facing Expedia mobile search
+                  with a B.S. in Computer Science &amp; Chemistry. Before my
+                  current role, I shipped customer-facing Expedia mobile search
                   features across Kotlin microservices, GraphQL APIs, and
                   localized frontend flows.
                 </m.p>
@@ -410,9 +411,9 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.2 }}
                 >
-                  The through-line for me is useful complexity: APIs that hold
-                  up, model pipelines people can trust, and interfaces that make
-                  complex systems feel clear.
+                  I like work where correctness, performance, and user impact
+                  all matter: APIs that scale, model pipelines that can be
+                  trusted, and interfaces that make complex systems feel clear.
                 </m.p>
 
                 <m.div
@@ -498,7 +499,7 @@ export default function Home() {
                   <span className="text-primary">Chat_</span>
                 </>
               }
-              description="Always happy to talk through backend, AI/ML, GenAI, frontend, and full-stack SWE opportunities."
+              description="Always happy to talk about backend, AI/ML, GenAI, frontend, and full-stack SWE opportunities."
             />
 
             <div className="grid lg:grid-cols-2 gap-6 mt-12">
@@ -517,7 +518,7 @@ export default function Home() {
                     </div>
                     <div className="flex-1">
                       <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
-                        Quick Note
+                        Quick Message
                       </div>
                       <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
                         Email
@@ -636,7 +637,7 @@ export default function Home() {
                   <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                   <span className="relative z-10 inline-flex items-center gap-2">
                     <Send className="h-3 w-3" />
-                    Send a Note
+                    Send Message
                   </span>
                 </button>
               </div>
@@ -650,7 +651,7 @@ export default function Home() {
               <span className="tactical-dot" />
               <span>© {new Date().getFullYear()} Vincent Do</span>
               <span className="hidden md:inline text-primary/60">›</span>
-              <span className="hidden md:inline">Built by me</span>
+              <span className="hidden md:inline">All Rights Reservered</span>
             </div>
             <div className="flex items-center gap-2">
               <span>v1.0.0</span>

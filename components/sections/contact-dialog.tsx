@@ -156,7 +156,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                 <div className="mb-6">
                   <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-primary mb-2 flex items-center gap-3">
                     <span className="h-px w-6 bg-primary" />
-                    Quick Note
+                    Quick Message
                   </div>
                   <h3
                     id="contact-dialog-title"
