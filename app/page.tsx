@@ -616,7 +616,7 @@ export default function Home() {
                     <div className="flex justify-between">
                       <span className="uppercase tracking-widest">Open to</span>
                       <span className="uppercase tracking-widest">
-                        Backend / AI / Full-Stack
+                        Backend / AI / Full-Stack / SWE
                       </span>
                     </div>
                   </div>
