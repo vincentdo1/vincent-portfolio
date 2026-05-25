@@ -31,7 +31,7 @@ const projects: Project[] = [
     code: "AI-001",
     classification: "ML // GAMES",
     description:
-      "Trained a CNN+LSTM legal move-policy model on 4.18M GM/Magnus positions, reaching 71.2% top-5 accuracy. Built a CUDA/PyTorch pipeline that cut epoch time from 20+ hours on CPU to 15-25 minutes.",
+      "Trained a CNN+LSTM model that suggests legal chess moves from 4.18M GM/Magnus positions, reaching 71.2% top-5 accuracy. Built a CUDA/PyTorch pipeline that reduced epoch time from 20+ hours on CPU to 15-25 minutes.",
     tags: ["Python", "PyTorch", "CUDA", "Flask", "Stockfish"],
     image: "/projects/chess-network-poster.png",
     video: "/projects/chess-network.mp4",
@@ -48,7 +48,7 @@ const projects: Project[] = [
     code: "GM-002",
     classification: "REAL-TIME // BACKEND",
     description:
-      "Real-time multiplayer card game with asynchronous Node.js game logic and persistent MongoDB session state. Kept gameplay consistent across concurrent players with 1600+ games played.",
+      "Built a real-time multiplayer card game with async Node.js game logic and MongoDB-backed sessions. Kept gameplay consistent across concurrent players through 1600+ games played.",
     tags: ["Node.js", "MongoDB", "Real-time"],
     image: "/project-placeholder-2.jpg",
     link: "https://chickens.rakerman.com",
@@ -64,7 +64,7 @@ const projects: Project[] = [
     code: "CV-003",
     classification: "COMPUTER VISION // SPORTS",
     description:
-      "In-progress computer-vision pipeline for volleyball footage: player position, ball trajectory, and spike-performance tracking with YOLOv8 and OpenCV.",
+      "Building a computer-vision pipeline for volleyball footage: player position, ball trajectory, and spike-performance tracking with YOLOv8 and OpenCV.",
     tags: ["Python", "YOLOv8", "Ultralytics", "OpenCV", "Computer Vision"],
     image: "/project-placeholder-3.jpg",
     video: "/projects/volleyball-tracker.mp4",
@@ -82,7 +82,7 @@ const projects: Project[] = [
     code: "GR-004",
     classification: "GRAPH // VISUALIZATION",
     description:
-      "BFS, Floyd-Warshall, and betweenness centrality applied to 14,110 airports and 37,595 routes, rendered on an interactive WebGL globe.",
+      "Mapped 14,110 airports and 37,595 routes with BFS, Floyd-Warshall, and betweenness centrality, then rendered the network on an interactive WebGL globe.",
     tags: ["C++", "React", "WebGL"],
     image: "/project-placeholder-3.jpg",
     globe: true,
@@ -158,10 +158,10 @@ export function ProjectsSection() {
             <>
               Selected
               <br />
-              <span className="text-primary">Works_</span>
+              <span className="text-primary">Projects_</span>
             </>
           }
-          description="Focused projects across ML, backend APIs, real-time systems, and data visualization."
+          description="A few projects where systems work, ML, data, and interactive product design meet."
         />
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-6 mt-12">
@@ -229,7 +229,7 @@ export function ProjectsSection() {
                       {current.upcoming && (
                         <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.25em] px-2 py-0.5 bg-primary/10 border border-primary/40 text-primary">
                           <Clock className="h-3 w-3" />
-                          In Development
+                          In Progress
                         </div>
                       )}
                     </div>
@@ -278,7 +278,7 @@ export function ProjectsSection() {
                       {current.upcoming ? (
                         <span className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-dashed border-primary/40 text-muted-foreground font-mono text-[10px] uppercase tracking-[0.2em]">
                           <Clock className="h-3 w-3" />
-                          Coming Soon
+                          In Progress
                         </span>
                       ) : current.link !== "#" ? (
                         <a
@@ -287,12 +287,12 @@ export function ProjectsSection() {
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 h-9 px-4 tactical-chip bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
                         >
-                          Visit Site <ExternalLink className="h-3 w-3" />
+                          View Site <ExternalLink className="h-3 w-3" />
                         </a>
                       ) : (
                         <span className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-dashed border-border text-muted-foreground font-mono text-[10px] uppercase tracking-[0.2em]">
                           <Clock className="h-3 w-3" />
-                          Not Deployed
+                          No Live Link
                         </span>
                       )}
                     </div>
@@ -305,7 +305,7 @@ export function ProjectsSection() {
           <div className="space-y-3">
             <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
               <span className="h-px w-6 bg-primary" />
-              All Projects
+              Explore Projects
             </div>
             {projects.map((p, i) => {
               const isActive = i === selected;

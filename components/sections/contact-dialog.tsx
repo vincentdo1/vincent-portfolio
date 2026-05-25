@@ -138,7 +138,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                   Message Sent
                 </div>
                 <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-                  Thanks for reaching out — I&apos;ll get back to you soon.
+                  Thanks for reaching out. I&apos;ll get back to you soon.
                 </p>
                 <button
                   onClick={handleClose}
@@ -162,11 +162,11 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                     id="contact-dialog-title"
                     className="font-display text-3xl md:text-4xl uppercase leading-none"
                   >
-                    Get in <span className="text-primary">Touch_</span>
+                    Say <span className="text-primary">Hello_</span>
                   </h3>
                   <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                    Send a role, team, or project note and it&apos;ll land in my
-                    inbox.
+                    Share a role, team, project, or idea and it&apos;ll land in
+                    my inbox.
                   </p>
                 </div>
 
@@ -225,7 +225,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                       onChange={handleChange}
                       required
                       disabled={sending}
-                      placeholder="Tell me what you're hiring for."
+                      placeholder="What are you building, hiring for, or curious about?"
                       rows={5}
                       className="w-full px-3 py-2 bg-background border border-border focus:border-primary outline-none text-sm font-mono placeholder:text-muted-foreground/50 transition-colors resize-none disabled:opacity-60"
                     />
@@ -265,7 +265,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                     className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors"
                   >
                     <Mail className="h-3 w-3" />
-                    Or email directly
+                    Or email me directly
                   </a>
                   <button
                     type="submit"
