@@ -54,17 +54,17 @@ const interests: Interest[] = [
   {
     code: "02",
     label: "Cooking",
-    description: "Process, taste, and quick iteration",
+    description: "Cooking for friends and testing new recipes",
   },
   {
     code: "03",
     label: "Volleyball",
-    description: "Competitive reps away from the keyboard",
+    description: "Competitive rallies away from the keyboard",
   },
   {
     code: "04",
     label: "Gaming",
-    description: "Pokémon enthusiast and sharp shooter in Valorant",
+    description: "Pokemon, Valorant, and game systems",
   },
 ];
 
@@ -159,10 +159,13 @@ export default function Home() {
                 className="mt-6 max-w-lg space-y-4"
               >
                 <p className="text-lg text-foreground/90">
-                  Software engineer focused on backend systems, AI/ML, and
-                  full-stack product engineering. Current SWE at{" "}
+                  I&apos;m a software engineer who enjoys turning complex
+                  systems into dependable tools: backend services, AI/ML
+                  pipelines, and polished full-stack products. I&apos;m
+                  currently at{" "}
                   <span className="text-primary font-medium">Boeing</span>,
-                  former Expedia SDE intern, UIUC CS &amp; Chemistry alum.
+                  previously interned at Expedia, and studied CS &amp; Chemistry
+                  at UIUC.
                 </p>
                 <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest">
                   <MapPin className="h-3 w-3 text-primary" />
@@ -182,7 +185,7 @@ export default function Home() {
                 >
                   <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                   <span className="relative z-10 inline-flex items-center gap-2">
-                    View Work <ArrowRight className="h-3 w-3" />
+                    Explore Work <ArrowRight className="h-3 w-3" />
                   </span>
                 </Link>
                 <button
@@ -193,7 +196,7 @@ export default function Home() {
                   className="inline-flex items-center gap-2 h-12 px-6 tactical-shape border border-primary/40 hover:border-primary text-primary font-mono text-xs uppercase tracking-[0.25em] transition-colors"
                 >
                   <Send className="h-3 w-3" />
-                  Get in Touch
+                  Say Hello
                 </button>
                 <div className="flex items-center gap-1 ml-2">
                   <a
@@ -347,13 +350,12 @@ export default function Home() {
                   <span>v1.0.0</span>
                   <span className="flex items-center gap-2 text-primary">
                     <span className="tactical-dot animate-pulse-dot" />
-                    Open // SWE Roles
+                    Open // Conversations
                   </span>
                 </div>
               </div>
             </m.div>
           </div>
-
         </section>
 
         <section
@@ -381,12 +383,11 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4 }}
                 >
-                  I&apos;m a software engineer building production software
-                  across backend systems, ML/AI pipelines, and full-stack
-                  product surfaces. At{" "}
+                  I build production software where reliability matters: backend
+                  systems, ML/AI pipelines, and full-stack product surfaces. At{" "}
                   <span className="text-foreground">Boeing</span>, I work on
                   real-time C++ and Ada features with automated tests,
-                  Dockerized builds, and release ownership for shared systems.
+                  Dockerized builds, and releases for shared systems.
                 </m.p>
                 <m.p
                   initial={{ opacity: 0, y: 20 }}
@@ -398,8 +399,8 @@ export default function Home() {
                   <span className="text-foreground">
                     University of Illinois Urbana-Champaign
                   </span>{" "}
-                  with a B.S. in Computer Science &amp; Chemistry. Before my
-                  current role, I shipped customer-facing Expedia mobile search
+                  with a B.S. in Computer Science &amp; Chemistry. Before
+                  Boeing, I shipped customer-facing Expedia mobile search
                   features across Kotlin microservices, GraphQL APIs, and
                   localized frontend flows.
                 </m.p>
@@ -409,9 +410,9 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.2 }}
                 >
-                  I like work where correctness, performance, and user impact
-                  all matter: APIs that scale, model pipelines that can be
-                  trusted, and interfaces that make complex systems feel clear.
+                  The through-line for me is useful complexity: APIs that hold
+                  up, model pipelines people can trust, and interfaces that make
+                  complex systems feel clear.
                 </m.p>
 
                 <m.div
@@ -438,7 +439,7 @@ export default function Home() {
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6 flex items-center gap-3">
                   <span className="h-px w-6 bg-primary" />
-                  Beyond Code
+                  After Hours
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {interests.map((item, i) => (
@@ -489,15 +490,15 @@ export default function Home() {
           <div className="mx-auto max-w-7xl">
             <SectionHeader
               number="05 // CONTACT"
-              label="Get in Touch"
+              label="Say Hello"
               title={
                 <>
                   Let&apos;s
                   <br />
-                  <span className="text-primary">Talk_</span>
+                  <span className="text-primary">Chat_</span>
                 </>
               }
-              description="Open to backend, AI/ML, GenAI, frontend, and full-stack SWE roles."
+              description="Always happy to talk through backend, AI/ML, GenAI, frontend, and full-stack SWE opportunities."
             />
 
             <div className="grid lg:grid-cols-2 gap-6 mt-12">
@@ -516,7 +517,7 @@ export default function Home() {
                     </div>
                     <div className="flex-1">
                       <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
-                        Quick Message
+                        Quick Note
                       </div>
                       <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
                         Email
@@ -568,7 +569,7 @@ export default function Home() {
                     </div>
                     <div className="flex-1">
                       <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
-                        Open Source
+                        Code
                       </div>
                       <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
                         GitHub
@@ -606,9 +607,7 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="uppercase tracking-widest">
-                        Response Time
-                      </span>
+                      <span className="uppercase tracking-widest">Reply</span>
                       <span className="uppercase tracking-widest">
                         {"< 24h"}
                       </span>
@@ -637,7 +636,7 @@ export default function Home() {
                   <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                   <span className="relative z-10 inline-flex items-center gap-2">
                     <Send className="h-3 w-3" />
-                    Send Message
+                    Send a Note
                   </span>
                 </button>
               </div>
@@ -651,7 +650,7 @@ export default function Home() {
               <span className="tactical-dot" />
               <span>© {new Date().getFullYear()} Vincent Do</span>
               <span className="hidden md:inline text-primary/60">›</span>
-              <span className="hidden md:inline">All Rights Reserved</span>
+              <span className="hidden md:inline">Built by me</span>
             </div>
             <div className="flex items-center gap-2">
               <span>v1.0.0</span>
