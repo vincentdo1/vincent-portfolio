@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { m, AnimatePresence } from "framer-motion";
-import { ExternalLink, Clock, RotateCcw } from "lucide-react";
+import { ExternalLink, Clock, RotateCcw, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/valorant/section-header";
 import { CornerBrackets } from "@/components/valorant/corner-brackets";
 import { AirportGlobe } from "@/components/globe/airport-globe-dynamic";
+import { HehPreview } from "@/components/chemistry/heh-preview-dynamic";
 import { GLOBE_CDN } from "@/components/globe/constants";
 
 type Project = {
@@ -19,6 +21,8 @@ type Project = {
   image: string;
   video?: string;
   globe?: boolean;
+  heh?: boolean;
+  internal?: boolean;
   link: string;
   repo: string;
   stats: { label: string; value: string }[];
@@ -99,16 +103,17 @@ const projects: Project[] = [
     code: "CHM-005",
     classification: "CHEMISTRY // 3D",
     description:
-      "Upcoming: a 3D visualization of the helium hydride molecule (HeH⁺) — the first molecule believed to have formed in the early universe. Plans for interactive orbital rendering and bonding visualization.",
-    tags: ["Three.js", "WebGL", "Chemistry"],
+      "An interactive 3D visualization of helium hydride (HeH⁺) — the first molecule to form in the universe. Spin a pre-computed, helium-skewed electron cloud here; the full project page covers vibrational isotope effects, bond dissociation, and its cosmic origin.",
+    tags: ["React Three Fiber", "WebGL", "Quantum Chem"],
     image: "/project-placeholder-1.jpg",
-    link: "#",
+    heh: true,
+    internal: true,
+    link: "/projects/helium-hydride",
     repo: "#",
-    upcoming: true,
     stats: [
-      { label: "Status", value: "Planning" },
-      { label: "Stack", value: "TBD" },
-      { label: "Type", value: "3D" },
+      { label: "Electrons", value: "2" },
+      { label: "Bond rₑ", value: "0.774Å" },
+      { label: "Render", value: "R3F" },
     ],
   },
 ];
@@ -140,6 +145,18 @@ function onGlobeButtonHover() {
   if (globePreloaded) return;
   globePreloaded = true;
   preloadGlobe();
+}
+
+let hehPreloaded = false;
+function onHehButtonHover() {
+  if (hehPreloaded) return;
+  hehPreloaded = true;
+  void import("@/components/chemistry/heh-preview");
+}
+
+function onProjectHover(p: Project) {
+  if (p.globe) onGlobeButtonHover();
+  else if (p.heh) onHehButtonHover();
 }
 
 export function ProjectsSection() {
@@ -179,7 +196,9 @@ export function ProjectsSection() {
                 className="grid"
               >
                 <div className="relative aspect-[16/9] overflow-hidden border-b border-border/60 bg-secondary">
-                  {current.globe ? (
+                  {current.heh ? (
+                    <HehPreview />
+                  ) : current.globe ? (
                     <AirportGlobe />
                   ) : current.video ? (
                     <video
@@ -206,13 +225,13 @@ export function ProjectsSection() {
                   <div
                     className={cn(
                       "absolute inset-0 pointer-events-none",
-                      current.globe
+                      current.globe || current.heh
                         ? "bg-gradient-to-tr from-background/60 via-background/10 to-transparent"
                         : "bg-gradient-to-tr from-background via-background/40 to-transparent",
                     )}
                   />
 
-                  {current.globe && (
+                  {(current.globe || current.heh) && (
                     <div className="absolute bottom-[5.5rem] right-4 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-primary/50 pointer-events-none select-none">
                       <RotateCcw className="h-2.5 w-2.5" />
                       Drag to rotate
@@ -277,6 +296,13 @@ export function ProjectsSection() {
                           <Clock className="h-3 w-3" />
                           Coming Soon
                         </span>
+                      ) : current.internal ? (
+                        <Link
+                          href={current.link}
+                          className="inline-flex items-center gap-2 h-9 px-4 tactical-chip bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
+                        >
+                          View Project <ArrowRight className="h-3 w-3" />
+                        </Link>
                       ) : current.link !== "#" ? (
                         <a
                           href={current.link}
@@ -310,8 +336,8 @@ export function ProjectsSection() {
                 <m.button
                   key={p.code}
                   onClick={() => setSelected(i)}
-                  onMouseEnter={p.globe ? onGlobeButtonHover : undefined}
-                  onFocus={p.globe ? onGlobeButtonHover : undefined}
+                  onMouseEnter={() => onProjectHover(p)}
+                  onFocus={() => onProjectHover(p)}
                   whileHover={{ x: -4 }}
                   transition={{ duration: 0.15 }}
                   className={cn(

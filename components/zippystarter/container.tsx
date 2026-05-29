@@ -21,11 +21,7 @@ export function ContainerOuter({
 }: React.ComponentPropsWithoutRef<"div"> & {
   component?: React.ElementType;
 }) {
-  return (
-    <Component className={className} {...props}>
-      {children}
-    </Component>
-  );
+  return React.createElement(Component, { className, ...props }, children);
 }
 
 interface ContainerProps extends React.ComponentPropsWithoutRef<"div"> {
