@@ -17,7 +17,7 @@ const experiences = [
     current: true,
     tags: ["C++", "Ada", "Real-time", "Docker"],
     summary:
-      "Production C++ and Ada features for real-time message streams, automated tests, and Dockerized builds. Own integration and release readiness for shared systems consumed by 60+ modules.",
+      "Building real-time C++ and Ada features, automated tests, Dockerized builds, and release workflows for shared systems used by 60+ modules.",
   },
   {
     company: "Expedia Group",
@@ -39,7 +39,7 @@ const experiences = [
     current: false,
     tags: ["Python", "R", "Graph Algos", "Data Viz"],
     summary:
-      "Computational genomics: analyzed 16,813 genes across 169 phenotypes with Python/R and graph traversal to surface rare-disease candidates.",
+      "Analyzed 16,813 genes across 169 phenotypes with Python/R and graph traversal, helping surface rare-disease candidates from computational genomics data.",
   },
 ];
 
@@ -55,7 +55,7 @@ export function ExperienceSection() {
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           number="03 // EXPERIENCE"
-          label="Work History"
+          label="Experience"
           title={
             <>
               Work
@@ -63,14 +63,14 @@ export function ExperienceSection() {
               <span className="text-primary">History_</span>
             </>
           }
-          description="Production systems, consumer product features, and data-heavy research."
+          description="Places where I have shipped production features, learned quickly, and gone deep with the systems around me."
         />
 
         <div className="grid lg:grid-cols-[280px_1fr] gap-6 mt-12">
           <div className="space-y-3">
             <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
               <span className="h-px w-6 bg-primary" />
-              Select Role
+              Explore Roles
             </div>
             {experiences.map((exp, i) => {
               const isActive = i === selected;

@@ -54,17 +54,17 @@ const interests: Interest[] = [
   {
     code: "02",
     label: "Cooking",
-    description: "Process, taste, and quick iteration",
+    description: "Cooking for family and testing new recipes",
   },
   {
     code: "03",
     label: "Volleyball",
-    description: "Competitive reps away from the keyboard",
+    description: "Competitive rallies away from the keyboard",
   },
   {
     code: "04",
     label: "Gaming",
-    description: "Pokémon enthusiast and sharp shooter in Valorant",
+    description: "Pokemon and Valorant",
   },
 ];
 
@@ -159,10 +159,13 @@ export default function Home() {
                 className="mt-6 max-w-lg space-y-4"
               >
                 <p className="text-lg text-foreground/90">
-                  Software engineer focused on backend systems, AI/ML, and
-                  full-stack product engineering. Current SWE at{" "}
+                  I&apos;m a software engineer who enjoys turning complex
+                  systems into dependable tools: backend services, AI/ML
+                  pipelines, and polished full-stack products. I&apos;m
+                  currently at{" "}
                   <span className="text-primary font-medium">Boeing</span>,
-                  former Expedia SDE intern, UIUC CS &amp; Chemistry alum.
+                  previously interned at Expedia, and studied CS &amp; Chemistry
+                  at UIUC.
                 </p>
                 <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground uppercase tracking-widest">
                   <MapPin className="h-3 w-3 text-primary" />
@@ -182,7 +185,7 @@ export default function Home() {
                 >
                   <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                   <span className="relative z-10 inline-flex items-center gap-2">
-                    View Work <ArrowRight className="h-3 w-3" />
+                    Explore Work <ArrowRight className="h-3 w-3" />
                   </span>
                 </Link>
                 <button
@@ -193,7 +196,7 @@ export default function Home() {
                   className="inline-flex items-center gap-2 h-12 px-6 tactical-shape border border-primary/40 hover:border-primary text-primary font-mono text-xs uppercase tracking-[0.25em] transition-colors"
                 >
                   <Send className="h-3 w-3" />
-                  Get in Touch
+                  Say Hello
                 </button>
                 <div className="flex items-center gap-1 ml-2">
                   <a
@@ -353,7 +356,6 @@ export default function Home() {
               </div>
             </m.div>
           </div>
-
         </section>
 
         <section
@@ -438,7 +440,7 @@ export default function Home() {
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-6 flex items-center gap-3">
                   <span className="h-px w-6 bg-primary" />
-                  Beyond Code
+                  After Hours
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {interests.map((item, i) => (
@@ -489,15 +491,15 @@ export default function Home() {
           <div className="mx-auto max-w-7xl">
             <SectionHeader
               number="05 // CONTACT"
-              label="Get in Touch"
+              label="Say Hello"
               title={
                 <>
                   Let&apos;s
                   <br />
-                  <span className="text-primary">Talk_</span>
+                  <span className="text-primary">Chat_</span>
                 </>
               }
-              description="Open to backend, AI/ML, GenAI, frontend, and full-stack SWE roles."
+              description="Always happy to talk about backend, AI/ML, GenAI, frontend, and full-stack SWE opportunities."
             />
 
             <div className="grid lg:grid-cols-2 gap-6 mt-12">
@@ -568,7 +570,7 @@ export default function Home() {
                     </div>
                     <div className="flex-1">
                       <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-1">
-                        Open Source
+                        Code
                       </div>
                       <div className="font-display text-xl uppercase group-hover:text-primary transition-colors">
                         GitHub
@@ -606,9 +608,7 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="uppercase tracking-widest">
-                        Response Time
-                      </span>
+                      <span className="uppercase tracking-widest">Reply</span>
                       <span className="uppercase tracking-widest">
                         {"< 24h"}
                       </span>
@@ -616,7 +616,7 @@ export default function Home() {
                     <div className="flex justify-between">
                       <span className="uppercase tracking-widest">Open to</span>
                       <span className="uppercase tracking-widest">
-                        Backend / AI / Full-Stack
+                        Backend / AI / Full-Stack / SWE
                       </span>
                     </div>
                   </div>
@@ -651,7 +651,7 @@ export default function Home() {
               <span className="tactical-dot" />
               <span>© {new Date().getFullYear()} Vincent Do</span>
               <span className="hidden md:inline text-primary/60">›</span>
-              <span className="hidden md:inline">All Rights Reserved</span>
+              <span className="hidden md:inline">All Rights Reservered</span>
             </div>
             <div className="flex items-center gap-2">
               <span>v1.0.0</span>
