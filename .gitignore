@@ -58,3 +58,10 @@ dist
 # Focus app generated files
 apps/focus/dist/
 apps/focus/temp_*/
+
+# local package-manager cache (review tooling artifact)
+.pnpm-store/
+
+# personal source docs — not for deployment
+Vincent_Do_Resume.pdf
+vincent_do_achievement_bank_2.json

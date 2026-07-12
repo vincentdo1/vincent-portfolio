@@ -1,159 +1,136 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
-import { m, AnimatePresence } from "framer-motion";
-import { ExternalLink, Clock, RotateCcw } from "lucide-react";
+import { ExternalLink, Github, Clock, Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/valorant/section-header";
 import { CornerBrackets } from "@/components/valorant/corner-brackets";
 import { AirportGlobe } from "@/components/globe/airport-globe-dynamic";
-import { GLOBE_CDN } from "@/components/globe/constants";
-
-type Project = {
-  title: string;
-  code: string;
-  classification: string;
-  description: string;
-  tags: string[];
-  image: string;
-  video?: string;
-  globe?: boolean;
-  link: string;
-  repo: string;
-  stats: { label: string; value: string }[];
-  upcoming?: boolean;
-};
-
-const projects: Project[] = [
-  {
-    title: "Playable Chess AI",
-    code: "AI-001",
-    classification: "ML // GAMES",
-    description:
-      "Trained a CNN+LSTM legal move-policy model on 4.18M GM/Magnus positions, reaching 71.2% top-5 accuracy. Built a CUDA/PyTorch pipeline that cut epoch time from 20+ hours on CPU to 15-25 minutes.",
-    tags: ["Python", "PyTorch", "CUDA", "Flask", "Stockfish"],
-    image: "/projects/chess-network-poster.png",
-    video: "/projects/chess-network.mp4",
-    link: "https://vincentdo1.github.io/playable-chess-AI/",
-    repo: "https://github.com/vincentdo1/playable-chess-AI",
-    stats: [
-      { label: "Architecture", value: "CNN/LSTM" },
-      { label: "Train Set", value: "4.18M" },
-      { label: "Optimization", value: "60x" },
-    ],
-  },
-  {
-    title: "Exploding Chickens",
-    code: "GM-002",
-    classification: "REAL-TIME // BACKEND",
-    description:
-      "Real-time multiplayer card game with asynchronous Node.js game logic and persistent MongoDB session state. Kept gameplay consistent across concurrent players with 1600+ games played.",
-    tags: ["Node.js", "MongoDB", "Real-time"],
-    image: "/project-placeholder-2.jpg",
-    link: "https://chickens.rakerman.com",
-    repo: "#",
-    stats: [
-      { label: "Games", value: "1600+" },
-      { label: "Backend", value: "Node.js" },
-      { label: "Storage", value: "MongoDB" },
-    ],
-  },
-  {
-    title: "Volleyball Motion Tracker",
-    code: "CV-003",
-    classification: "COMPUTER VISION // SPORTS",
-    description:
-      "In-progress computer-vision pipeline for volleyball footage: player position, ball trajectory, and spike-performance tracking with YOLOv8 and OpenCV.",
-    tags: ["Python", "YOLOv8", "Ultralytics", "OpenCV", "Computer Vision"],
-    image: "/project-placeholder-3.jpg",
-    video: "/projects/volleyball-tracker.mp4",
-    link: "#",
-    repo: "#",
-    upcoming: true,
-    stats: [
-      { label: "Status", value: "WIP" },
-      { label: "Stack", value: "YOLOv8" },
-      { label: "Type", value: "CV" },
-    ],
-  },
-  {
-    title: "Airport Paths",
-    code: "GR-004",
-    classification: "GRAPH // VISUALIZATION",
-    description:
-      "BFS, Floyd-Warshall, and betweenness centrality applied to 14,110 airports and 37,595 routes, rendered on an interactive WebGL globe.",
-    tags: ["C++", "React", "WebGL"],
-    image: "/project-placeholder-3.jpg",
-    globe: true,
-    link: "https://vincentdo1.github.io/airports-paths/",
-    repo: "#",
-    stats: [
-      { label: "Airports", value: "14110" },
-      { label: "Paths", value: "37595" },
-      { label: "Render", value: "WebGL" },
-    ],
-  },
-  /*{
-    title: "Shafa API",
-    code: "API-005",
-    classification: "BACKEND // API",
-    description:
-      "Developing REST API for items and outfits built with Hono.js, Drizzle ORM, PostgreSQL/Neon, and Cloudflare Workers. Added smoke tests and local database tooling for release confidence.",
-    tags: ["TypeScript", "Hono.js", "PostgreSQL", "Cloudflare"],
-    image: "/project-placeholder-1.jpg",
-    link: "https://shafa.app",
-    repo: "#",
-    stats: [
-      { label: "API", value: "REST" },
-      { label: "DB", value: "Neon" },
-      { label: "Runtime", value: "Workers" },
-    ],
-  },*/
-];
-
-function preloadGlobe() {
-  void import("@/components/globe/airport-globe");
-  [
-    { as: "script", href: GLOBE_CDN },
-    { as: "image", href: "/projects/earth-night.jpg" },
-    { as: "fetch", href: "/projects/airport-nodes.json" },
-    { as: "fetch", href: "/projects/airport-arcs-preview.json" },
-  ].forEach(({ as, href }) => {
-    const exists = Array.from(
-      document.head.querySelectorAll<HTMLLinkElement>('link[rel="prefetch"]'),
-    ).some((link) => link.getAttribute("href") === href);
-    if (exists) return;
-
-    const link = document.createElement("link");
-    link.rel = "prefetch";
-    link.as = as;
-    link.href = href;
-    if (as === "fetch") link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-  });
-}
+import { projects } from "@/lib/content";
 
 let globePreloaded = false;
 function onGlobeButtonHover() {
-  if (globePreloaded) return;
+  if (globePreloaded || getStaticMediaSnapshot()) return;
   globePreloaded = true;
-  preloadGlobe();
+  import("@/components/globe/airport-globe").catch(() => {});
+  import("globe.gl").catch(() => {});
+}
+
+// Reduced motion or Save-Data: posters instead of autoplaying media.
+// SSR snapshot defaults to static so server HTML never embeds heavy media.
+function subscribeStaticMedia(cb: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
+
+function getStaticMediaSnapshot() {
+  return (
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    (navigator as Navigator & { connection?: { saveData?: boolean } })
+      .connection?.saveData === true
+  );
 }
 
 export function ProjectsSection() {
   const [selected, setSelected] = useState(0);
+  const [mediaEnabled, setMediaEnabled] = useState(false);
+  const [videoPaused, setVideoPaused] = useState(false);
+  const staticMedia = useSyncExternalStore(
+    subscribeStaticMedia,
+    getStaticMediaSnapshot,
+    () => true,
+  );
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const current = projects[selected];
+
+  // Only attach video/WebGL once the section approaches the viewport.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        // Edge-adjacent boxes report isIntersecting with ratio 0 — when the
+        // section starts exactly at the hero fold, that would load media on
+        // initial navigation. Require real visibility.
+        if (entry && entry.isIntersecting && entry.intersectionRatio >= 0.02) {
+          setMediaEnabled(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.02 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const showVideo =
+    mediaEnabled && !staticMedia && current.video && !current.globe;
+  const showGlobe = mediaEnabled && current.globe && !staticMedia;
+
+  // Pause the video offscreen or in a hidden tab; respect an explicit pause.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    let inView = true;
+    const sync = () => {
+      if (inView && !videoPaused && document.visibilityState === "visible") {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    };
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry?.isIntersecting ?? false;
+        sync();
+      },
+      { threshold: 0.1 },
+    );
+    io.observe(video);
+    document.addEventListener("visibilitychange", sync);
+    sync();
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, [videoPaused, showVideo, current.slug]);
+
+  const selectProject = (i: number) => {
+    setSelected(i);
+    setVideoPaused(false);
+  };
+
+  const onTabKeyDown = (e: React.KeyboardEvent) => {
+    // The tablist is horizontal below lg; vertical arrows there must keep
+    // scrolling the page.
+    const vertical = window.matchMedia("(min-width: 1024px)").matches;
+    let next: number | null = null;
+    if (e.key === "ArrowRight" || (vertical && e.key === "ArrowDown"))
+      next = (selected + 1) % projects.length;
+    if (e.key === "ArrowLeft" || (vertical && e.key === "ArrowUp"))
+      next = (selected - 1 + projects.length) % projects.length;
+    if (e.key === "Home") next = 0;
+    if (e.key === "End") next = projects.length - 1;
+    if (next === null) return;
+    e.preventDefault();
+    selectProject(next);
+    tabRefs.current[next]?.focus();
+  };
 
   return (
     <section
-      id="projects"
-      className="relative content-auto py-24 border-t border-border/60 px-safe"
+      id="work"
+      ref={sectionRef}
+      className="relative content-auto py-16 sm:py-24 lg:py-32 border-t border-border/60 px-safe"
     >
       <div className="mx-auto max-w-7xl">
         <SectionHeader
-          number="04 // PROJECTS"
-          label="Featured"
+          number="01"
+          label="Projects"
           title={
             <>
               Selected
@@ -161,99 +138,167 @@ export function ProjectsSection() {
               <span className="text-primary">Works_</span>
             </>
           }
-          description="Focused projects across ML, backend APIs, real-time systems, and data visualization."
+          description="Focused projects across ML, real-time systems, and data visualization."
         />
 
-        <div className="grid lg:grid-cols-[1fr_300px] gap-6 mt-12">
-          <div className="relative border border-border/60 bg-card/30 overflow-hidden">
-            <CornerBrackets size={14} thickness={1.5} />
-
-            <AnimatePresence mode="wait">
-              <m.div
-                key={current.code}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="grid"
-              >
-                <div className="relative aspect-[16/9] overflow-hidden border-b border-border/60 bg-secondary">
-                  {current.globe ? (
-                    <AirportGlobe />
-                  ) : current.video ? (
-                    <video
-                      key={current.code}
-                      src={current.video}
-                      poster={current.image}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="metadata"
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Image
-                      src={current.image}
-                      alt={current.title}
-                      fill
-                      sizes="(min-width: 1280px) 860px, (min-width: 1024px) calc(100vw - 380px), calc(100vw - 2rem)"
-                      quality={75}
-                      className="object-cover grayscale opacity-50"
-                    />
+        <div
+          className="grid gap-4 lg:grid-cols-[1fr_300px] lg:gap-6 mt-12"
+          data-reveal
+        >
+          {/* Selector rail: horizontal scroll on mobile, vertical on desktop */}
+          <div
+            role="tablist"
+            aria-label="Projects"
+            className="order-first lg:order-last flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 lg:flex-col lg:gap-3 lg:overflow-visible lg:pb-0"
+          >
+            {projects.map((p, i) => {
+              const isActive = i === selected;
+              return (
+                <button
+                  key={p.slug}
+                  ref={(el) => {
+                    tabRefs.current[i] = el;
+                  }}
+                  role="tab"
+                  id={`project-tab-${p.slug}`}
+                  aria-selected={isActive}
+                  aria-controls="project-panel"
+                  tabIndex={isActive ? 0 : -1}
+                  onClick={() => selectProject(i)}
+                  onKeyDown={onTabKeyDown}
+                  onMouseEnter={p.globe ? onGlobeButtonHover : undefined}
+                  onFocus={p.globe ? onGlobeButtonHover : undefined}
+                  className={cn(
+                    "shrink-0 min-w-[220px] lg:min-w-0 lg:w-full text-left p-4 border transition-colors duration-200 tactical-chip",
+                    isActive
+                      ? "bg-primary/10 border-primary"
+                      : p.upcoming
+                        ? "bg-card/20 border-dashed border-border/60 hover:border-primary/40"
+                        : "bg-card/40 border-border/60 hover:border-primary/40 hover:bg-card",
                   )}
+                >
                   <div
                     className={cn(
-                      "absolute inset-0 pointer-events-none",
-                      current.globe
-                        ? "bg-gradient-to-tr from-background/60 via-background/10 to-transparent"
-                        : "bg-gradient-to-tr from-background via-background/40 to-transparent",
+                      "font-mono text-xs tracking-widest mb-1",
+                      isActive ? "text-primary" : "text-muted-foreground",
                     )}
-                  />
-
-                  {current.globe && (
-                    <div className="hidden sm:flex absolute bottom-[5.5rem] right-4 items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-primary/50 pointer-events-none select-none">
-                      <RotateCcw className="h-2.5 w-2.5" />
-                      Drag to rotate
-                    </div>
-                  )}
-
-                  <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-start gap-2">
-                    <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                      <div className="flex items-center gap-2 min-w-0 max-w-full font-mono text-[10px] uppercase tracking-[0.25em] text-primary">
-                        <span className="tactical-dot animate-pulse-dot shrink-0" />
-                        <span className="truncate">
-                          {current.classification}
-                        </span>
-                      </div>
-                      {current.upcoming && (
-                        <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.25em] px-2 py-0.5 bg-primary/10 border border-primary/40 text-primary">
-                          <Clock className="h-3 w-3" />
-                          In Development
-                        </div>
-                      )}
-                    </div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground shrink-0">
-                      {current.code}
-                    </div>
+                  >
+                    {p.code}
                   </div>
+                  <div
+                    className={cn(
+                      "font-display text-lg uppercase leading-tight",
+                      isActive
+                        ? "text-foreground"
+                        : p.upcoming
+                          ? "text-foreground/60"
+                          : "text-foreground/80",
+                    )}
+                  >
+                    {p.title}
+                  </div>
+                  <div className="text-xs font-mono text-muted-foreground mt-0.5 uppercase tracking-wider">
+                    {p.classification}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
 
-                  <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
-                    <h3 className="font-display text-2xl sm:text-3xl md:text-5xl lg:text-6xl uppercase leading-[0.95] text-foreground break-words">
-                      {current.title}
-                    </h3>
+          {/* Detail card */}
+          <div
+            id="project-panel"
+            role="tabpanel"
+            aria-labelledby={`project-tab-${current.slug}`}
+            tabIndex={0}
+            className="relative border border-border/60 bg-card/30 overflow-hidden"
+          >
+            <CornerBrackets size={14} thickness={1.5} />
+
+            <div key={current.slug} className="grid panel-fade">
+              <div className="relative aspect-[16/9] overflow-hidden border-b border-border/60 bg-secondary">
+                {showGlobe ? (
+                  <AirportGlobe />
+                ) : showVideo && current.video ? (
+                  <video
+                    ref={videoRef}
+                    poster={current.image}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  >
+                    {current.video.webm && (
+                      <source src={current.video.webm} type="video/webm" />
+                    )}
+                    <source src={current.video.mp4} type="video/mp4" />
+                  </video>
+                ) : (
+                  <Image
+                    src={current.image}
+                    alt={current.imageAlt}
+                    fill
+                    sizes="(min-width: 1280px) 860px, (min-width: 1024px) calc(100vw - 380px), calc(100vw - 2rem)"
+                    quality={75}
+                    className="object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-background/85 via-background/10 to-background/70" />
+
+                <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-start gap-2">
+                  <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                    <div className="flex items-center gap-2 min-w-0 max-w-full font-mono text-xs uppercase tracking-[0.25em] text-primary">
+                      <span className="tactical-dot shrink-0" />
+                      <span className="truncate">{current.classification}</span>
+                    </div>
+                    {current.upcoming && (
+                      <div className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-[0.2em] px-2 py-0.5 bg-primary/10 border border-primary/40 text-primary">
+                        <Clock className="h-3 w-3" />
+                        In development
+                      </div>
+                    )}
+                  </div>
+                  <div className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground shrink-0">
+                    {current.code}
                   </div>
                 </div>
 
-                <div className="p-4 sm:p-6 lg:p-8 grid gap-5 sm:gap-6">
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    {current.description}
-                  </p>
+                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
+                  <h3 className="font-display text-2xl sm:text-3xl md:text-5xl lg:text-6xl uppercase leading-[0.95] text-foreground break-words">
+                    {current.title}
+                  </h3>
+                </div>
 
-                  <div className="grid grid-cols-3 gap-2 sm:gap-3 border-y border-border/60 py-4">
+                {showVideo && (
+                  <button
+                    type="button"
+                    onClick={() => setVideoPaused((p) => !p)}
+                    aria-label={
+                      videoPaused ? "Play project video" : "Pause project video"
+                    }
+                    className="absolute top-14 right-3 sm:top-16 sm:right-4 z-10 flex h-11 w-11 items-center justify-center border border-border/70 bg-background/70 text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary hover:text-primary"
+                  >
+                    {videoPaused ? (
+                      <Play className="h-4 w-4" />
+                    ) : (
+                      <Pause className="h-4 w-4" />
+                    )}
+                  </button>
+                )}
+              </div>
+
+              <div className="p-4 sm:p-6 lg:p-8 grid gap-5 sm:gap-6">
+                <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">
+                  {current.description}
+                </p>
+
+                {current.stats.length > 0 && (
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 border-y border-border/60 py-4">
                     {current.stats.map((stat) => (
                       <div key={stat.label} className="min-w-0">
-                        <div className="font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-muted-foreground mb-1 truncate">
+                        <div className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground mb-1">
                           {stat.label}
                         </div>
                         <div className="font-display text-base sm:text-xl md:text-2xl text-primary leading-none">
@@ -262,107 +307,51 @@ export function ProjectsSection() {
                       </div>
                     ))}
                   </div>
+                )}
 
-                  <div className="flex items-end justify-between gap-4 flex-wrap">
-                    <div className="flex flex-wrap gap-2">
-                      {current.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 bg-secondary/60 border border-border tactical-chip text-muted-foreground"
-                        >
-                          {tag}
+                <div className="flex items-end justify-between gap-4 flex-wrap">
+                  <div className="flex flex-wrap gap-2">
+                    {current.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="font-mono text-xs uppercase tracking-wider px-2.5 py-1 bg-secondary/60 border border-border tactical-chip text-muted-foreground"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {current.repo && (
+                      <a
+                        href={current.repo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 h-11 px-4 tactical-chip border border-border hover:border-primary hover:text-primary text-muted-foreground font-mono text-xs uppercase tracking-[0.2em] transition-colors"
+                      >
+                        <Github className="h-3 w-3" />
+                        Source
+                        <span className="sr-only">
+                          for {current.title} (opens in new tab)
                         </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      {current.upcoming ? (
-                        <span className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-dashed border-primary/40 text-muted-foreground font-mono text-[10px] uppercase tracking-[0.2em]">
-                          <Clock className="h-3 w-3" />
-                          Coming Soon
+                      </a>
+                    )}
+                    {current.link && (
+                      <a
+                        href={current.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 h-11 px-4 tactical-chip bg-primary text-primary-foreground font-mono text-xs uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
+                      >
+                        Live project <ExternalLink className="h-3 w-3" />
+                        <span className="sr-only">
+                          {current.title} (opens in new tab)
                         </span>
-                      ) : current.link !== "#" ? (
-                        <a
-                          href={current.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 h-9 px-4 tactical-chip bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[0.2em] hover:bg-primary/90 transition-colors"
-                        >
-                          Visit Site <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        <span className="inline-flex items-center gap-2 h-9 px-4 tactical-chip border border-dashed border-border text-muted-foreground font-mono text-[10px] uppercase tracking-[0.2em]">
-                          <Clock className="h-3 w-3" />
-                          Not Deployed
-                        </span>
-                      )}
-                    </div>
+                      </a>
+                    )}
                   </div>
                 </div>
-              </m.div>
-            </AnimatePresence>
-          </div>
-
-          <div className="space-y-3">
-            <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center gap-3">
-              <span className="h-px w-6 bg-primary" />
-              All Projects
+              </div>
             </div>
-            {projects.map((p, i) => {
-              const isActive = i === selected;
-              return (
-                <m.button
-                  key={p.code}
-                  onClick={() => setSelected(i)}
-                  onMouseEnter={p.globe ? onGlobeButtonHover : undefined}
-                  onFocus={p.globe ? onGlobeButtonHover : undefined}
-                  whileHover={{ x: -4 }}
-                  transition={{ duration: 0.15 }}
-                  className={cn(
-                    "w-full text-left relative p-4 border transition-all duration-200 tactical-chip",
-                    isActive
-                      ? "bg-primary/10 border-primary glow-primary"
-                      : p.upcoming
-                        ? "bg-card/20 border-dashed border-border/60 hover:border-primary/40"
-                        : "bg-card/40 border-border/60 hover:border-primary/40 hover:bg-card",
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span
-                          className={cn(
-                            "font-mono text-[10px] tracking-widest",
-                            isActive ? "text-primary" : "text-muted-foreground",
-                          )}
-                        >
-                          {p.code}
-                        </span>
-                        {p.upcoming && (
-                          <span className="font-mono text-[9px] uppercase tracking-widest text-primary/80">
-                            <Clock className="h-2.5 w-2.5 inline" /> Soon
-                          </span>
-                        )}
-                      </div>
-                      <div
-                        className={cn(
-                          "font-display text-lg uppercase leading-tight",
-                          isActive
-                            ? "text-foreground"
-                            : p.upcoming
-                              ? "text-foreground/60"
-                              : "text-foreground/80",
-                        )}
-                      >
-                        {p.title}
-                      </div>
-                      <div className="text-[10px] font-mono text-muted-foreground mt-0.5 uppercase tracking-wider">
-                        {p.classification}
-                      </div>
-                    </div>
-                  </div>
-                </m.button>
-              );
-            })}
           </div>
         </div>
       </div>

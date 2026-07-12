@@ -7,14 +7,89 @@ const FROM_EMAIL =
   process.env.RESEND_FROM_EMAIL || "Portfolio <onboarding@resend.dev>";
 const TO_EMAIL = process.env.RESEND_TO_EMAIL || "vincentdo306@gmail.com";
 
+const MAX_BODY_BYTES = 16 * 1024;
+const MAX_NAME = 200;
+const MAX_EMAIL = 320;
+const MAX_MESSAGE = 5000;
+const ALLOWED_FIELDS = new Set(["name", "email", "message", "company"]);
+const SEND_TIMEOUT_MS = 10_000;
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const urlInTextRegex = /(https?:\/\/|www\.)/i;
+// CR, LF, null bytes, and other C0/C1 control characters
+const controlCharRegex = /[\u0000-\u001F\u007F-\u009F]/;
+
+const MX_CACHE_MAX_ENTRIES = 256;
 const mxCache = new Map<string, { value: boolean; expiresAt: number }>();
 const mxCacheTtlMs = 1000 * 60 * 60;
 
 const disposableDomains = new Set<string>(
   disposableDomainsList.map((d) => d.toLowerCase()),
 );
+
+const baseHeaders = {
+  "Cache-Control": "no-store",
+  "X-Robots-Tag": "noindex",
+  "X-Content-Type-Options": "nosniff",
+};
+
+function json(body: Record<string, unknown>, status = 200) {
+  return NextResponse.json(body, { status, headers: baseHeaders });
+}
+
+export function GET() {
+  return new NextResponse(null, {
+    status: 405,
+    headers: { ...baseHeaders, Allow: "POST" },
+  });
+}
+
+function newCorrelationId() {
+  return crypto.randomUUID().slice(0, 8);
+}
+
+async function readBodyWithLimit(
+  req: Request,
+  limit: number,
+): Promise<string | null> {
+  const declared = Number(req.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > limit) return null;
+
+  if (!req.body) return "";
+  const reader = req.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let received = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    received += value.byteLength;
+    if (received > limit) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+  const merged = new Uint8Array(received);
+  let offset = 0;
+  for (const chunk of chunks) {
+    merged.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder().decode(merged);
+}
+
+function isSameOrigin(req: Request): boolean {
+  const origin = req.headers.get("origin");
+  // Non-browser clients may omit Origin; only enforce when present.
+  if (!origin) return true;
+  const host = req.headers.get("host");
+  if (!host) return false;
+  try {
+    return new URL(origin).host === host;
+  } catch {
+    return false;
+  }
+}
 
 async function domainHasMx(domain: string): Promise<boolean> {
   const cached = mxCache.get(domain);
@@ -31,6 +106,10 @@ async function domainHasMx(domain: string): Promise<boolean> {
     if (!res.ok) return true;
     const data = (await res.json()) as { Answer?: unknown[] };
     const value = Array.isArray(data.Answer) && data.Answer.length > 0;
+    if (mxCache.size >= MX_CACHE_MAX_ENTRIES) {
+      const oldest = mxCache.keys().next().value;
+      if (oldest !== undefined) mxCache.delete(oldest);
+    }
     mxCache.set(domain, { value, expiresAt: Date.now() + mxCacheTtlMs });
     return value;
   } catch {
@@ -39,36 +118,52 @@ async function domainHasMx(domain: string): Promise<boolean> {
 }
 
 export async function POST(req: Request) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      {
-        error:
-          "Email service not configured. Set RESEND_API_KEY in .env.local.",
-      },
-      { status: 500 },
-    );
+  const correlationId = newCorrelationId();
+
+  if (!isSameOrigin(req)) {
+    return json({ error: "Request rejected.", correlationId }, 403);
+  }
+
+  const mediaType =
+    req.headers.get("content-type")?.split(";")[0].trim().toLowerCase() ?? "";
+  if (mediaType !== "application/json") {
+    return json({ error: "Unsupported content type.", correlationId }, 415);
+  }
+
+  const raw = await readBodyWithLimit(req, MAX_BODY_BYTES);
+  if (raw === null) {
+    return json({ error: "Request body too large.", correlationId }, 413);
   }
 
   let body: unknown;
   try {
-    body = await req.json();
+    body = JSON.parse(raw);
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+    return json({ error: "Invalid JSON body.", correlationId }, 400);
   }
 
-  const { name, email, message, company, openedAt } = (body ?? {}) as Record<
-    string,
-    unknown
-  >;
-
-  if (typeof company === "string" && company.trim())
-    return NextResponse.json({ ok: true });
-  if (typeof openedAt === "number" && Date.now() - openedAt < 2000)
-    return NextResponse.json({ ok: true });
-  if (typeof name === "string" && urlInTextRegex.test(name)) {
-    return NextResponse.json({ ok: true });
+  if (typeof body !== "object" || body === null || Array.isArray(body)) {
+    return json({ error: "Invalid JSON body.", correlationId }, 400);
   }
+
+  const record = body as Record<string, unknown>;
+  for (const key of Object.keys(record)) {
+    if (!ALLOWED_FIELDS.has(key)) {
+      return json(
+        { error: "Unexpected field in request.", correlationId },
+        400,
+      );
+    }
+  }
+
+  const { name, email, message, company } = record;
+
+  // Bot signals: honeypot field, URLs in the name field. Respond success
+  // without sending so bots learn nothing. No timing heuristics — autofill
+  // makes legitimate sub-second submissions common.
+  if (typeof company === "string" && company.trim()) return json({ ok: true });
+  if (typeof name === "string" && urlInTextRegex.test(name))
+    return json({ ok: true });
 
   if (
     typeof name !== "string" ||
@@ -78,82 +173,109 @@ export async function POST(req: Request) {
     !email.trim() ||
     !message.trim()
   ) {
-    return NextResponse.json(
-      { error: "Name, email, and message are required." },
-      { status: 400 },
+    return json(
+      { error: "Name, email, and message are required.", correlationId },
+      400,
     );
   }
 
-  const cleanName = name.trim();
-  const cleanEmail = email.trim();
+  const cleanName = name.trim().normalize("NFC");
+  const cleanEmail = email.trim().normalize("NFC");
   const cleanMessage = message.trim();
 
+  if (controlCharRegex.test(cleanName) || controlCharRegex.test(cleanEmail)) {
+    return json(
+      { error: "Name or email contains invalid characters.", correlationId },
+      400,
+    );
+  }
+
   if (!emailRegex.test(cleanEmail)) {
-    return NextResponse.json(
-      { error: "Please provide a valid email address." },
-      { status: 400 },
+    return json(
+      { error: "Please provide a valid email address.", correlationId },
+      400,
     );
   }
 
   if (
-    cleanName.length > 200 ||
-    cleanEmail.length > 320 ||
-    cleanMessage.length > 5000
+    cleanName.length > MAX_NAME ||
+    cleanEmail.length > MAX_EMAIL ||
+    cleanMessage.length > MAX_MESSAGE
   ) {
-    return NextResponse.json(
-      { error: "One of the fields is too long." },
-      { status: 400 },
+    return json(
+      { error: "One of the fields is too long.", correlationId },
+      400,
     );
   }
 
   const emailDomain = cleanEmail.split("@")[1]?.toLowerCase() ?? "";
 
   if (disposableDomains.has(emailDomain)) {
-    return NextResponse.json(
+    return json(
       {
         error:
           "Please use a real email address — disposable addresses aren't accepted.",
+        correlationId,
       },
-      { status: 400 },
+      400,
     );
   }
 
   if (!(await domainHasMx(emailDomain))) {
-    return NextResponse.json(
+    return json(
       {
-        error: `That email domain (${emailDomain}) doesn't appear to receive mail. Please double-check the address.`,
+        error:
+          "That email domain doesn't appear to receive mail. Please double-check the address.",
+        correlationId,
       },
-      { status: 400 },
+      400,
+    );
+  }
+
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error(`[contact] ${correlationId} email service not configured`);
+    return json(
+      { error: "Message could not be sent right now.", correlationId },
+      500,
     );
   }
 
   try {
     const resend = new Resend(apiKey);
-    const result = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: TO_EMAIL,
-      replyTo: cleanEmail,
-      subject: `Portfolio: message from ${cleanName}`,
-      text: `From: ${cleanName} <${cleanEmail}>\n\n${cleanMessage}`,
-    });
+    const result = await Promise.race([
+      resend.emails.send({
+        from: FROM_EMAIL,
+        to: TO_EMAIL,
+        replyTo: cleanEmail,
+        subject: `Portfolio: message from ${cleanName}`,
+        text: `From: ${cleanName} <${cleanEmail}>\n\n${cleanMessage}`,
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("SendTimeout")), SEND_TIMEOUT_MS),
+      ),
+    ]);
 
     if (result.error) {
-      console.error("[contact] resend error:", result.error);
-      return NextResponse.json(
-        {
-          error: result.error.message || "Email provider rejected the message.",
-        },
-        { status: 502 },
+      // Log provider error name only — never submitted content.
+      console.error(
+        `[contact] ${correlationId} provider error: ${result.error.name}`,
+      );
+      return json(
+        { error: "Message could not be sent right now.", correlationId },
+        502,
       );
     }
 
-    return NextResponse.json({ ok: true });
+    return json({ ok: true });
   } catch (e) {
-    console.error("[contact] unexpected error:", e);
-    const msg = e instanceof Error ? e.message : "Unknown error";
-    return NextResponse.json(
-      { error: `Failed to send: ${msg}` },
-      { status: 500 },
+    console.error(
+      `[contact] ${correlationId} unexpected error:`,
+      e instanceof Error ? e.name : "unknown",
+    );
+    return json(
+      { error: "Message could not be sent right now.", correlationId },
+      500,
     );
   }
 }

@@ -21,11 +21,11 @@ export function CornerBrackets({
   };
 
   return (
-    <div className={cn("pointer-events-none absolute inset-0", className)} aria-hidden>
-      <span
-        className="absolute top-0 left-0 border-t border-l"
-        style={style}
-      />
+    <div
+      className={cn("pointer-events-none absolute inset-0", className)}
+      aria-hidden
+    >
+      <span className="absolute top-0 left-0 border-t border-l" style={style} />
       <span
         className="absolute top-0 right-0 border-t border-r"
         style={style}

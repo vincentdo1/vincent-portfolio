@@ -1,21 +1,19 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { m, AnimatePresence } from "framer-motion";
 import { X, Send, Mail, Loader2, AlertCircle } from "lucide-react";
-import { CornerBrackets } from "@/components/valorant/corner-brackets";
 import { cn } from "@/lib/utils";
+import { site } from "@/lib/content";
 
 interface ContactDialogProps {
   open: boolean;
   onClose: () => void;
 }
 
-const RECIPIENT = "vincentdo306@gmail.com";
-
 type Status = "idle" | "sending" | "sent" | "error";
 
 export function ContactDialog({ open, onClose }: ContactDialogProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -24,20 +22,21 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
   });
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const sending = status === "sending";
 
-  const openedAtRef = useRef<number>(0);
   useEffect(() => {
-    if (open) openedAtRef.current = Date.now();
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open && !dialog.open) {
+      dialog.showModal();
+      // Form dialogs focus their first field (WAI-ARIA dialog pattern);
+      // showModal would otherwise land on the close button.
+      dialog.querySelector<HTMLInputElement>("#contact-name")?.focus();
+    } else if (!open && dialog.open) {
+      dialog.close();
+    }
   }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && status !== "sending") onClose();
-    };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [open, onClose, status]);
 
   useEffect(() => {
     if (!open) return;
@@ -56,249 +55,250 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (status === "sending") return;
+    if (sending) return;
     setStatus("sending");
     setErrorMsg(null);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+    const timeout = setTimeout(() => controller.abort("timeout"), 15_000);
 
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, openedAt: openedAtRef.current }),
+        body: JSON.stringify(form),
+        signal: controller.signal,
       });
       const data = (await res.json().catch(() => ({}))) as {
         error?: string;
       };
 
       if (!res.ok) {
-        setErrorMsg(data.error || `Request failed (${res.status})`);
+        setErrorMsg(data.error || "Something went wrong. Please try again.");
         setStatus("error");
         return;
       }
       setStatus("sent");
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Network error";
-      setErrorMsg(msg);
+    } catch {
+      if (controller.signal.reason === "close") return;
+      setErrorMsg(
+        controller.signal.reason === "timeout"
+          ? "The request took too long. Please retry, or email me directly."
+          : "Network error — please check your connection and retry.",
+      );
       setStatus("error");
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
   function handleClose() {
-    if (status === "sending") return;
+    abortRef.current?.abort("close");
     onClose();
     setTimeout(() => {
       setStatus("idle");
       setErrorMsg(null);
       setForm({ name: "", email: "", message: "", company: "" });
-    }, 250);
+    }, 200);
   }
 
-  const sending = status === "sending";
-
   return (
-    <AnimatePresence>
-      {open && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="contact-dialog-title"
-        >
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={handleClose}
-            className="absolute inset-0 bg-background/85 backdrop-blur-md"
-          />
+    <dialog
+      ref={dialogRef}
+      onClose={handleClose}
+      aria-labelledby="contact-dialog-title"
+      className="m-auto w-[calc(100%-2rem)] max-w-lg border border-border bg-card text-foreground p-6 lg:p-8 backdrop:bg-transparent"
+    >
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <span className="absolute top-0 left-0 h-3.5 w-3.5 border-t-[1.5px] border-l-[1.5px] border-primary" />
+        <span className="absolute top-0 right-0 h-3.5 w-3.5 border-t-[1.5px] border-r-[1.5px] border-primary" />
+        <span className="absolute bottom-0 left-0 h-3.5 w-3.5 border-b-[1.5px] border-l-[1.5px] border-primary" />
+        <span className="absolute bottom-0 right-0 h-3.5 w-3.5 border-b-[1.5px] border-r-[1.5px] border-primary" />
+      </div>
 
-          <m.div
-            initial={{ opacity: 0, scale: 0.96, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 12 }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            className="relative z-10 w-full max-w-lg border border-border bg-card p-6 lg:p-8"
-          >
-            <CornerBrackets size={14} thickness={1.5} />
+      <button
+        onClick={handleClose}
+        className="absolute top-2 right-2 flex h-11 w-11 items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+        aria-label="Close dialog"
+      >
+        <X className="h-4 w-4" />
+      </button>
 
-            <button
-              onClick={handleClose}
-              disabled={sending}
-              className="absolute top-3 right-3 p-2 text-muted-foreground hover:text-primary transition-colors disabled:opacity-30"
-              aria-label="Close"
-            >
-              <X className="h-4 w-4" />
-            </button>
-
-            {status === "sent" ? (
-              <div className="py-8 text-center">
-                <div className="font-display text-5xl text-primary mb-2">✓</div>
-                <div className="font-mono text-xs uppercase tracking-[0.25em] text-primary mb-3">
-                  Message Sent
-                </div>
-                <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-                  Thanks for reaching out — I&apos;ll get back to you soon.
-                </p>
-                <button
-                  onClick={handleClose}
-                  className={cn(
-                    "inline-flex items-center gap-2 h-10 px-5 tactical-shape",
-                    "bg-primary text-primary-foreground font-mono text-[11px]",
-                    "uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors",
-                  )}
-                >
-                  Close
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit}>
-                <div className="mb-6">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-primary mb-2 flex items-center gap-3">
-                    <span className="h-px w-6 bg-primary" />
-                    Quick Message
-                  </div>
-                  <h3
-                    id="contact-dialog-title"
-                    className="font-display text-3xl md:text-4xl uppercase leading-none"
-                  >
-                    Get in <span className="text-primary">Touch_</span>
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                    Send a role, team, or project note and it&apos;ll land in my
-                    inbox.
-                  </p>
-                </div>
-
-                <div className="grid gap-4">
-                  <div>
-                    <label
-                      htmlFor="contact-name"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5"
-                    >
-                      Name
-                    </label>
-                    <input
-                      id="contact-name"
-                      name="name"
-                      type="text"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                      disabled={sending}
-                      placeholder="Your name"
-                      className="w-full h-10 px-3 bg-background border border-border focus:border-primary outline-none text-sm font-mono placeholder:text-muted-foreground/50 transition-colors disabled:opacity-60"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="contact-email"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5"
-                    >
-                      Email
-                    </label>
-                    <input
-                      id="contact-email"
-                      name="email"
-                      type="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                      disabled={sending}
-                      placeholder="you@example.com"
-                      className="w-full h-10 px-3 bg-background border border-border focus:border-primary outline-none text-sm font-mono placeholder:text-muted-foreground/50 transition-colors disabled:opacity-60"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="contact-message"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1.5"
-                    >
-                      Message
-                    </label>
-                    <textarea
-                      id="contact-message"
-                      name="message"
-                      value={form.message}
-                      onChange={handleChange}
-                      required
-                      disabled={sending}
-                      placeholder="Tell me what you're hiring for."
-                      rows={5}
-                      className="w-full px-3 py-2 bg-background border border-border focus:border-primary outline-none text-sm font-mono placeholder:text-muted-foreground/50 transition-colors resize-none disabled:opacity-60"
-                    />
-                  </div>
-
-                  <div
-                    aria-hidden="true"
-                    className="absolute -left-[9999px] opacity-0 pointer-events-none"
-                  >
-                    <label htmlFor="contact-company">
-                      Company (leave this blank)
-                    </label>
-                    <input
-                      id="contact-company"
-                      name="company"
-                      type="text"
-                      tabIndex={-1}
-                      autoComplete="off"
-                      value={form.company}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                {status === "error" && errorMsg && (
-                  <div className="mt-4 flex items-start gap-2 p-3 border border-destructive/40 bg-destructive/10 text-destructive">
-                    <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-                    <div className="text-xs font-mono leading-relaxed">
-                      {errorMsg}
-                    </div>
-                  </div>
-                )}
-
-                <div className="mt-6 flex items-center justify-between gap-3">
-                  <a
-                    href={`mailto:${RECIPIENT}`}
-                    className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <Mail className="h-3 w-3" />
-                    Or email directly
-                  </a>
-                  <button
-                    type="submit"
-                    disabled={sending}
-                    className={cn(
-                      "relative inline-flex items-center gap-2 h-10 px-5 tactical-shape",
-                      "bg-primary text-primary-foreground font-mono text-[11px]",
-                      "uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors",
-                      "disabled:opacity-60 disabled:cursor-wait",
-                      "group overflow-hidden",
-                    )}
-                  >
-                    <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-                    <span className="relative z-10 inline-flex items-center gap-2">
-                      {sending ? (
-                        <>
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                          Sending
-                        </>
-                      ) : (
-                        <>
-                          <Send className="h-3 w-3" />
-                          Send
-                        </>
-                      )}
-                    </span>
-                  </button>
-                </div>
-              </form>
-            )}
-          </m.div>
+      <div className="mb-6">
+        <div className="font-mono text-xs uppercase tracking-[0.25em] text-primary mb-2 flex items-center gap-3">
+          <span className="h-px w-6 bg-primary" />
+          Quick message
         </div>
+        <h3
+          id="contact-dialog-title"
+          className="font-display text-3xl md:text-4xl uppercase leading-none"
+        >
+          Get in <span className="text-primary">Touch_</span>
+        </h3>
+      </div>
+
+      {status === "sent" ? (
+        <div role="status" className="py-6 text-center">
+          <div className="font-display text-5xl text-primary mb-2">✓</div>
+          <div className="font-mono text-xs uppercase tracking-[0.25em] text-primary mb-3">
+            Message sent
+          </div>
+          <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
+            Thanks for reaching out — I&apos;ll get back to you soon.
+          </p>
+          <button
+            onClick={handleClose}
+            className={cn(
+              "inline-flex items-center gap-2 h-11 px-5 tactical-shape",
+              "bg-primary text-primary-foreground font-mono text-xs",
+              "uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors",
+            )}
+          >
+            Close
+          </button>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+            Send a role, team, or project note and it&apos;ll land in my inbox.
+          </p>
+
+          <div className="grid gap-4">
+            <div>
+              <label
+                htmlFor="contact-name"
+                className="block font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground mb-1.5"
+              >
+                Name
+              </label>
+              <input
+                id="contact-name"
+                name="name"
+                type="text"
+                value={form.name}
+                onChange={handleChange}
+                required
+                disabled={sending}
+                maxLength={200}
+                autoComplete="name"
+                placeholder="Your name"
+                className="w-full h-11 px-3 bg-background border border-border focus:border-primary text-sm font-mono placeholder:text-muted-foreground/50 transition-colors disabled:opacity-60"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="contact-email"
+                className="block font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground mb-1.5"
+              >
+                Email
+              </label>
+              <input
+                id="contact-email"
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                disabled={sending}
+                maxLength={320}
+                autoComplete="email"
+                placeholder="you@example.com"
+                className="w-full h-11 px-3 bg-background border border-border focus:border-primary text-sm font-mono placeholder:text-muted-foreground/50 transition-colors disabled:opacity-60"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="contact-message"
+                className="block font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground mb-1.5"
+              >
+                Message
+              </label>
+              <textarea
+                id="contact-message"
+                name="message"
+                value={form.message}
+                onChange={handleChange}
+                required
+                disabled={sending}
+                maxLength={5000}
+                placeholder="Tell me what you're hiring for."
+                rows={5}
+                className="w-full px-3 py-2 bg-background border border-border focus:border-primary text-sm font-mono placeholder:text-muted-foreground/50 transition-colors resize-none disabled:opacity-60"
+              />
+            </div>
+
+            <div
+              aria-hidden="true"
+              className="absolute -left-[9999px] opacity-0 pointer-events-none"
+            >
+              <label htmlFor="contact-company">
+                Company (leave this blank)
+              </label>
+              <input
+                id="contact-company"
+                name="company"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={form.company}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          {status === "error" && errorMsg && (
+            <div
+              role="alert"
+              className="mt-4 flex items-start gap-2 p-3 border border-destructive/40 bg-destructive/10 text-destructive"
+            >
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+              <div className="text-xs font-mono leading-relaxed">
+                {errorMsg}
+              </div>
+            </div>
+          )}
+
+          <p className="mt-4 text-xs text-muted-foreground/80 leading-relaxed">
+            Used only to reply to you. Delivered through an email provider —
+            never added to a list.
+          </p>
+
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <a
+              href={`mailto:${site.email}`}
+              className="inline-flex min-h-11 items-center gap-2 py-2 text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Mail className="h-3 w-3" />
+              Or email directly
+            </a>
+            <button
+              type="submit"
+              disabled={sending}
+              className={cn(
+                "inline-flex items-center gap-2 h-11 px-5 tactical-shape",
+                "bg-primary text-primary-foreground font-mono text-xs",
+                "uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors",
+                "disabled:opacity-60 disabled:cursor-wait",
+              )}
+            >
+              {sending ? (
+                <>
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <span role="status">Sending</span>
+                </>
+              ) : (
+                <>
+                  <Send className="h-3 w-3" />
+                  Send
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       )}
-    </AnimatePresence>
+    </dialog>
   );
 }
