@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/valorant/section-header";
 import { CornerBrackets } from "@/components/valorant/corner-brackets";
 import { AirportGlobe } from "@/components/globe/airport-globe-dynamic";
+import { loadGlobe } from "@/components/globe/load-globe";
 import { projects } from "@/lib/content";
 
 let globePreloaded = false;
@@ -14,7 +15,7 @@ function onGlobeButtonHover() {
   if (globePreloaded || getStaticMediaSnapshot()) return;
   globePreloaded = true;
   import("@/components/globe/airport-globe").catch(() => {});
-  import("globe.gl").catch(() => {});
+  loadGlobe().catch(() => {});
 }
 
 // Reduced motion or Save-Data: posters instead of autoplaying media.

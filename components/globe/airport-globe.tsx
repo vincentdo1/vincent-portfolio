@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
-import type { GlobeInstance } from "globe.gl";
+import { loadGlobe, type GlobeApi } from "./load-globe";
 import { GlobeFallback } from "./globe-fallback";
 
 const TOP_10 = new Set([
@@ -37,7 +37,7 @@ const arcColorFn = (d: ArcDatum) =>
 
 export function AirportGlobe() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const worldRef = useRef<GlobeInstance | null>(null);
+  const worldRef = useRef<GlobeApi | null>(null);
   const rotateRef = useRef(true);
   const inViewRef = useRef(true);
   const [failed, setFailed] = useState(false);
@@ -105,8 +105,8 @@ export function AirportGlobe() {
 
     document.addEventListener("visibilitychange", applyActivity);
 
-    Promise.all([import("globe.gl"), dataPromise])
-      .then(([{ default: Globe }, [rawNodes, rawArcs]]) => {
+    Promise.all([loadGlobe(), dataPromise])
+      .then(([Globe, [rawNodes, rawArcs]]) => {
         if (!mounted) return;
 
         const nodes = rawNodes.map((n) => ({
