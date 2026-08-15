@@ -51,16 +51,6 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
       },
       {
-        // Vendored browser libraries carry their version in the filename.
-        source: "/vendor/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
         // Résumé changes under a stable filename — never cache it as
         // immutable or recruiters can see a year-stale version.
         source: "/resume.pdf",

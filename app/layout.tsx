@@ -30,7 +30,7 @@ const siteUrl =
 
 const title = "Vincent Do // Software Engineer";
 const description =
-  "Software engineer focused on backend, AI/ML, and full-stack product engineering. Current Boeing SWE, former Expedia SDE intern, UIUC CS & Chemistry alum.";
+  "Software engineer focused on backend, infrastructure, and ML systems. Real-time C++ at Boeing, former Expedia SDE intern, UIUC CS & Chemistry alum.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
