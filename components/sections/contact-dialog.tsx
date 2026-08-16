@@ -14,16 +14,25 @@ type Status = "idle" | "sending" | "sent" | "error";
 
 export function ContactDialog({ open, onClose }: ContactDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  // ref_id, not "company": browsers autofill organization fields, and a
+  // recruiter whose browser filled it in used to be shown "Message sent" for
+  // a message the server had silently dropped. See TRAP_FIELD in the route.
   const [form, setForm] = useState({
     name: "",
     email: "",
     message: "",
-    company: "",
+    ref_id: "",
   });
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const sentHeadingRef = useRef<HTMLHeadingElement>(null);
   const sending = status === "sending";
+
+  // Success replaces the whole form, taking the focused element with it.
+  useEffect(() => {
+    if (status === "sent") sentHeadingRef.current?.focus();
+  }, [status]);
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -99,7 +108,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
     setTimeout(() => {
       setStatus("idle");
       setErrorMsg(null);
-      setForm({ name: "", email: "", message: "", company: "" });
+      setForm({ name: "", email: "", message: "", ref_id: "" });
     }, 200);
   }
 
@@ -108,7 +117,11 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
       ref={dialogRef}
       onClose={handleClose}
       aria-labelledby="contact-dialog-title"
-      className="m-auto w-[calc(100%-2rem)] max-w-lg border border-border bg-card text-foreground p-6 lg:p-8 backdrop:bg-transparent"
+      aria-busy={sending}
+      // max-h + overflow-y: on a landscape phone (390px tall) the form is
+      // taller than the viewport, and without these the Send button and the
+      // direct-email fallback were simply unreachable.
+      className="m-auto w-[calc(100%-2rem)] max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto border border-border bg-card text-foreground p-5 sm:p-6 lg:p-8 backdrop:bg-transparent"
     >
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <span className="absolute top-0 left-0 h-3.5 w-3.5 border-t-[1.5px] border-l-[1.5px] border-primary" />
@@ -140,10 +153,19 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
 
       {status === "sent" ? (
         <div role="status" className="py-6 text-center">
-          <div className="font-display text-5xl text-primary mb-2">✓</div>
-          <div className="font-mono text-xs uppercase tracking-[0.25em] text-primary mb-3">
-            Message sent
+          <div className="font-display text-5xl text-primary mb-2" aria-hidden>
+            ✓
           </div>
+          {/* Focused on mount: the form it replaced held focus, so without
+              this a screen-reader or keyboard user is left on a node that no
+              longer exists and the confirmation is easy to miss. */}
+          <h4
+            ref={sentHeadingRef}
+            tabIndex={-1}
+            className="font-mono text-xs uppercase tracking-[0.25em] text-primary mb-3 outline-none"
+          >
+            Message sent
+          </h4>
           <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
             Thanks for reaching out — I&apos;ll get back to you soon.
           </p>
@@ -234,16 +256,14 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
               aria-hidden="true"
               className="absolute -left-[9999px] opacity-0 pointer-events-none"
             >
-              <label htmlFor="contact-company">
-                Company (leave this blank)
-              </label>
+              <label htmlFor="contact-ref-id">Leave this field blank</label>
               <input
-                id="contact-company"
-                name="company"
+                id="contact-ref-id"
+                name="ref_id"
                 type="text"
                 tabIndex={-1}
                 autoComplete="off"
-                value={form.company}
+                value={form.ref_id}
                 onChange={handleChange}
               />
             </div>
@@ -266,7 +286,9 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
             never added to a list.
           </p>
 
-          <div className="mt-4 flex items-center justify-between gap-3">
+          {/* wraps rather than overflowing: at 320px these two do not fit on
+              one line, and the fallback link must stay reachable */}
+          <div className="mt-4 flex flex-wrap-reverse items-center justify-between gap-3">
             <a
               href={`mailto:${site.email}`}
               className="inline-flex min-h-11 items-center gap-2 py-2 text-xs font-mono uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors"

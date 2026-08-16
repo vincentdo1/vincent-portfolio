@@ -4,6 +4,7 @@ import {
   Component,
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -65,25 +66,59 @@ class DialogBoundary extends Component<
  */
 export function ContactProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [broken, setBroken] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  /**
+   * Load the dialog chunk during idle time, before anyone clicks.
+   *
+   * `open()` used to return true — and so the trigger called
+   * preventDefault() on its own `mailto:` — before this chunk existed. On a
+   * slow or failed first request the click did nothing at all: no dialog, and
+   * the native fallback already suppressed. Now the chunk is fetched up front
+   * and `open()` refuses until it has actually resolved, so the very first
+   * click either opens the dialog or follows the mailto during that same user
+   * activation. It is a small form; prefetching it costs almost nothing.
+   */
+  useEffect(() => {
+    let cancelled = false;
+    const load = () =>
+      contactDialogLoader().then(
+        () => !cancelled && setReady(true),
+        () => !cancelled && setBroken(true),
+      );
+
+    const idle = window.requestIdleCallback;
+    if (typeof idle === "function") {
+      const handle = idle(load, { timeout: 2000 });
+      return () => {
+        cancelled = true;
+        window.cancelIdleCallback?.(handle);
+      };
+    }
+    const timer = window.setTimeout(load, 700);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   const value = useMemo<ContactContextValue>(
     () => ({
       open: () => {
-        if (broken) return false;
-        setMounted(true);
+        // not ready yet => let the mailto: through instead of a dead click
+        if (broken || !ready) return false;
         setOpen(true);
         return true;
       },
     }),
-    [broken],
+    [broken, ready],
   );
 
   return (
     <ContactContext.Provider value={value}>
       {children}
-      {mounted && (
+      {ready && !broken && (
         <DialogBoundary onBroken={() => setBroken(true)}>
           <ContactDialog open={open} onClose={() => setOpen(false)} />
         </DialogBoundary>

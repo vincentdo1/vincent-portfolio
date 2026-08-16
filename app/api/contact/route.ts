@@ -11,7 +11,18 @@ const MAX_BODY_BYTES = 16 * 1024;
 const MAX_NAME = 200;
 const MAX_EMAIL = 320;
 const MAX_MESSAGE = 5000;
-const ALLOWED_FIELDS = new Set(["name", "email", "message", "company"]);
+/**
+ * The trap field is deliberately NOT called "company".
+ *
+ * It was, and that is a real false-success bug: browsers and password
+ * managers autofill organization fields, and `company` is one of the names
+ * they recognise. A recruiter whose browser filled it in would see "Message
+ * sent" while the message was silently dropped. `ref_id` is meaningless to
+ * autofill heuristics, so only a script that fills every input will trip it.
+ */
+const TRAP_FIELD = "ref_id";
+
+const ALLOWED_FIELDS = new Set(["name", "email", "message", TRAP_FIELD]);
 const SEND_TIMEOUT_MS = 10_000;
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -156,14 +167,28 @@ export async function POST(req: Request) {
     }
   }
 
-  const { name, email, message, company } = record;
+  const { name, email, message } = record;
+  const trap = record[TRAP_FIELD];
 
-  // Bot signals: honeypot field, URLs in the name field. Respond success
-  // without sending so bots learn nothing. No timing heuristics — autofill
-  // makes legitimate sub-second submissions common.
-  if (typeof company === "string" && company.trim()) return json({ ok: true });
-  if (typeof name === "string" && urlInTextRegex.test(name))
-    return json({ ok: true });
+  // The one signal that still answers success-without-sending. Nothing a
+  // human uses fills a field called ref_id that is off-screen, tabIndex -1,
+  // aria-hidden, and autocomplete="off", so a hit here is a script and should
+  // learn nothing from the response.
+  if (typeof trap === "string" && trap.trim()) return json({ ok: true });
+
+  // A name matching urlInTextRegex (an explicit http:// or www.) used to be
+  // silently discarded the same way. "Jane, www.acme.com" is a plausible
+  // thing for a real recruiter to paste, and they were told the message sent.
+  // It is a visible validation error now, so the sender can fix it and retry.
+  if (typeof name === "string" && urlInTextRegex.test(name)) {
+    return json(
+      {
+        error: "Please enter your name without a link or web address.",
+        correlationId,
+      },
+      400,
+    );
+  }
 
   if (
     typeof name !== "string" ||

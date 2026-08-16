@@ -9,9 +9,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { MorphField } from "@/components/three/morph-field";
 import { useDeviceProfile } from "@/lib/three/device";
+import { field } from "@/lib/three/field";
 
 /**
  * Watches real frame times and fires `onDegrade` once if the device
@@ -55,20 +56,15 @@ function PerfGovernor({ onDegrade }: { onDegrade: () => void }) {
   return null;
 }
 
-function CameraRig({
-  progressRef,
-  reduced,
-}: {
-  progressRef: React.RefObject<number>;
-  reduced: boolean;
-}) {
+function CameraRig() {
   const shake = useRef(0);
 
   useFrame((state, delta) => {
     const camera = state.camera;
-    const p = progressRef.current ?? 0;
-    // pull back through the sequence so later shapes get room to breathe
-    const targetZ = 7.4 + p * 2.6;
+    const p = field.progress;
+    // pull back through the shapes so later ones get room to breathe, then
+    // further still below the intro so the field reads as distance
+    const targetZ = 7.4 + p * 2.6 + field.recede * 1.6;
     const targetY = Math.sin(p * Math.PI) * 0.8;
 
     camera.position.z +=
@@ -76,10 +72,8 @@ function CameraRig({
     camera.position.y +=
       (targetY - camera.position.y) * Math.min(1, delta * 2.5);
 
-    if (!reduced) {
-      shake.current += delta;
-      camera.position.x = Math.sin(shake.current * 0.24) * 0.45;
-    }
+    shake.current += delta;
+    camera.position.x = Math.sin(shake.current * 0.24) * 0.45;
     camera.lookAt(0, 0, 0);
   });
 
@@ -87,9 +81,35 @@ function CameraRig({
 }
 
 /**
+ * Wakes the demand-driven loop.
+ *
+ * `frameloop="demand"` means nothing renders unless something asks. Scrolling
+ * is the only input that can change what the field should look like, so it is
+ * the only thing that needs to wake it; MorphField then keeps the loop alive
+ * frame by frame until the morph and the pull-back have both settled, and the
+ * canvas goes quiet again. Below the intro the field is a static texture, and
+ * a static texture should not cost a redraw every 16ms.
+ */
+function FrameWaker() {
+  const invalidate = useThree((s) => s.invalidate);
+
+  useEffect(() => {
+    const wake = () => invalidate();
+    window.addEventListener("scroll", wake, { passive: true });
+    window.addEventListener("resize", wake);
+    return () => {
+      window.removeEventListener("scroll", wake);
+      window.removeEventListener("resize", wake);
+    };
+  }, [invalidate]);
+
+  return null;
+}
+
+/**
  * WebGL is a nice-to-have here, never a dependency: if context creation
  * fails (no WebGL, blocklisted GPU, software rasterizer refused by
- * failIfMajorPerformanceCaveat) the hero simply renders without particles —
+ * failIfMajorPerformanceCaveat) the page simply renders without particles —
  * the copy, readouts, and grid are plain DOM and unaffected.
  */
 class CanvasBoundary extends Component<
@@ -107,12 +127,22 @@ class CanvasBoundary extends Component<
   }
 }
 
-type Props = {
-  progressRef: React.RefObject<number>;
-  className?: string;
-};
-
-export function MorphScene({ progressRef, className }: Props) {
+/**
+ * The point field, fixed behind the entire document.
+ *
+ * Purely decorative. Every section owns its own copy in normal-flow DOM and
+ * registers a shape for the field to morph to (`lib/three/field.ts`); nothing
+ * on the page depends on this rendering, or on WebGL existing at all.
+ *
+ * Exactly one WebGL context, and zero downloaded assets — the geometry is
+ * math (`lib/three/shapes.ts`).
+ *
+ * Not rendered at all for `prefers-reduced-motion`. A frozen point cloud is
+ * still a large moving-looking object behind text, and the sections read
+ * perfectly well without it, so the honest reduced-motion answer is no canvas
+ * rather than a static one.
+ */
+export function MorphScene({ className }: { className?: string }) {
   const device = useDeviceProfile();
 
   // One-way ratchet: hardwareConcurrency misses plenty of slow machines
@@ -133,32 +163,14 @@ export function MorphScene({ progressRef, className }: Props) {
   const offsetY = device.narrow ? 1.35 : 0;
   const fieldScale = device.narrow ? 0.72 : 1;
 
-  const hostRef = useRef<HTMLDivElement>(null);
+  // The canvas is fixed and always on screen now, so an IntersectionObserver
+  // has nothing left to tell us. Tab visibility is the gate that still matters.
   const [visible, setVisible] = useState(true);
 
-  // stop rendering entirely when the canvas is scrolled past or the tab is hidden
   useEffect(() => {
-    const el = hostRef.current;
-    if (!el) return;
-
-    let onScreen = true;
-    const sync = () =>
-      setVisible(onScreen && document.visibilityState === "visible");
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        onScreen = entry?.isIntersecting ?? true;
-        sync();
-      },
-      { threshold: 0 },
-    );
-    io.observe(el);
+    const sync = () => setVisible(document.visibilityState === "visible");
     document.addEventListener("visibilitychange", sync);
-
-    return () => {
-      io.disconnect();
-      document.removeEventListener("visibilitychange", sync);
-    };
+    return () => document.removeEventListener("visibilitychange", sync);
   }, []);
 
   const glConfig = useMemo(
@@ -175,31 +187,32 @@ export function MorphScene({ progressRef, className }: Props) {
     [],
   );
 
-  // No usable GPU: the hero stays a typographic screen — copy, readouts, and
-  // grid are plain DOM, so nothing is lost but the particles.
-  if (!device.ready || !device.gl)
-    return <div ref={hostRef} className={className} />;
+  // No usable GPU, or the visitor asked for reduced motion: no canvas. Every
+  // section is plain DOM, so nothing is lost but the decoration.
+  if (!device.ready || !device.gl || device.reduced) return null;
 
   return (
-    <div ref={hostRef} className={className}>
+    <div className={className} aria-hidden="true">
       <CanvasBoundary>
         <Canvas
           dpr={dpr}
           gl={glConfig}
           camera={{ position: [0, 0, 7.4], fov: 45, near: 0.1, far: 60 }}
-          frameloop={visible ? "always" : "never"}
+          // demand, not always: below the intro the field is a static texture
+          // and should cost nothing. FrameWaker wakes it on scroll, MorphField
+          // keeps it alive until the morph settles.
+          frameloop={visible ? "demand" : "never"}
         >
           <PerfGovernor onDegrade={degrade} />
-          <CameraRig progressRef={progressRef} reduced={device.reduced} />
+          <FrameWaker />
+          <CameraRig />
           {/* key remount on degrade so buffers and segment cache start fresh */}
           <MorphField
             key={count}
-            progressRef={progressRef}
             count={count}
             offsetX={offsetX}
             offsetY={offsetY}
             fieldScale={fieldScale}
-            staticMode={device.reduced}
           />
         </Canvas>
       </CanvasBoundary>

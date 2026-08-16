@@ -5,104 +5,108 @@ import { site } from "@/lib/content";
 /**
  * Persistent conversion bar.
  *
- * The scroll sequence is most of the page, so without this a recruiter would
- * have to scroll six screens to find any way to reach Vincent. This never
- * scrolls away.
+ * Two layout problems drove the current rules:
  *
- * On a phone there is no room for four labelled actions, so the two that
- * actually convert — résumé and email — keep their labels, and GitHub and
- * LinkedIn drop off (both are still in the profile section and the footer).
- * Every control carries an explicit aria-label: a label hidden with
- * `display: none` is hidden from screen readers too, which would leave the
- * icon-only state with no accessible name at all.
+ * - At 320px the row overflowed and clipped the Email action off-screen. The
+ *   brand now truncates to initials below `xs` (360px) and Résumé goes
+ *   icon-only, which is what buys the room.
+ * - GitHub and LinkedIn used to show their labels from `sm` (640px) up, which
+ *   is still narrow enough to overflow once Work and About are in the row.
+ *   Labels now wait for `md`.
+ *
+ * Every control carries an explicit aria-label, because a label hidden with
+ * `display: none` is hidden from screen readers too — the icon-only states
+ * would otherwise have no accessible name at all.
  */
 
-const CONTACT_LINKS = [
-  {
-    label: "Résumé",
-    href: site.resume,
-    icon: FileText,
-    external: true,
-    mobile: true,
-  },
-  {
-    label: "GitHub",
-    href: site.github,
-    icon: Github,
-    external: true,
-    mobile: false,
-  },
+const SECTION_LINKS = [
+  { label: "Work", href: "#work" },
+  { label: "Experience", href: "#experience" },
+  { label: "About", href: "#profile" },
+];
+
+const EXTERNAL_LINKS = [
+  { label: "Résumé", href: site.resume, icon: FileText, alwaysVisible: true },
+  { label: "GitHub", href: site.github, icon: Github, alwaysVisible: false },
   {
     label: "LinkedIn",
     href: site.linkedin,
     icon: Linkedin,
-    external: true,
-    mobile: false,
+    alwaysVisible: false,
   },
 ];
 
 export function TopBar() {
   return (
-    <header className="fixed top-0 inset-x-0 z-40 border-b border-border/50 bg-background/70 backdrop-blur-md">
-      <div className="mx-auto max-w-7xl px-safe h-14 flex items-center justify-between gap-3">
+    <header className="fixed top-0 inset-x-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
+      <div className="mx-auto max-w-7xl px-safe h-14 flex items-center justify-between gap-2">
         <a
           href="#top"
+          aria-label="Vincent Do, back to top"
           className="inline-flex items-center h-11 font-display text-lg uppercase tracking-wide hover:text-primary transition-colors shrink-0"
         >
-          Vincent Do
-          <span className="text-primary">_</span>
+          {/* full name once there is room for it; initials at 320px */}
+          <span className="hidden xs:inline">Vincent Do</span>
+          <span className="xs:hidden" aria-hidden="true">
+            VD
+          </span>
         </a>
 
-        <nav aria-label="Primary" className="flex items-center gap-1 sm:gap-2">
-          <a
-            href="#profile"
-            className="hidden lg:inline-flex items-center px-3 h-11 mr-2 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors"
-          >
-            About
-          </a>
+        <nav
+          aria-label="Primary"
+          className="flex items-center gap-0.5 sm:gap-1 min-w-0"
+        >
+          {SECTION_LINKS.map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              className="hidden md:inline-flex items-center px-3 h-11 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {label}
+            </a>
+          ))}
 
-          {CONTACT_LINKS.map(
-            ({ label, href, icon: Icon, external, mobile }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={external ? `${label} (opens in new tab)` : label}
-                {...(external
-                  ? { target: "_blank", rel: "noopener noreferrer" }
-                  : {})}
-                // display class is set once, never both: `hidden` and
-                // `inline-flex` are the same Tailwind property group, so
-                // listing both leaves the winner up to stylesheet order
-                className={`group items-center gap-2 px-2.5 sm:px-3 h-11 border border-transparent hover:border-primary/50 hover:bg-primary/5 transition-colors tactical-chip ${
-                  mobile ? "inline-flex" : "hidden sm:inline-flex"
-                }`}
+          {EXTERNAL_LINKS.map(({ label, href, icon: Icon, alwaysVisible }) => (
+            <a
+              key={label}
+              href={href}
+              aria-label={`${label} (opens in new tab)`}
+              target="_blank"
+              rel="noopener noreferrer"
+              // one display class only: `hidden` and `inline-flex` are the same
+              // Tailwind property group, so listing both leaves the winner up
+              // to stylesheet order rather than class order
+              className={`group items-center gap-2 px-2.5 sm:px-3 h-11 border border-transparent hover:border-primary/50 hover:bg-primary/5 transition-colors tactical-chip ${
+                alwaysVisible ? "inline-flex" : "hidden sm:inline-flex"
+              }`}
+            >
+              <Icon
+                className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors"
+                aria-hidden="true"
+              />
+              {/* lg, not md: at md the three section links are already in the
+                  row, and adding three more labels overflows an 844px-wide
+                  landscape phone and clips the Message action off the edge */}
+              <span
+                className="hidden lg:inline font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground group-hover:text-primary transition-colors"
+                aria-hidden="true"
               >
-                <Icon
-                  className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors"
-                  aria-hidden="true"
-                />
-                <span
-                  className={`font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground group-hover:text-primary transition-colors ${
-                    mobile ? "" : "hidden sm:inline"
-                  }`}
-                  aria-hidden="true"
-                >
-                  {label}
-                </span>
-              </a>
-            ),
-          )}
+                {label}
+              </span>
+            </a>
+          ))}
 
+          {/* "Message", not "Email": this opens an in-page form. */}
           <ContactTrigger
-            aria-label="Email Vincent"
-            className="inline-flex items-center gap-2 px-3 h-11 bg-primary text-primary-foreground tactical-chip hover:bg-primary/90 transition-colors"
+            aria-label="Send Vincent a message"
+            className="inline-flex items-center gap-2 px-3 h-11 bg-primary text-primary-foreground tactical-chip hover:bg-primary/90 transition-colors shrink-0"
           >
             <Mail className="h-3.5 w-3.5" aria-hidden="true" />
             <span
               className="font-mono text-xs uppercase tracking-[0.2em]"
               aria-hidden="true"
             >
-              Email
+              Message
             </span>
           </ContactTrigger>
         </nav>

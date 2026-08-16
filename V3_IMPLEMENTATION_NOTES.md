@@ -15,50 +15,189 @@ Content decisions Vincent confirmed:
 
 Structure went through two passes of Vincent's feedback on the same day:
 
-1. *"Make it a majority of 3D scrolling or all 3D scrolling… the short version
-   repeats the work history and About… I'm not sure we need Selected Works."*
+1. _"Make it a majority of 3D scrolling or all 3D scrolling… the short version
+   repeats the work history and About… I'm not sure we need Selected Works."_
    → the static projects/experience/about/contact sections were deleted and the
    projects moved **into** the sequence as stages.
-2. *"The search and commit portion isn't really necessary… the short version
+2. _"The search and commit portion isn't really necessary… the short version
    can be shorter, with more emphasis on what I am as a software engineer and
    what I like to do rather than hobbies… it'd be cool if it used dynamic
-   scrolling too."*
+   scrolling too."_
    → the personal closing stage was cut, and the closing section was rebuilt
    around a scroll-driven capability rail.
-3. *"Scratch that, I am not a fan of the headshot. Go back to the original
-   space particles."* → stage 00 is the `scatter` cloud again (§2), plus a
+3. _"Scratch that, I am not a fan of the headshot. Go back to the original
+   space particles."_ → stage 00 is the `scatter` cloud again (§2), plus a
    mobile pass: 44px tap targets in the top bar, no text under 11px, and
    `scroll-mt` so anchor jumps clear the fixed header.
 
 ---
 
-## 1. Page structure
+## 00. Third pass, 2026-08-16 — the stage-1 UI/UX review
+
+Branch `v3_stage_1`, implementing `V3_STAGE_1_UI_UX_REVIEW.md` (a Codex audit).
+Everything in §0 and §1 below describes the structure this pass **replaced**;
+it is kept for the reasoning, not as a description of the current page.
+
+**The verdict that drove it:** the site behaved like a WebGL presentation
+wrapped around resume bullets. Six sticky stages ran ~630vh before any
+normal-flow content, only one stage existed in the DOM at a time, and the
+flagship projects could not be found, linked to, tabbed to, or compared.
+
+**What the page is now.** One animated intro screen carrying the page's single
+stable `<h1>`, then ordinary anchored sections:
 
 ```
-TopBar (fixed: Résumé + Email always; About/GitHub/LinkedIn on wider screens)
-HeroSequence   — 6 stages, one morphing point field          ~6.3 viewports
-ProfileSection — pinned capability rail + facts + closing    ~2.7 viewports
+MorphScene   — fixed inset-0 z-0, one canvas, purely decorative
+TopBar       — Work · Experience · About · Résumé · GitHub · LinkedIn · Message
+Intro        — #top, the one <h1>, readout, View work / Message / Résumé
+FeaturedWork — #work → #chess-engine, #airport-routing
+Experience   — #experience → #boeing, #expedia-group, #uw-madison
+ProfileSection — #profile (capability grid, core stack, education) + #contact
 footer
 ```
 
-**~9 viewports total.** Everything above the facts block is scroll-driven.
+**9.4 viewports → 4.7.** Every project heading, summary, readout, and link is
+in the DOM at rest.
+
+**The field is now driven by reading position, not scroll gating.** Each
+section registers a shape (`lib/three/field.ts`); the field morphs to whichever
+section is nearest the middle of the viewport. `SHAPE_ORDER` therefore has to
+match document order or the field races backwards. Nothing on the page depends
+on it rendering.
+
+**Changes worth knowing about:**
+
+| Item                | Before                                 | After                                          |
+| ------------------- | -------------------------------------- | ---------------------------------------------- |
+| Capability rail     | pinned, cards tilt/fade to 0.5 opacity | static responsive grid, no JS                  |
+| Lenis smooth scroll | 1.05s duration                         | removed, native scrolling                      |
+| Reduced motion      | full 630vh track + morphs              | **no canvas at all**                           |
+| `frameloop`         | `"always"`                             | `"demand"`, woken by scroll, settles and stops |
+| Honeypot            | `company` (autofill-prone)             | `ref_id`, non-semantic                         |
+| URL in name         | silent success                         | visible 400                                    |
+| Contact first click | `preventDefault` before chunk loaded   | idle prefetch; `open()` false until ready      |
+| Tech chips          | 37                                     | 18                                             |
+| Readouts            | content-sized `inline-block`           | fixed 3-col `<dl>`                             |
+| Header CTA          | "Email"                                | "Message" (it opens a form)                    |
+
+**Motif reduction.** Removed: scan lines, corner brackets, decorative
+underscores, blueprint grid, `SYS //` numbering, section heading rules.
+Kept: particle field, monospace instrumentation, notched buttons, green.
+`CornerBrackets` is deleted; the contact dialog still draws its own inline.
+
+**Verification.** `npm run verify:ui` (new) drives a real browser through the
+review's acceptance matrix: **103/103**, covering navigation/scanning, keyboard
+and focus, no-JS, no-WebGL, reduced motion, contact, and the responsive matrix
+at 320×568, 390×844, 844×390, 1280×720, 1440×900. Needs `CHROME_PATH` or a
+system Chrome.
+
+**Bundle: 2,450.99 KiB gzip** (was 2,461.81), 621 KiB under the free-plan
+limit. Removing Lenis paid for the new sections.
+
+Two real bugs the browser matrix caught that static checks could not:
+
+- At **844×390** the `md` breakpoint turned on both the section links and the
+  external-link labels, overflowing the row and clipping the Message action.
+  Labels moved to `lg`.
+- The `:not(:focus-within)` reveal guard needs the CSS rule _and_ the
+  `focusin` handler. The CSS alone leaves the element revealed only while
+  focused, so it fades back out on blur mid-tab-sequence.
+
+---
+
+## 0. Second pass, 2026-08-16 — the ending, and a copy rewrite
+
+Vincent: _"I'm not the biggest fan of the ending page… research alternatives
+that match better with the 3D modeling"_ and _"match the portfolio with better
+wording (non AI generated wording), I want it to sound like a human wrote it."_
+
+**The diagnosis.** The canvas died when the hero track released and the last
+three viewports were flat cards on black: a 40-chip tech-stack wall, a "Where"
+block that repeated stages 01–03 (the Madison row reused stage 03's three
+readout numbers verbatim), and `LET'S BUILD_` floating above ~200px of empty
+space and a copyright line. The page peaked at stage 05 and decayed. That is a
+[peak-end](https://lawsofux.com/peak-end-rule/) failure in the most literal
+form — the very last thing on screen was nothing.
+
+**What shipped.** The `<Canvas>` moved out of `HeroSequence` to a page-level
+`fixed inset-0 z-0` layer driven by the whole document, so it survives past the
+sequence and the dossier is no longer a flat page. This is the standard r3f
+architecture (cf. [`14islands/r3f-scroll-rig`](https://github.com/14islands/r3f-scroll-rig))
+and how Apple's product pages avoid the same handoff. Still **one WebGL
+context**, still **zero downloaded assets**, **+0.26 KiB gzip** on the Worker.
+
+**What was built and then removed the same day.** A full closing stage
+(`SYS // 07 — CONTACT`, `Your move_`, its own 190vh sticky track) where the
+field morphed one last time into `tree`, the chess search tree that prunes to a
+single bright line, with the contact CTA in the same frame. It worked and it
+verified. Vincent: _"I also do not like the ending page you just added so
+remove that."_ It came out; the compact closing band went back where it was, at
+the end of the dossier.
+
+So the page still ends on a flat screen. That was a deliberate call, not an
+oversight — **do not rebuild the closing stage without asking.** `tree` has now
+been written for a closing stage and cut twice.
+
+Also rejected: appending a closing stage without moving the canvas, and a
+non-WebGL echo of the field (reads as a fake next to the real thing).
+
+**On the copy.** Vincent rewrote roughly half of `lib/content.ts` on top of the
+first pass and the result is the reference for his voice: **shorter, denser,
+plainer titles**. He cut every narrative sentence (_"that summer is when the
+code half won"_, _"sitting with the frontend engineers until the edge cases
+stopped"_, _"mostly because I wanted to find out what breaks first"_) and
+restored terse factual ones. Titles went back to literal: `Real-time delivery`,
+`Neural network`, `Airports routing`. What he kept from the first pass: all of
+stage 00, every capability card, the `experiences` rows, and `alsoBuilt`.
+
+Match that register for anything new. Concise and factual beats narrative here,
+even though narrative is what usually reads as human.
+
+## 1. Page structure
+
+```
+MorphScene    — fixed inset-0 z-0, ONE canvas for the whole document
+TopBar (fixed: Résumé + Email always; About/GitHub/LinkedIn on wider screens)
+HeroSequence   — 6 stages, sticky copy panel                 ~6.3 viewports
+ProfileSection — rail + facts + closing band, field receded  ~2.7 viewports
+footer
+```
+
+**~9.4 viewports desktop, ~10.7 mobile.** All content sits at `z-10`; the
+scan-line overlay is at `z-1`, so the field reads as depth _under_ the page.
 
 ### The sequence (`stages` in `lib/content.ts`, shapes in `lib/three/shapes.ts`)
 
-| # | Shape | Stage |
-|---|---|---|
-| 00 | `scatter` | Vincent Do — identity, clearance, chess hook |
-| 01 | `rocket` | Boeing — real-time delivery |
-| 02 | `handset` | Expedia — backend at product scale |
-| 03 | `dna` | UW–Madison research → CS + Chemistry |
-| 04 | `brain` | Playable Chess AI · **Play it / Source** |
-| 05 | `globe` | Airport Routing Service · **Live demo / Source** |
+| #   | Shape     | Stage                                            |
+| --- | --------- | ------------------------------------------------ |
+| 00  | `scatter` | Vincent Do — identity, clearance, chess hook     |
+| 01  | `rocket`  | Boeing — real-time delivery                      |
+| 02  | `handset` | Expedia — backend at product scale               |
+| 03  | `dna`     | UW–Madison — solving medicine through code       |
+| 04  | `brain`   | Playable Chess AI · **Play it / Source**         |
+| 05  | `globe`   | Airport Routing Service · **Live demo / Source** |
 
-`tree` (a chess search tree that prunes to one bright principal variation),
-`network`, and `mesh` are generated and posed but unused — add any to
-`SHAPE_ORDER` to use it. `tree` was built for a personal closing stage that
-Vincent cut; the site leads with engineering and stage 00's hook line carries
-the chess credential.
+`tree`, `network`, and `mesh` are generated and posed but unused. See §0 before
+reaching for `tree`.
+
+### How the hero drives a canvas it doesn't contain (`lib/three/field.ts`)
+
+The canvas is fixed behind the whole document, so the section driving it and
+the canvas rendering it are no longer parent and child. They meet at a module
+singleton that `useScrollStage` writes on every scroll frame:
+
+```
+progress = 0→1 across the sequence   (drives the morph)
+recede   = 1 − presence              (1 once the sticky panel releases)
+```
+
+`presence` is how much the hero's sticky panel owns the screen: 1 while pinned,
+ramping to 0 over one viewport either side. Over the dossier it is 0, so
+`recede` is 1 and the field fades to 26%, shrinks 16%, and stops advancing its
+time-based terms.
+
+A module singleton rather than context on purpose: one field, both values
+change every scroll frame, and nothing should re-render when they do.
 
 ### ProfileSection
 
@@ -71,9 +210,39 @@ the chess credential.
   is what someone filtering for infrastructure work actually scans.
 - **Facts** — three one-line experience rows, education, the Exploding Chickens
   line, and a single off-the-clock line.
-- **Closing band** — availability plus Send message / Résumé, then a
-  **Back to top** control in the footer so a nine-viewport page never traps
-  anyone at the bottom.
+- **Closing band** — `Your move_`, availability, Send message / Résumé. One
+  line and two actions: the top bar carries résumé, GitHub, LinkedIn, and email
+  at every scroll position, so a full contact panel here is just a second copy
+  of it. The rail heading above it is `How I work_` rather than `What I build_`
+  so the two headings do not use the same verb.
+- **Back to top** in the footer, so a nine-viewport page never traps anyone at
+  the bottom.
+
+## 0b. The copy pass
+
+Audited against a [public inventory of AI writing tells](https://github.com/conorbronsdon/avoid-ai-writing).
+What the original copy was doing, all of it flagged: **12 em-dash appositives**
+in user-facing strings, closing aphorisms on nearly every sentence (`keeps both
+honest`, `hardware that doesn't get a second try`), **six rule-of-three
+lists**, `X rather than Y` negation-before-reveal, `real health checks`
+adjective inflation. Above all, one uniform rhythm: clipped noun phrase,
+em-dash appositive, closing aphorism, repeat.
+
+The pass that stuck: **no em dashes in prose** (the ones left are in
+`SYS // 01 — BOEING` labels and date ranges, which is typography), **no closing
+aphorisms**, and **stated preferences instead**, because the absence of any
+first-person stance is itself a tell.
+
+The pass that did **not** stick: rewriting headlines to name the thing
+(`Cockpit displays` for `Real-time delivery`, `An engine you can beat` for
+`Trained architectures`), and adding narrative sentences. Vincent reverted both
+— see §0. His register is **concise and factual**, not narrative. When those
+two goals conflict here, concise wins.
+
+One guess left in the file, flagged inline at stage 03: `Extracted thousands of
+medical papers before AI`. The original read `thousands of medical literature`,
+which is ungrammatical because literature is uncountable. **`papers` is
+inferred** — swap for records or abstracts if that is closer to the work.
 
 ## 2. Explored and rejected: the headshot as points
 
@@ -134,10 +303,19 @@ measured centre positions anyway, and rAF works everywhere.
   consecutive 1.5s windows with >40% of frames slower than 28fps → one-way
   degrade to the weak budget (MorphField remounts via `key={count}`).
 - **WebGL probe**: a `failIfMajorPerformanceCaveat` context is created before
-  any `<Canvas>` mounts. No real GPU → the hero renders as a typographic screen
-  and nothing else changes.
-- frameloop → `"never"` offscreen or on a hidden tab. **One WebGL context on
-  the page**, and no `<video>` anywhere.
+  any `<Canvas>` mounts. No real GPU → every section renders as a typographic
+  screen and nothing else changes.
+- frameloop → `"never"` on a hidden tab. **One WebGL context on the page**, and
+  no `<video>` anywhere.
+- **The cost of the page-level canvas, stated honestly.** The field now renders
+  for all ~9.4 viewports instead of the first six, because a fixed canvas is
+  always on screen and the IntersectionObserver gate has nothing left to tell
+  it. Per-frame cost is unchanged, so the device budget and PerfGovernor still
+  bound the worst case; the exposure is battery over a long read, not jank.
+  Partial mitigation: while receded the field fades to 26%, shrinks 16%, and
+  stops advancing `uTime`, so drift and neuron firing cost nothing over the
+  dossier. If this ever needs more, the lever is `frameloop="demand"` plus
+  `invalidate()` on scroll while `recede > 0.96`.
 - Narrow viewports stack copy under the field, so the field lifts
   (`offsetY` 1.35) and shrinks (`fieldScale` 0.72) above the text.
 - three.js and lenis each sit behind their own `ssr:false` boundary — that
@@ -145,26 +323,35 @@ measured centre positions anyway, and rAF works everywhere.
 - The rail does all its layout reads in `measure()` (mount + resize only); the
   scroll loop writes transforms and nothing else.
 
-## 5. Measurements (2026-08-15, local prod build, headless Chrome w/ GPU)
+## 5. Measurements (2026-08-16, local prod build, headless Chrome/SwiftShader)
 
-- **Wrangler dry-run: Total Upload 9,222.50 KiB / gzip 2,461.56 KiB** —
-  ~610 KiB under the 3,072 KiB free-plan limit (v2 was 2,507.85).
-  `WebGLRenderer` / `react-three` / `lenis` / `globe.gl` in `worker.js`: 0.
-- Initial route JS **~203 KB gzip**; the three.js chunk (~231 KB gzip) is lazy
-  and never render-blocking.
-- Hero holds ~60fps (16.7 ms avg/frame) on this machine's GPU.
-- **Mobile (390×844):** 10.7 viewports, no horizontal overflow at any scroll
-  position, every control ≥44×44 except two inline links inside sentences
-  (which WCAG 2.2 exempts), and no text below 11px. The capability rail is not
-  pinned there — narrow viewports get the plain stacked grid.
-- **22/22 browser checks pass** (`verify.mjs` in the session scratchpad): six
-  distinct stages with working project links, one canvas, zero project-media or
-  third-party requests, full profile content with **no focusable elements
-  inside the rail**, the tech-stack block and a working back-to-top link, old
-  section anchors gone, JS-blocked page fully readable with working
-  mailto/résumé, WebGL-refused fallback with stages still advancing, reduced
-  motion, and mobile 390 with no horizontal overflow plus a labelled
-  résumé/email pair in the top bar.
+- **Wrangler dry-run: Total Upload 9,224.66 KiB / gzip 2,461.82 KiB** —
+  610 KiB under the 3,072 KiB free-plan limit, and **+0.26 KiB gzip** over the
+  2,461.56 recorded on 2026-08-15 (v2 was 2,507.85). Moving the canvas out to
+  page level is essentially free. `WebGLRenderer` in `worker.js`: 0.
+- **Desktop 1440×900: 9.4 viewports**, one canvas, no horizontal overflow at
+  any scroll position, zero third-party requests.
+- **Mobile 390×844: 10.7 viewports**, no horizontal overflow at any scroll
+  position, and every control in the closing band ≥44px tall. The capability
+  rail is not pinned there — narrow viewports get the plain stacked grid.
+- **31/31 browser checks pass** (`verify.mjs`, session scratchpad — not
+  committed, matching the previous pass's convention). Baseline: one canvas,
+  fixed/z-0/viewport-sized host, closing band inside `#profile`, no orphan
+  `SYS // 07` left behind by the removed stage, no `LET'S BUILD` anywhere, both
+  `#contact` and `#profile` anchors, mailto and résumé reachable in the closing
+  band, canvas still alive at the very bottom of the page, no third-party
+  requests. Plus: JS-blocked (closing copy and both actions in server HTML,
+  dossier still indexable, page under 7,000px so a dead chunk never leaves
+  viewports of blank), WebGL-refused (no canvas, closing band renders, stages
+  still advance), reduced motion (canvas mounts in static pose, rail unpinned),
+  and mobile.
+
+Three of those checks failed on the first run and all three were **test** bugs
+worth recording: `ContactTrigger` renders an `<a href="mailto:">` rather than a
+`<button>` (that is the progressive-enhancement design — it upgrades to the
+dialog on click), the availability line is uppercased by CSS so `innerText`
+comparisons must be case-insensitive, and r3f inserts **two** wrapper divs
+between the fixed host and the `<canvas>`, not one.
 
 ## 6. Gotchas worth knowing
 
@@ -175,7 +362,7 @@ measured centre positions anyway, and rAF works everywhere.
   skipped subtree reports zero-sized boxes, so the rail could not measure its
   own track. `content-auto` was removed from ProfileSection for that reason.
 - react-hooks v6 / React Compiler rules: three.js objects must be mutated
-  through the `<points>` ref *inside* `useFrame`; device/hydration state uses
+  through the `<points>` ref _inside_ `useFrame`; device/hydration state uses
   `useSyncExternalStore`, not set-state-in-effect.
 - The morph buffers cache the current segment, so any point-count change must
   remount `MorphField` (`key={count}`) or the shapes desync.
@@ -190,12 +377,35 @@ measured centre positions anyway, and rAF works everywhere.
   every top-bar control now carries one.
 - Track heights come from `stages.length` and from measured rail travel, so
   adding a stage or a card needs no magic vh constant updated.
+- **A square-edged scrim over the field is visible as a horizontal line.**
+  `ProfileSection` dims the receded field with `bg-background/88`, and with a
+  hard boundary you could see the exact scanline where the globe changed
+  brightness — the same seam the rebuild existed to remove. Fixed with a
+  `mask-image` that ramps in over 180px. The ramp is in **px, not %**, so the
+  softness does not change with the section's height. There is deliberately no
+  matching ramp at the bottom: the section runs to the footer, so the scrim
+  should stay solid under the closing band rather than exposing particles.
+- **react-hooks v6 bans writing a ref during render**, which rules out the
+  usual `ref.current = callback` trick for keeping an effect from
+  resubscribing. `useScrollStage` takes `onMeasure` as a real effect
+  dependency instead, and the caller wraps it in `useCallback` with no deps.
 
 ## 7. Known / deferred
 
 - **The Expedia (`handset`) shape is the weak one visually.** Vincent's call:
   keep for now, revisit the artwork later. It is accurate to the work (services
   → gateway → device, 16 locale arcs); it just doesn't look as good as the rest.
+- **The "Where" block still repeats stages 01–03.** The rows were reworded so
+  they are no longer the stage body twice, but the dossier and the sequence
+  still cover the same three jobs. Deleting the rows would cost the dates and
+  locations a recruiter scans for, so this is a real tension, not an oversight.
+  A timeline strip (company · role · dates on one line each, no prose) would
+  resolve it and is the obvious next trim.
+- **The page still ends flat**, since the closing stage came out (§0). The
+  field is alive behind the dossier but receded, so the last screen is the
+  closing band over a faint field and then the footer. Better than the canvas
+  dying at stage 05, but the ending is still the weakest part of the page.
+  Whatever comes next, it should not be another full-screen closing stage.
 - Real-device mobile pass (the `hardwareConcurrency` branch doesn't trigger in
   desktop emulation) and a locked-down corporate laptop check.
 - Everything in v2 notes §5 still stands (Cloudflare rate-limit rule, CSP

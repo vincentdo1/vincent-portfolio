@@ -10,13 +10,13 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "lint": "eslint",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "verify:ui": "node scripts/verify-ui.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.7.0",
     "clsx": "^2.1.1",
     "disposable-email-domains": "^1.0.62",
-    "lenis": "^1.3.26",
     "lucide-react": "^0.562.0",
     "next": "^16.2.6",
     "react": "19.2.3",
@@ -36,6 +36,7 @@
     "eslint-config-next": "^16.2.6",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.7.4",
+    "puppeteer-core": "^25.7.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "wrangler": "^4.92.0"

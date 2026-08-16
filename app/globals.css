@@ -38,6 +38,13 @@
   --g: --spacing(4);
   --safe-area-left: max(var(--m), env(safe-area-inset-left));
   --safe-area-right: max(var(--m), env(safe-area-inset-right));
+  /* 320px phones: below this the header drops to initials + icon-only Résumé,
+     which is what stops the Email action being clipped off the right edge */
+  --breakpoint-xs: 360px;
+  /* the point field's phosphor greens, shared with the shader uniforms in
+     components/three/morph-field.tsx so the 3D and the UI cannot drift apart */
+  --color-field: #3fae44;
+  --color-field-hot: #7cff6b;
 }
 
 :root {
@@ -103,22 +110,11 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* subtle scan-line texture, dark only */
-  .dark body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent 0,
-      transparent 3px,
-      rgba(255, 255, 255, 0.012) 3px,
-      rgba(255, 255, 255, 0.012) 4px
-    );
-    opacity: 0.75;
-  }
+  /* The scan-line overlay was removed here. The interface was stacking nine
+     decorative motifs (particle field, scan lines, blueprint grid, corner
+     brackets, notched buttons, monospace labels, wide tracking, decorative
+     underscores, SYS numbering). The surviving signature is the particle
+     field, monospace instrumentation, notched buttons, and green accents. */
 
   /* Focus treatment: visible, ≥3:1, and inset on clip-path shapes so the
      ring is never clipped away. */
@@ -243,7 +239,11 @@
    reveal script has actually loaded and stamped `reveal-ready` on <html>,
    so a blocked or failed JS chunk can never hide server HTML. */
 @media (prefers-reduced-motion: no-preference) {
-  .reveal-ready [data-reveal]:not(.in-view) {
+  /* :not(:focus-within) is load-bearing, not a nicety. Tabbing can move focus
+     into a block the observer has not revealed yet — a keyboard user would
+     then be focused on an invisible control. Anything containing focus is
+     always painted, whatever the observer thinks. */
+  .reveal-ready [data-reveal]:not(.in-view):not(:focus-within) {
     opacity: 0;
     transform: translateY(16px);
   }

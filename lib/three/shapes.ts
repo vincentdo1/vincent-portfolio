@@ -20,26 +20,35 @@ export type ShapeKey =
   | "globe";
 
 /**
- * The sequence, in order: the arrival cloud, the three roles
- * reverse-chronologically, then the two flagship projects.
+ * The shapes the field morphs through, in the order the page presents them.
  *
- * There is no static projects section — `brain` and `globe` carry the chess
- * engine and the routing service here, inside the sequence, which is why those
- * stages own the live/source links.
+ * This is no longer a scroll "sequence" that gates content — the page is
+ * ordinary anchored sections now, and the field simply morphs to whichever
+ * section is nearest the middle of the viewport. The order therefore has to
+ * match document order (intro → projects → experience) so that scrolling
+ * normally never makes the field race backwards through the array.
  *
- * `tree`, `network`, and `mesh` are generated and posed but unused; add any of
- * them to this array to put it in the sequence. `tree` is the chess search
- * tree built for a personal closing stage that was cut — the site leads with
- * engineering, and the hook line in stage 00 carries the chess credential.
+ * Each section names its shape in `lib/content.ts`. Adding a section means
+ * adding its shape here in the right position; nothing else needs updating.
+ *
+ * `tree`, `network`, and `mesh` are generated and posed but unused. `tree` is
+ * a chess search tree pruning to one bright principal variation — it has been
+ * built for a closing stage twice and cut twice, so check before reviving it.
  */
 export const SHAPE_ORDER: ShapeKey[] = [
-  "scatter",
-  "rocket",
-  "handset",
-  "dna",
-  "brain",
-  "globe",
+  "scatter", // intro
+  "brain", // project: chess engine
+  "globe", // project: airport routing
+  "rocket", // experience: Boeing
+  "handset", // experience: Expedia
+  "dna", // experience: UW–Madison
 ];
+
+/** Position of a shape in the morph order, for sections to target. */
+export function shapeIndex(key: ShapeKey): number {
+  const i = SHAPE_ORDER.indexOf(key);
+  return i < 0 ? 0 : i;
+}
 
 /** Deterministic RNG so a given shape is byte-identical every build. */
 function mulberry32(seed: number) {
