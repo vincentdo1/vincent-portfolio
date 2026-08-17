@@ -20,9 +20,12 @@ import { site } from "@/lib/content";
  */
 
 const SECTION_LINKS = [
-  { label: "Work", href: "#work" },
-  { label: "Experience", href: "#experience" },
-  { label: "About", href: "#profile" },
+  // Work stays visible at every width. Mobile used to lose all section
+  // navigation below md, which left a phone visitor scrolling past two
+  // stacked project cards with no way back to the top-level structure.
+  { label: "Work", href: "#work", alwaysVisible: true },
+  { label: "Experience", href: "#experience", alwaysVisible: false },
+  { label: "About", href: "#profile", alwaysVisible: false },
 ];
 
 const EXTERNAL_LINKS = [
@@ -56,11 +59,13 @@ export function TopBar() {
           aria-label="Primary"
           className="flex items-center gap-0.5 sm:gap-1 min-w-0"
         >
-          {SECTION_LINKS.map(({ label, href }) => (
+          {SECTION_LINKS.map(({ label, href, alwaysVisible }) => (
             <a
               key={label}
               href={href}
-              className="hidden md:inline-flex items-center px-3 h-11 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors"
+              className={`items-center px-2 sm:px-3 h-11 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors ${
+                alwaysVisible ? "inline-flex" : "hidden md:inline-flex"
+              }`}
             >
               {label}
             </a>
@@ -76,7 +81,7 @@ export function TopBar() {
               // one display class only: `hidden` and `inline-flex` are the same
               // Tailwind property group, so listing both leaves the winner up
               // to stylesheet order rather than class order
-              className={`group items-center gap-2 px-2.5 sm:px-3 h-11 border border-transparent hover:border-primary/50 hover:bg-primary/5 transition-colors tactical-chip ${
+              className={`group items-center gap-2 px-2.5 sm:px-3 h-11 border border-transparent hover:border-primary/50 hover:bg-primary/5 transition-colors ${
                 alwaysVisible ? "inline-flex" : "hidden sm:inline-flex"
               }`}
             >

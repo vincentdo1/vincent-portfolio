@@ -77,7 +77,7 @@ export function Intro() {
               <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
               View work
             </a>
-            <ContactTrigger className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-primary/50 text-primary hover:bg-primary/10 transition-colors tactical-chip font-mono text-[11px] uppercase tracking-[0.25em]">
+            <ContactTrigger className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-primary/50 text-primary hover:bg-primary/10 transition-colors font-mono text-[11px] uppercase tracking-[0.25em]">
               <Mail className="h-3.5 w-3.5" aria-hidden="true" />
               Message
             </ContactTrigger>
@@ -85,7 +85,7 @@ export function Intro() {
               href={site.resume}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors tactical-chip font-mono text-[11px] uppercase tracking-[0.25em]"
+              className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-border-strong text-muted-foreground hover:border-primary hover:text-primary transition-colors font-mono text-[11px] uppercase tracking-[0.25em]"
             >
               <FileText className="h-3.5 w-3.5" aria-hidden="true" />
               Résumé

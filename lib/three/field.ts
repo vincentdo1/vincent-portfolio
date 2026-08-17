@@ -5,17 +5,24 @@ import { SHAPE_ORDER, shapeIndex, type ShapeKey } from "@/lib/three/shapes";
 /**
  * The bridge between the page's sections and the one point field behind them.
  *
- * The field used to be driven by a 630vh sticky track that gated all the
- * content behind scroll position. It is now driven by *reading position*:
- * every section registers the shape it wants, and the field morphs to
- * whichever section is nearest the middle of the viewport. Sections are
- * ordinary normal-flow elements, so Find, Page Down, anchors, and keyboard
- * navigation all behave the way a visitor expects, and the field is purely
- * decorative on top of that.
+ * Two rules, both learned the hard way:
  *
- * A module singleton rather than React context on purpose: there is exactly
- * one field, the values change on every scroll frame, and nothing on the page
- * should re-render when they do.
+ * **Never register two things that can share a vertical band.** The target is
+ * whichever registered element is nearest the middle of the viewport, so
+ * anything that can occupy the same band ties at distance zero and insertion
+ * order silently decides the winner. Both project cards registered once; they
+ * share a grid row on desktop, so the chess brain sat behind the Airport
+ * Routing card and the globe was unreachable at any scroll position.
+ *
+ * This is about layout, not granularity. Per-item registration is fine where
+ * items stack (the experience roles are a single-column list, so each owns a
+ * shape); it is section-level only where they can sit side by side.
+ *
+ * **The shapes are an abstract progression, not labels.** They do not stand
+ * for the content they sit behind, and nothing should be read into which
+ * shape appears where. Treating them as semantic is what made a mismatch look
+ * like a bug rather than decoration. Every section's meaning lives in its own
+ * normal-flow DOM; this layer only has to look alive.
  */
 
 const SEGMENTS = Math.max(1, SHAPE_ORDER.length - 1);
@@ -38,6 +45,21 @@ export const field = {
 let frame = 0;
 let listening = false;
 
+/**
+ * Called when `target` actually changes.
+ *
+ * The canvas runs `frameloop="demand"`, so a new target that nobody asks to
+ * render is a target that never appears. The scroll listener that wakes the
+ * canvas and the measurement that sets the target are separate callbacks, and
+ * a demand frame can consume the old value before measurement writes the new
+ * one. Waking explicitly here removes the ordering dependency.
+ */
+let onTargetChange: (() => void) | null = null;
+
+export function setFieldWaker(fn: (() => void) | null) {
+  onTargetChange = fn;
+}
+
 function measure() {
   frame = 0;
   if (registry.size === 0) return;
@@ -52,25 +74,23 @@ function measure() {
     const r = entry.el.getBoundingClientRect();
     if (r.height === 0) continue;
 
-    // distance from the section's midpoint to the viewport's midpoint,
-    // clamped so a very tall section still counts as "here" while you are
-    // anywhere inside it
-    const top = r.top;
-    const bottom = r.bottom;
-    const dist = top > mid ? top - mid : bottom < mid ? mid - bottom : 0;
-
+    const dist =
+      r.top > mid ? r.top - mid : r.bottom < mid ? mid - r.bottom : 0;
     if (dist < bestDist) {
       bestDist = dist;
       bestIndex = entry.index;
     }
 
     if (entry.hero) {
-      // 1 while the intro fills the screen, ramping to 0 as it leaves
-      field.heroPresence = Math.max(0, Math.min(1, bottom / vh));
+      field.heroPresence = Math.max(0, Math.min(1, r.bottom / vh));
     }
   }
 
-  field.target = bestIndex / SEGMENTS;
+  const next = bestIndex / SEGMENTS;
+  if (next !== field.target) {
+    field.target = next;
+    onTargetChange?.();
+  }
 }
 
 function schedule() {
@@ -95,7 +115,7 @@ function stop() {
 }
 
 /**
- * Register a section as the owner of a shape. Returns the unregister fn.
+ * Register a major section as the owner of a shape. Returns the unregister fn.
  * Safe to call when there is no canvas — the registry is inert without one.
  */
 export function registerSection(

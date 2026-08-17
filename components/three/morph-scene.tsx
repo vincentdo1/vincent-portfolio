@@ -12,7 +12,7 @@ import {
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { MorphField } from "@/components/three/morph-field";
 import { useDeviceProfile } from "@/lib/three/device";
-import { field } from "@/lib/three/field";
+import { field, setFieldWaker } from "@/lib/three/field";
 
 /**
  * Watches real frame times and fires `onDegrade` once if the device
@@ -97,9 +97,16 @@ function FrameWaker() {
     const wake = () => invalidate();
     window.addEventListener("scroll", wake, { passive: true });
     window.addEventListener("resize", wake);
+    // Also wake when measurement commits a new target. Scroll and measurement
+    // are separate callbacks, so without this a demand frame can consume the
+    // old target just before the new one is written, and nothing then asks
+    // for the frame that would show it — correctness would depend on
+    // listener ordering.
+    setFieldWaker(wake);
     return () => {
       window.removeEventListener("scroll", wake);
       window.removeEventListener("resize", wake);
+      setFieldWaker(null);
     };
   }, [invalidate]);
 
@@ -137,10 +144,9 @@ class CanvasBoundary extends Component<
  * Exactly one WebGL context, and zero downloaded assets — the geometry is
  * math (`lib/three/shapes.ts`).
  *
- * Not rendered at all for `prefers-reduced-motion`. A frozen point cloud is
- * still a large moving-looking object behind text, and the sections read
- * perfectly well without it, so the honest reduced-motion answer is no canvas
- * rather than a static one.
+ * Not rendered at all for `prefers-reduced-motion`, Save-Data, or a machine
+ * without usable WebGL. Those decisions are made in `field-backdrop.tsx`,
+ * before this chunk is imported.
  */
 export function MorphScene({ className }: { className?: string }) {
   const device = useDeviceProfile();
@@ -187,8 +193,10 @@ export function MorphScene({ className }: { className?: string }) {
     [],
   );
 
-  // No usable GPU, or the visitor asked for reduced motion: no canvas. Every
-  // section is plain DOM, so nothing is lost but the decoration.
+  // Eligibility (no WebGL / reduced motion / Save-Data) is decided by
+  // FieldBackdrop, outside this module's dynamic import, so an ineligible
+  // visitor never downloads the Three.js chunk at all. This guard is only the
+  // belt to that braces.
   if (!device.ready || !device.gl || device.reduced) return null;
 
   return (

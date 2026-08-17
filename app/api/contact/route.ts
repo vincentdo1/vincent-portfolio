@@ -128,8 +128,67 @@ async function domainHasMx(domain: string): Promise<boolean> {
   }
 }
 
+/**
+ * Per-IP request budget, held in the isolate.
+ *
+ * Be clear about what this is and is not. Workers isolates are per-colo and
+ * short-lived, so this bounds a naive flood hitting one isolate and nothing
+ * more — a distributed script routed through several colos will get a fresh
+ * budget in each. It exists so the provider quota is not trivially drained by
+ * a single looping client, which would make legitimate recruiter mail fail.
+ *
+ * The real control is a Cloudflare rate-limiting rule (or Turnstile) in front
+ * of /api/contact. That is dashboard configuration, not code, and it is still
+ * outstanding — see V3_IMPLEMENTATION_NOTES.md.
+ */
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_MAX_PER_WINDOW = 5;
+const RATE_CACHE_MAX_ENTRIES = 2048;
+const rateBuckets = new Map<string, number[]>();
+
+function clientKey(req: Request): string {
+  return (
+    req.headers.get("cf-connecting-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown"
+  );
+}
+
+/** True when this client is over budget. */
+function isRateLimited(req: Request): boolean {
+  const key = clientKey(req);
+  const now = Date.now();
+
+  // bounded: drop the oldest key rather than let the map grow without limit
+  if (rateBuckets.size >= RATE_CACHE_MAX_ENTRIES) {
+    const oldest = rateBuckets.keys().next().value;
+    if (oldest !== undefined) rateBuckets.delete(oldest);
+  }
+
+  const hits = (rateBuckets.get(key) ?? []).filter(
+    (t) => now - t < RATE_WINDOW_MS,
+  );
+  if (hits.length >= RATE_MAX_PER_WINDOW) {
+    rateBuckets.set(key, hits);
+    return true;
+  }
+  hits.push(now);
+  rateBuckets.set(key, hits);
+  return false;
+}
+
 export async function POST(req: Request) {
   const correlationId = newCorrelationId();
+
+  if (isRateLimited(req)) {
+    return json(
+      {
+        error: `Too many messages from this address. Please try again shortly, or email ${TO_EMAIL} directly.`,
+        correlationId,
+      },
+      429,
+    );
+  }
 
   if (!isSameOrigin(req)) {
     return json({ error: "Request rejected.", correlationId }, 403);
@@ -170,11 +229,26 @@ export async function POST(req: Request) {
   const { name, email, message } = record;
   const trap = record[TRAP_FIELD];
 
-  // The one signal that still answers success-without-sending. Nothing a
-  // human uses fills a field called ref_id that is off-screen, tabIndex -1,
-  // aria-hidden, and autocomplete="off", so a hit here is a script and should
-  // learn nothing from the response.
-  if (typeof trap === "string" && trap.trim()) return json({ ok: true });
+  // The trap answers with a recoverable error, never with a fake success.
+  //
+  // This used to return { ok: true } without sending, which meant one
+  // client-controlled field could make the UI announce "Message sent" for a
+  // message nobody would ever receive — invisible to the sender and to
+  // Vincent. Renaming the field away from "company" narrowed who could trip
+  // it accidentally, but a single decisive signal silently discarding mail is
+  // the wrong shape regardless of how unlikely the false positive is.
+  //
+  // A bot learns only that the request failed. A human who somehow trips it
+  // gets told, and gets the direct address, so the conversion is recoverable.
+  if (typeof trap === "string" && trap.trim()) {
+    return json(
+      {
+        error: `That submission looked automated. Please email ${TO_EMAIL} directly.`,
+        correlationId,
+      },
+      422,
+    );
+  }
 
   // A name matching urlInTextRegex (an explicit http:// or www.) used to be
   // silently discarded the same way. "Jane, www.acme.com" is a plausible

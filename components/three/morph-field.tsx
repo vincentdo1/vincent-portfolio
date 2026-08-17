@@ -250,6 +250,12 @@ export function MorphField({
     // Ceiling below 1 even in the intro. At full strength 22,000 additively
     // blended points wash out the copy sitting on top of them, and the answer
     // to that is a quieter field, not heavier text shadows on the type.
+    //
+    // Receded floor. Perceived brightness goes roughly as luminance^(1/2.2),
+    // so "20% more visible" is ~1.5x the alpha, not 1.2x: 0.079 -> 0.119.
+    // Vincent's call — the shapes behind the role cards were too faint to
+    // read as anything. Text legibility is unaffected because the cards
+    // themselves are the scrim, not this value.
     u.uFade.value = 0.66 * (1 - r * 0.82);
     u.uSize.value = 3.4 * (1 - r * 0.42);
     u.uDrift.value = 0.022 * (1 - r);

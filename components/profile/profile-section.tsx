@@ -1,8 +1,7 @@
-import { ArrowUpRight, FileText, Mail } from "lucide-react";
-import { ContactTrigger } from "@/components/contact/contact-trigger";
+import { ArrowUpRight } from "lucide-react";
+import { FieldRegion } from "@/components/three/field-region";
 import {
   capabilities,
-  contact,
   education,
   profile,
   site,
@@ -30,6 +29,8 @@ export function ProfileSection() {
       aria-labelledby="profile-heading"
       className="relative z-10 scroll-mt-20 px-safe py-16 sm:py-20 border-t border-border/60"
     >
+      <FieldRegion targetId="profile" shape="globe" />
+
       <div className="mx-auto w-full max-w-7xl">
         <div className="mb-6">
           <h2
@@ -122,7 +123,7 @@ export function ProfileSection() {
               href={profile.alsoBuiltHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline whitespace-nowrap"
+              className="inline-flex items-center min-h-11 py-1 text-primary hover:underline whitespace-nowrap"
             >
               Live demo
               <ArrowUpRight
@@ -141,7 +142,7 @@ export function ProfileSection() {
               href={site.chesscom}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline whitespace-nowrap"
+              className="inline-flex items-center min-h-11 py-1 text-primary hover:underline whitespace-nowrap"
             >
               chess.com/{site.chesscomHandle}
               <ArrowUpRight
@@ -151,41 +152,6 @@ export function ProfileSection() {
               <span className="sr-only">(opens in new tab)</span>
             </a>
           </p>
-        </div>
-
-        {/* Closing action. One line, two controls — the header carries the
-            same actions at every scroll position. */}
-        <div
-          id="contact"
-          className="mt-16 scroll-mt-20 border-t border-border/60 pt-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between"
-          data-reveal
-        >
-          <div>
-            <h2 className="font-display text-3xl sm:text-4xl uppercase leading-none">
-              Your move
-            </h2>
-            <p className="mt-3 text-muted-foreground max-w-md">
-              {contact.availability} Based in {site.location}, open to
-              relocation.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2 shrink-0">
-            <ContactTrigger className="inline-flex items-center justify-center gap-2 h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors tactical-chip font-mono text-[11px] uppercase tracking-[0.25em]">
-              <Mail className="h-3.5 w-3.5" aria-hidden="true" />
-              Message
-            </ContactTrigger>
-            <a
-              href={site.resume}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-primary/50 text-primary hover:bg-primary/10 transition-colors tactical-chip font-mono text-[11px] uppercase tracking-[0.25em]"
-            >
-              <FileText className="h-3.5 w-3.5" aria-hidden="true" />
-              Résumé
-              <span className="sr-only">(opens in new tab)</span>
-            </a>
-          </div>
         </div>
       </div>
     </section>

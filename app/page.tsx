@@ -1,10 +1,11 @@
 import { ArrowUp, Github, Linkedin } from "lucide-react";
 import { TopBar } from "@/components/top-bar";
-import { MorphScene } from "@/components/three/morph-scene-dynamic";
+import { FieldBackdrop } from "@/components/three/field-backdrop";
 import { Intro } from "@/components/sections/intro";
 import { FeaturedWork } from "@/components/sections/featured-work";
 import { ExperienceSection } from "@/components/sections/experience";
 import { ProfileSection } from "@/components/profile/profile-section";
+import { ContactSection } from "@/components/sections/contact-section";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { ContactProvider } from "@/components/contact/contact-provider";
 import { projects, site } from "@/lib/content";
@@ -43,8 +44,9 @@ export default function Home() {
 
       {/* One canvas for the whole document, fixed at z-0 behind every section.
           Purely decorative: every section owns its copy in normal-flow DOM and
-          only registers a shape for the field to morph to. */}
-      <MorphScene className="fixed inset-0 z-0 pointer-events-none" />
+          only registers a shape for the field to morph to. FieldBackdrop
+          decides eligibility before the Three.js chunk is ever requested. */}
+      <FieldBackdrop className="fixed inset-0 z-0 pointer-events-none" />
 
       <ContactProvider>
         <TopBar />
@@ -58,24 +60,23 @@ export default function Home() {
           <FeaturedWork />
           <ExperienceSection />
           <ProfileSection />
+          <ContactSection />
         </main>
 
         <footer className="relative z-10 border-t border-border/60 py-8 px-safe">
-          {/* DOM order matches visual order at every breakpoint — no
-              `order-first`, which used to make the tab sequence disagree with
-              what a sighted keyboard user sees. */}
-          <div className="mx-auto max-w-7xl flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              © {new Date().getFullYear()} {site.name}
-            </p>
-
+          {/* DOM order matches visual order at every breakpoint. Neither
+              `order-first` nor `flex-col-reverse`: both make a sighted
+              keyboard user tab through the footer in the opposite order to
+              the one they can see. The nav comes first in the DOM because it
+              comes first visually on mobile. */}
+          <div className="mx-auto max-w-7xl flex flex-col sm:flex-row-reverse items-center justify-between gap-4">
             <nav
               aria-label="Footer"
               className="flex flex-wrap items-center justify-center gap-1"
             >
               <a
                 href="#top"
-                className="inline-flex items-center gap-2 h-11 px-4 border border-border hover:border-primary hover:text-primary text-muted-foreground transition-colors font-mono text-[11px] uppercase tracking-[0.2em]"
+                className="inline-flex items-center gap-2 h-11 px-4 border border-border-strong hover:border-primary hover:text-primary text-muted-foreground transition-colors font-mono text-[11px] uppercase tracking-[0.2em]"
               >
                 <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
                 Back to top
@@ -99,6 +100,10 @@ export default function Home() {
                 <Linkedin className="h-4 w-4" aria-hidden="true" />
               </a>
             </nav>
+
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+              © {new Date().getFullYear()} {site.name}
+            </p>
           </div>
         </footer>
       </ContactProvider>

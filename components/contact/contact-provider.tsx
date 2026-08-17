@@ -68,6 +68,7 @@ export function ContactProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [broken, setBroken] = useState(false);
   const [ready, setReady] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   /**
    * Load the dialog chunk during idle time, before anyone clicks.
@@ -105,14 +106,18 @@ export function ContactProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<ContactContextValue>(
     () => ({
+      // "Operational", not "imported". A resolved import only proves the
+      // module arrived; it does not prove the component mounted or that
+      // showModal() exists. Reporting readiness from inside the mounted
+      // dialog closes the window where a click was prevented but nothing
+      // opened.
       open: () => {
-        // not ready yet => let the mailto: through instead of a dead click
-        if (broken || !ready) return false;
+        if (broken || !mounted) return false;
         setOpen(true);
         return true;
       },
     }),
-    [broken, ready],
+    [broken, mounted],
   );
 
   return (
@@ -120,7 +125,11 @@ export function ContactProvider({ children }: { children: ReactNode }) {
       {children}
       {ready && !broken && (
         <DialogBoundary onBroken={() => setBroken(true)}>
-          <ContactDialog open={open} onClose={() => setOpen(false)} />
+          <ContactDialog
+            open={open}
+            onClose={() => setOpen(false)}
+            onMounted={() => setMounted(true)}
+          />
         </DialogBoundary>
       )}
     </ContactContext.Provider>

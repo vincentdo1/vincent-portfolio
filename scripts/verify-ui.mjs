@@ -129,7 +129,10 @@ console.log("\nNAVIGATION AND SCANNING");
     "Expedia",
     "UW–Madison",
   ])
-    ok(`Find locates "${term}" without scrolling`, has(t, term));
+    ok(
+      `"${term}" is in rendered text at rest (Find would match)`,
+      has(t, term),
+    );
 
   ok(
     "header exposes a Work destination",
@@ -224,7 +227,7 @@ console.log("\nKEYBOARD AND FOCUS");
   );
 
   ok(
-    "every project CTA is keyboard reachable in order",
+    "project CTAs appear in sequential DOM order",
     await p.evaluate(() => {
       const order = [...document.querySelectorAll("a[href], button")];
       const work = [...document.querySelectorAll("#work a[href^='http']")];
@@ -344,6 +347,219 @@ console.log("\nCONTACT");
   await p.close();
 }
 
+// ── Real Tab order, not programmatic focus ────────────────────────────────
+console.log("\nREAL TAB ORDER");
+{
+  const p = await fresh();
+  const seen = [];
+  await p.evaluate(() => document.body.focus());
+  for (let i = 0; i < 40; i++) {
+    await p.keyboard.press("Tab");
+    const info = await p.evaluate(() => {
+      const el = document.activeElement;
+      if (!el || el === document.body) return null;
+      // the Next.js dev overlay injects a 0x0 focusable portal; it does not
+      // exist in a production build
+      if (el.tagName.includes("NEXTJS")) return null;
+      const r = el.getBoundingClientRect();
+      const wrap = el.closest("[data-reveal]");
+      return {
+        tag: el.tagName,
+        href: el.getAttribute("href") || "",
+        label: (el.textContent || el.ariaLabel || "").trim().slice(0, 28),
+        opacity: Number(getComputedStyle(wrap ?? el).opacity),
+        w: r.width,
+        h: r.height,
+      };
+    });
+    if (info) seen.push(info);
+  }
+  ok(
+    "Tab reaches at least 15 controls",
+    seen.length >= 15,
+    `saw ${seen.length}`,
+  );
+  const invisible = seen.filter((s) => s.opacity < 0.85);
+  ok(
+    "nothing reached by real Tab is faded below 0.85",
+    invisible.length === 0,
+    invisible.map((i) => i.label).join(" | "),
+  );
+  const zero = seen.filter((s) => s.w === 0 || s.h === 0);
+  ok(
+    "nothing reached by real Tab is zero-sized",
+    zero.length === 0,
+    zero.map((z) => z.label).join(" | "),
+  );
+  ok(
+    "Tab reaches both project demos",
+    new Set(seen.filter((s) => /github\.io/.test(s.href)).map((s) => s.href))
+      .size === 2,
+  );
+  await p.close();
+}
+
+// ── Cold contact click: the mailto must survive an unready dialog ─────────
+console.log("\nCOLD CONTACT CLICK");
+{
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 900 });
+  await page.goto(URL, { waitUntil: "domcontentloaded" });
+  // click immediately, before the idle prefetch can resolve
+  const prevented = await page.evaluate(() => {
+    const a = [...document.querySelectorAll("header a")].find((x) =>
+      /message/i.test(x.textContent),
+    );
+    if (!a) return "no-trigger";
+    if (!a.getAttribute("href")?.startsWith("mailto:")) return "not-mailto";
+    let defaultPrevented = false;
+    a.addEventListener(
+      "click",
+      (e) => {
+        defaultPrevented = e.defaultPrevented;
+        e.preventDefault(); // don't actually launch a mail client
+      },
+      { capture: false },
+    );
+    a.click();
+    return defaultPrevented ? "swallowed" : "fell-through";
+  });
+  ok(
+    "cold click falls through to mailto rather than dying",
+    prevented === "fell-through",
+    String(prevented),
+  );
+  await page.close();
+}
+
+// ── Contrast of real rendered colours ─────────────────────────────────────
+console.log("\nCONTRAST");
+{
+  const p = await fresh();
+  const results = await p.evaluate(() => {
+    // Chrome returns computed colours in the authored space — lab(), oklch()
+    // — so scraping numbers out of the string is meaningless. Rasterise one
+    // pixel instead and read the real sRGB bytes back.
+    const ctx = document.createElement("canvas").getContext("2d");
+    const parse = (c) => {
+      ctx.clearRect(0, 0, 1, 1);
+      ctx.fillStyle = c;
+      ctx.fillRect(0, 0, 1, 1);
+      const d = ctx.getImageData(0, 0, 1, 1).data;
+      return [d[0], d[1], d[2]];
+    };
+    const lum = (rgb) => {
+      const f = (u) => {
+        u /= 255;
+        return u <= 0.04045 ? u / 12.92 : Math.pow((u + 0.055) / 1.055, 2.4);
+      };
+      return 0.2126 * f(rgb[0]) + 0.7152 * f(rgb[1]) + 0.0722 * f(rgb[2]);
+    };
+    const ratio = (a, b) => {
+      const [hi, lo] = lum(a) > lum(b) ? [lum(a), lum(b)] : [lum(b), lum(a)];
+      return (hi + 0.05) / (lo + 0.05);
+    };
+    const bg = parse(getComputedStyle(document.body).backgroundColor);
+    const out = {};
+
+    const heading = document.querySelector("#work h2");
+    out.heading = ratio(parse(getComputedStyle(heading).color), bg);
+
+    const body = document.querySelector("#chess-engine p:nth-of-type(2)");
+    out.body = ratio(parse(getComputedStyle(body).color), bg);
+
+    const dt = document.querySelector("#chess-engine dl dt");
+    out.readoutLabel = ratio(parse(getComputedStyle(dt).color), bg);
+
+    // interactive outline: the Source button
+    const outlined = [...document.querySelectorAll("#work a")].find((a) =>
+      /source/i.test(a.textContent),
+    );
+    out.outlinedBorder = ratio(
+      parse(getComputedStyle(outlined).borderTopColor),
+      bg,
+    );
+    return out;
+  });
+
+  ok(
+    `section heading text >= 4.5 (${results.heading.toFixed(2)}:1)`,
+    results.heading >= 4.5,
+  );
+  ok(
+    `project body text >= 4.5 (${results.body.toFixed(2)}:1)`,
+    results.body >= 4.5,
+  );
+  ok(
+    `readout label >= 4.5 (${results.readoutLabel.toFixed(2)}:1)`,
+    results.readoutLabel >= 4.5,
+  );
+  ok(
+    `outlined control border >= 3.0 (${results.outlinedBorder.toFixed(2)}:1)`,
+    results.outlinedBorder >= 3.0,
+  );
+  await p.close();
+}
+
+// ── Field registration contract ──────────────────────────────────────────
+// The audit found the field sticking on one shape: two project cards shared a
+// grid row, tied on vertical distance, and insertion order silently won —
+// leaving the globe unreachable and the previous shape persisting past the
+// last registered section. The fix was to register whole sections instead.
+//
+// Verifying the *rendered* shape is not possible here: the canvas runs
+// without `preserveDrawingBuffer` (deliberately, for performance), so
+// toDataURL returns a blank buffer. What is checkable is the contract the fix
+// depends on — every major section exists as a distinct registration target,
+// including the ones after Experience that used to have none.
+console.log("\nFIELD REGISTRATION CONTRACT");
+{
+  const p = await fresh();
+  ok("canvas is present", (await p.$$("canvas")).length === 1);
+  for (const sel of ["#work", "#experience", "#profile", "#contact"])
+    ok(`${sel} exists as a registration target`, (await p.$(sel)) !== null);
+  ok(
+    "sections after Experience have their own targets (no shape persistence)",
+    (await p.$("#profile")) !== null && (await p.$("#contact")) !== null,
+  );
+  ok(
+    "project cards are inside #work, not siblings competing with it",
+    await p.evaluate(() => {
+      const work = document.getElementById("work");
+      return (
+        work.contains(document.getElementById("chess-engine")) &&
+        work.contains(document.getElementById("airport-routing"))
+      );
+    }),
+  );
+  await p.close();
+}
+
+// ── Console errors and failed requests ────────────────────────────────────
+console.log("\nRUNTIME CLEANLINESS");
+{
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 900 });
+  const errors = [];
+  const failed = [];
+  page.on("console", (m) => {
+    if (m.type() === "error") errors.push(m.text().slice(0, 120));
+  });
+  page.on("pageerror", (e) =>
+    errors.push("pageerror: " + String(e).slice(0, 120)),
+  );
+  page.on("requestfailed", (r) => failed.push(r.url().slice(0, 120)));
+  await page.goto(URL, { waitUntil: "networkidle0" });
+  const H = await page.evaluate(() => document.documentElement.scrollHeight);
+  for (let y = 0; y < H; y += 600) {
+    await page.evaluate((yy) => window.scrollTo(0, yy), y);
+    await new Promise((r) => setTimeout(r, 120));
+  }
+  ok("no console errors", errors.length === 0, errors.join(" | "));
+  ok("no failed requests", failed.length === 0, failed.join(" | "));
+  await page.close();
+}
+
 // ── Responsive matrix ─────────────────────────────────────────────────────
 console.log("\nRESPONSIVE MATRIX");
 for (const [w, h] of SIZES) {
@@ -429,20 +645,41 @@ for (const [w, h] of SIZES) {
 
   // 5. readout cells do not collide (3 equal columns, no overlap)
   const collide = await p.evaluate(() => {
-    for (const dl of document.querySelectorAll("dl.grid-cols-3")) {
-      const cells = [...dl.children].map((c) => c.getBoundingClientRect());
-      for (let i = 1; i < cells.length; i++)
-        if (cells[i].left < cells[i - 1].right - 1) return true;
-      // value must not spill out of its cell
-      for (const c of dl.children) {
+    const bad = [];
+    for (const dl of document.querySelectorAll("dl[class*='grid']")) {
+      const cells = [...dl.children];
+      const boxes = cells.map((c) => c.getBoundingClientRect());
+      for (let i = 1; i < boxes.length; i++)
+        if (
+          boxes[i].left < boxes[i - 1].right - 1 &&
+          boxes[i].top < boxes[i - 1].bottom - 1
+        )
+          bad.push("cells overlap");
+      // BOTH dt and dd must stay inside their own cell. Checking only dd was
+      // how a real 320px failure got through: the labels were the overflow.
+      for (const c of cells) {
         const box = c.getBoundingClientRect();
-        const dd = c.querySelector("dd").getBoundingClientRect();
-        if (dd.right > box.right + 1) return true;
+        for (const kid of c.querySelectorAll("dt,dd")) {
+          const k = kid.getBoundingClientRect();
+          if (k.right > box.right + 1 || k.left < box.left - 1)
+            bad.push(
+              `${kid.tagName} "${kid.textContent.trim().slice(0, 14)}" spills`,
+            );
+          // scrollWidth beats getBoundingClientRect for text clipped by the box
+          if (kid.scrollWidth > Math.ceil(k.width) + 1)
+            bad.push(
+              `${kid.tagName} "${kid.textContent.trim().slice(0, 14)}" clipped`,
+            );
+        }
       }
     }
-    return false;
+    return bad;
   });
-  ok("readout cells do not collide or spill", !collide);
+  ok(
+    "readout labels and values stay inside their cells",
+    collide.length === 0,
+    collide.slice(0, 4).join(" | "),
+  );
 
   // 6. nothing pinned/sticky hides content on a short viewport
   const stuck = await p.evaluate(() => {

@@ -20,28 +20,37 @@ export type ShapeKey =
   | "globe";
 
 /**
- * The shapes the field morphs through, in the order the page presents them.
+ * The shapes the field morphs through, in document order.
  *
- * This is no longer a scroll "sequence" that gates content — the page is
- * ordinary anchored sections now, and the field simply morphs to whichever
- * section is nearest the middle of the viewport. The order therefore has to
- * match document order (intro → projects → experience) so that scrolling
- * normally never makes the field race backwards through the array.
+ * This is decoration, not meaning. The shapes do not stand for the content
+ * they sit behind and nothing should be read into which one appears where.
+ * Order has to match document order so that scrolling normally never makes
+ * the field race backwards through the array.
  *
- * Each section names its shape in `lib/content.ts`. Adding a section means
- * adding its shape here in the right position; nothing else needs updating.
+ * **Registration granularity is a layout question, not a taste one.** The
+ * field picks the registered element nearest the middle of the viewport, so
+ * two elements that can occupy the same vertical band tie at distance zero
+ * and insertion order silently decides the winner. That is exactly what went
+ * wrong when both project cards registered: they share a grid row on desktop,
+ * so the chess brain sat behind the Airport Routing card and the globe was
+ * unreachable at any scroll position.
  *
- * `tree`, `network`, and `mesh` are generated and posed but unused. `tree` is
- * a chess search tree pruning to one bright principal variation — it has been
+ * The rule that follows: register per item where items **stack** (the three
+ * experience roles are a single-column `<ol>`, so they can never tie), and
+ * per section where they **can share a row** (Featured Work owns one shape
+ * for both cards).
+ *
+ * `tree`, `network` and `mesh` are generated and posed but unused. `tree` is a
+ * chess search tree pruning to one bright principal variation; it has been
  * built for a closing stage twice and cut twice, so check before reviving it.
  */
 export const SHAPE_ORDER: ShapeKey[] = [
   "scatter", // intro
-  "brain", // project: chess engine
-  "globe", // project: airport routing
-  "rocket", // experience: Boeing
-  "handset", // experience: Expedia
-  "dna", // experience: UW–Madison
+  "brain", // #work — one shape, both project cards
+  "rocket", // #boeing
+  "handset", // #expedia-group
+  "dna", // #uw-madison
+  "globe", // #profile and #contact
 ];
 
 /** Position of a shape in the morph order, for sections to target. */

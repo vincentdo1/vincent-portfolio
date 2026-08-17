@@ -3,6 +3,20 @@
 import { Readout } from "@/components/sections/readout";
 import { useFieldSection } from "@/lib/three/use-field-section";
 import { experiences, type Experience } from "@/lib/content";
+import type { ShapeKey } from "@/lib/three/shapes";
+
+/**
+ * Shape per role, positional.
+ *
+ * Colocated with the presentation rather than sitting in `lib/content.ts`:
+ * these are decoration and say nothing about the job. Registering per role is
+ * safe here specifically because the list is a single-column `<ol>` — the
+ * cards stack at every width, so two of them can never occupy the same
+ * vertical band and tie at distance zero the way the side-by-side project
+ * cards did. If this list ever becomes multi-column, move the registration up
+ * to the section like Featured Work.
+ */
+const ROLE_SHAPES: ShapeKey[] = ["rocket", "handset", "dna"];
 
 /**
  * Roles, reverse-chronological, in normal flow.
@@ -12,8 +26,8 @@ import { experiences, type Experience } from "@/lib/content";
  * different words. Each role now appears exactly once, with the fuller copy,
  * its dates, and its readout together in one card a recruiter can scan.
  */
-function Role({ role }: { role: Experience }) {
-  const ref = useFieldSection<HTMLElement>(role.shape);
+function Role({ role, shape }: { role: Experience; shape: ShapeKey }) {
+  const ref = useFieldSection<HTMLElement>(shape);
   const id = role.company.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
   return (
@@ -46,12 +60,14 @@ function Role({ role }: { role: Experience }) {
         )}
       </p>
 
-      <p className="text-[15px] text-foreground/90 leading-relaxed mt-4">
+      {/* max-w-prose: the cards are full width on desktop and an unbroken
+          ~140-character measure is hard to track back to the next line */}
+      <p className="text-[15px] text-foreground/90 leading-relaxed mt-4 max-w-prose">
         {role.body}
       </p>
 
       {role.note && (
-        <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+        <p className="text-sm text-muted-foreground leading-relaxed mt-2 max-w-prose">
           {role.note}
         </p>
       )}
@@ -79,9 +95,9 @@ export function ExperienceSection() {
         </div>
 
         <ol className="grid gap-5">
-          {experiences.map((e) => (
+          {experiences.map((e, i) => (
             <li key={e.company}>
-              <Role role={e} />
+              <Role role={e} shape={ROLE_SHAPES[i] ?? "rocket"} />
             </li>
           ))}
         </ol>

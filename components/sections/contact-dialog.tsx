@@ -8,11 +8,17 @@ import { site } from "@/lib/content";
 interface ContactDialogProps {
   open: boolean;
   onClose: () => void;
+  /** Fired once the dialog is mounted and <dialog> is actually usable. */
+  onMounted?: () => void;
 }
 
 type Status = "idle" | "sending" | "sent" | "error";
 
-export function ContactDialog({ open, onClose }: ContactDialogProps) {
+export function ContactDialog({
+  open,
+  onClose,
+  onMounted,
+}: ContactDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   // ref_id, not "company": browsers autofill organization fields, and a
   // recruiter whose browser filled it in used to be shown "Message sent" for
@@ -28,6 +34,16 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
   const abortRef = useRef<AbortController | null>(null);
   const sentHeadingRef = useRef<HTMLHeadingElement>(null);
   const sending = status === "sending";
+
+  // Tell the provider the dialog is genuinely usable, not merely imported.
+  // Until this fires, every trigger falls through to its mailto: default.
+  useEffect(() => {
+    if (
+      typeof HTMLDialogElement !== "undefined" &&
+      dialogRef.current?.showModal
+    )
+      onMounted?.();
+  }, [onMounted]);
 
   // Success replaces the whole form, taking the focused element with it.
   useEffect(() => {
@@ -123,13 +139,6 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
       // direct-email fallback were simply unreachable.
       className="m-auto w-[calc(100%-2rem)] max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto border border-border bg-card text-foreground p-5 sm:p-6 lg:p-8 backdrop:bg-transparent"
     >
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <span className="absolute top-0 left-0 h-3.5 w-3.5 border-t-[1.5px] border-l-[1.5px] border-primary" />
-        <span className="absolute top-0 right-0 h-3.5 w-3.5 border-t-[1.5px] border-r-[1.5px] border-primary" />
-        <span className="absolute bottom-0 left-0 h-3.5 w-3.5 border-b-[1.5px] border-l-[1.5px] border-primary" />
-        <span className="absolute bottom-0 right-0 h-3.5 w-3.5 border-b-[1.5px] border-r-[1.5px] border-primary" />
-      </div>
-
       <button
         onClick={handleClose}
         className="absolute top-2 right-2 flex h-11 w-11 items-center justify-center text-muted-foreground hover:text-primary transition-colors"
@@ -139,15 +148,14 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
       </button>
 
       <div className="mb-6">
-        <div className="font-mono text-xs uppercase tracking-[0.25em] text-primary mb-2 flex items-center gap-3">
-          <span className="h-px w-6 bg-primary" />
+        <div className="font-mono text-xs uppercase tracking-[0.25em] text-primary mb-2">
           Quick message
         </div>
         <h3
           id="contact-dialog-title"
           className="font-display text-3xl md:text-4xl uppercase leading-none"
         >
-          Get in <span className="text-primary">Touch_</span>
+          Get in <span className="text-primary">touch</span>
         </h3>
       </div>
 
@@ -172,7 +180,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
           <button
             onClick={handleClose}
             className={cn(
-              "inline-flex items-center gap-2 h-11 px-5 tactical-shape",
+              "inline-flex items-center gap-2 h-11 px-5 tactical-chip",
               "bg-primary text-primary-foreground font-mono text-xs",
               "uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors",
             )}
@@ -205,7 +213,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                 maxLength={200}
                 autoComplete="name"
                 placeholder="Your name"
-                className="w-full h-11 px-3 bg-background border border-border focus:border-primary text-sm font-mono placeholder:text-muted-foreground/50 transition-colors disabled:opacity-60"
+                className="w-full h-11 px-3 bg-background border border-input focus:border-primary text-sm font-mono placeholder:text-muted-foreground/80 transition-colors disabled:opacity-60"
               />
             </div>
 
@@ -227,7 +235,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                 maxLength={320}
                 autoComplete="email"
                 placeholder="you@example.com"
-                className="w-full h-11 px-3 bg-background border border-border focus:border-primary text-sm font-mono placeholder:text-muted-foreground/50 transition-colors disabled:opacity-60"
+                className="w-full h-11 px-3 bg-background border border-input focus:border-primary text-sm font-mono placeholder:text-muted-foreground/80 transition-colors disabled:opacity-60"
               />
             </div>
 
@@ -248,7 +256,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
                 maxLength={5000}
                 placeholder="Tell me what you're hiring for."
                 rows={5}
-                className="w-full px-3 py-2 bg-background border border-border focus:border-primary text-sm font-mono placeholder:text-muted-foreground/50 transition-colors resize-none disabled:opacity-60"
+                className="w-full px-3 py-2 bg-background border border-input focus:border-primary text-sm font-mono placeholder:text-muted-foreground/80 transition-colors resize-none disabled:opacity-60"
               />
             </div>
 
@@ -300,7 +308,7 @@ export function ContactDialog({ open, onClose }: ContactDialogProps) {
               type="submit"
               disabled={sending}
               className={cn(
-                "inline-flex items-center gap-2 h-11 px-5 tactical-shape",
+                "inline-flex items-center gap-2 h-11 px-5 tactical-chip",
                 "bg-primary text-primary-foreground font-mono text-xs",
                 "uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors",
                 "disabled:opacity-60 disabled:cursor-wait",

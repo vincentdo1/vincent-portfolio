@@ -1,5 +1,3 @@
-import type { ShapeKey } from "@/lib/three/shapes";
-
 /**
  * Single source of truth for portfolio content.
  * Every metric here must be real and defensible, and should appear
@@ -67,9 +65,8 @@ export const intro = {
  * linked straight to one. They live above `experiences` deliberately: the
  * projects are the part interviewers actually bring up.
  *
- * `shape` names the point-field shape this section morphs to when it scrolls
- * into view. It is presentation only, and nothing here depends on WebGL
- * existing — see `lib/three/shapes.ts`.
+ * The point field behind the page is decoration and is driven per *section*,
+ * not per card, so nothing here carries a shape. See `lib/three/field.ts`.
  */
 export type Project = {
   id: string;
@@ -78,7 +75,6 @@ export type Project = {
   body: string;
   readout: Readout[];
   links: { label: string; href: string }[];
-  shape: ShapeKey;
 };
 
 export const projects: Project[] = [
@@ -96,7 +92,6 @@ export const projects: Project[] = [
       { label: "Live demo", href: urls.chessDemo },
       { label: "Source", href: urls.chessRepo },
     ],
-    shape: "brain",
   },
   {
     id: "airport-routing",
@@ -112,7 +107,6 @@ export const projects: Project[] = [
       { label: "Live demo", href: urls.airportDemo },
       { label: "Source", href: urls.airportRepo },
     ],
-    shape: "globe",
   },
 ];
 
@@ -128,7 +122,6 @@ export type Experience = {
   /** Second line, where it carries facts `body` does not. */
   note?: string;
   readout: Readout[];
-  shape: ShapeKey;
 };
 
 /**
@@ -155,7 +148,6 @@ export const experiences: Experience[] = [
       { label: "Streams", value: "6+" },
       { label: "Throughput", value: "1.5×" },
     ],
-    shape: "rocket",
   },
   {
     company: "Expedia Group",
@@ -170,7 +162,6 @@ export const experiences: Experience[] = [
       { label: "Locales", value: "16" },
       { label: "Surface", value: "iOS · Android" },
     ],
-    shape: "handset",
   },
   {
     company: "UW–Madison",
@@ -184,7 +175,6 @@ export const experiences: Experience[] = [
       { label: "Phenotypes", value: "169" },
       { label: "Candidates", value: "25" },
     ],
-    shape: "dna",
   },
 ];
 

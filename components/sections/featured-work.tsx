@@ -15,11 +15,8 @@ import { projects, type Project } from "@/lib/content";
  * links are ordinary anchors that never unmount.
  */
 function ProjectCard({ project }: { project: Project }) {
-  const ref = useFieldSection<HTMLElement>(project.shape);
-
   return (
     <article
-      ref={ref}
       id={project.id}
       // scroll-mt clears the fixed header when linked to directly
       className="scroll-mt-20 flex flex-col border border-border/60 bg-card/80 p-6 sm:p-7"
@@ -50,10 +47,10 @@ function ProjectCard({ project }: { project: Project }) {
             href={l.href}
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex items-center gap-2 h-11 px-5 font-mono text-xs uppercase tracking-[0.2em] transition-colors tactical-chip ${
+            className={`inline-flex items-center gap-2 h-11 px-5 font-mono text-xs uppercase tracking-[0.2em] transition-colors ${
               i === 0
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                : "border border-border text-muted-foreground hover:border-primary hover:text-primary"
+                : "border border-border-strong text-muted-foreground hover:border-primary hover:text-primary"
             }`}
           >
             {l.label}
@@ -69,8 +66,14 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 export function FeaturedWork() {
+  // one registration for the section: the two cards share a grid row on
+  // desktop, so registering each would tie on vertical distance and let
+  // insertion order pick the shape
+  const ref = useFieldSection<HTMLElement>("brain");
+
   return (
     <section
+      ref={ref}
       id="work"
       aria-labelledby="work-heading"
       className="relative scroll-mt-20 px-safe py-16 sm:py-20 border-t border-border/60"

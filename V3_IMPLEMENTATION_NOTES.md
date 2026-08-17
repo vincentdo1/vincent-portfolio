@@ -32,6 +32,122 @@ Structure went through two passes of Vincent's feedback on the same day:
 
 ---
 
+## 000. Fourth pass, 2026-08-16 — Codex stage-2 audit fixes
+
+Branch `v3_stage_1`, on top of commit `37ac1a5`. Implements
+`codex_stage_2_audit.md`, which independently re-verified the stage-1 work and
+found three defects the stage-1 suite had missed. All three were real.
+
+### The three real bugs
+
+**1. The contact endpoint could still silently discard a legitimate message.**
+Renaming the honeypot to `ref_id` narrowed _who_ could trip it, but the route
+still answered `{ ok: true }` without sending, so one client-controlled field
+could make the UI announce "Message sent" for mail nobody would receive —
+invisible to the sender and to Vincent. The trap now returns a recoverable
+**422** naming the direct address. A single decisive signal must never fake a
+delivery confirmation, however unlikely the false positive.
+
+**2. Three fixed readout columns broke below 360px.** `THROUGHPUT`,
+`PHENOTYPES`, `CANDIDATES` and `RELOCATION` crossed into neighbouring cells and
+`PYTORCH · CUDA` broke mid-word. ~55px of text width at 11px mono with 0.16em
+tracking is not viable. Now one column below `xs`, label and value on one row.
+The stage-1 check missed it twice over: it inspected `dd` but not `dt`, and the
+page's `overflow-x-clip` hid the spill from a document-width assertion.
+
+**3. The field morph targeted the wrong shape.** Both project cards share a
+grid row on desktop, so both scored a vertical distance of exactly zero and
+insertion order decided the winner — the chess brain sat behind the Airport
+Routing card and the globe was unreachable at any scroll position. After
+UW–Madison nothing registered at all, so the last shape persisted through
+Profile and Contact.
+
+The rule is **never register two things that can share a vertical band** — a
+layout constraint, not a granularity one. The first fix over-corrected to
+section-level everywhere, which dropped the sequence from six shapes to four.
+Vincent preferred six, and six is available without any tie risk, because only
+the project cards ever sit side by side:
+
+| Registers                                                           | Shape     |
+| ------------------------------------------------------------------- | --------- |
+| Intro                                                               | `scatter` |
+| `#work` (section — the two cards can tie, so one shape covers both) | `brain`   |
+| `#boeing`                                                           | `rocket`  |
+| `#expedia-group`                                                    | `handset` |
+| `#uw-madison`                                                       | `dna`     |
+| `#profile` + `#contact`                                             | `globe`   |
+
+The three roles are a single-column `<ol>`, so they stack at every width and
+can never tie. Indices run 0,1,2,3,4,5,5 in document order — monotonic, so
+the field never races backwards. Verified by screenshot at all six positions:
+six distinct frames, with the rocket and the handset (both previously
+unreachable) clearly rendered behind Boeing and Expedia.
+
+The shapes are documented as an abstract progression, not labels for the
+content behind them.
+
+### Also fixed
+
+| Audit item                                     | Fix                                                                                          |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Three.js downloaded by ineligible visitors     | `FieldBackdrop` decides no-WebGL / reduced-motion / Save-Data **outside** the dynamic import |
+| Device profile cached at cold load only        | `device.ts` subscribes to reduced-motion, viewport, connection, and resize                   |
+| Contact was a bare `div` inside Profile        | its own `<section aria-labelledby>` landmark                                                 |
+| No mobile section navigation                   | Work is now visible at every width, including 320px                                          |
+| Dialog readiness meant "module imported"       | the mounted dialog reports itself operational                                                |
+| Resting control borders at 1.21:1              | new `--border-strong` token, **measured 3.23:1** in the browser                              |
+| Placeholder text at 2.47:1                     | raised to `/80`                                                                              |
+| Notch on every control                         | reserved for filled primary CTAs                                                             |
+| Dialog still drew corner brackets and `Touch_` | removed                                                                                      |
+| Experience prose ran ~140 characters           | capped at `max-w-prose`                                                                      |
+| `flex-col-reverse` footer                      | DOM order matches visual order at every breakpoint                                           |
+| No abuse budget on `/api/contact`              | in-isolate per-IP limiter, 5 per 10 min                                                      |
+
+**The rate limiter is not a substitute for the Cloudflare rule.** Workers
+isolates are per-colo and short-lived, so it bounds a naive single-client flood
+and nothing else. A distributed script gets a fresh budget per colo. The
+dashboard rule (or Turnstile) is still outstanding.
+
+### Verification
+
+`npm run verify:ui` is **121/121**, up from 103. The audit's critique of the
+old suite was fair, so the additions test the things it named:
+
+- **real Tab order** (pressing Tab, not calling `.focus()`)
+- **cold contact click** before the prefetch resolves — asserts the `mailto:`
+  is _not_ swallowed
+- **contrast**, rasterising one pixel per colour because Chrome returns
+  computed colours as `lab()`, so scraping numbers from the string is
+  meaningless
+- **console errors and failed requests** across a full scroll
+- **readout cells** now check `dt` as well as `dd`, and use `scrollWidth`
+  rather than document width
+- assertions renamed where they overclaimed: "Find locates X" became "X is in
+  rendered text at rest", "keyboard reachable in order" became "appears in
+  sequential DOM order"
+
+Three of the new checks failed first as **test** bugs worth recording: the
+Next.js dev overlay injects a 0×0 focusable portal that does not exist in a
+production build; a 40-press Tab loop wraps the page and double-counts; and
+`toDataURL` returns a blank buffer because `preserveDrawingBuffer` is off by
+design, so the rendered shape cannot be pixel-diffed — that check became a
+structural contract test instead, with the limitation documented in the script.
+
+**Bundle 2,452.45 KiB gzip**, 620 KiB under the free-plan limit.
+
+### Not done, and why
+
+- **Real-device, real-GPU, axe, screen-reader, Lighthouse.** Needs hardware
+  and tooling not available here. Still the largest pre-release gap.
+- **Case-study evidence slots** (problem / ownership / alternatives rejected /
+  validation). The audit is right that this is now the biggest hiring
+  weakness, but it needs facts only Vincent has; inventing them was out of
+  scope.
+- **Raw-WebGL rewrite of the point field.** The audit advised gating before
+  importing first and measuring on real hardware after. Gating is done.
+
+---
+
 ## 00. Third pass, 2026-08-16 — the stage-1 UI/UX review
 
 Branch `v3_stage_1`, implementing `V3_STAGE_1_UI_UX_REVIEW.md` (a Codex audit).
