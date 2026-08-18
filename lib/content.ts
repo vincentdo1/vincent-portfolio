@@ -50,7 +50,7 @@ export type Readout = { label: string; value: string };
 export const intro = {
   title: "Vincent Do",
   body: "I write backend and infrastructure code. Right now that means real-time C++ on Linux at Boeing; before that, Kotlin services at Expedia and ML training pipelines at school.",
-  hook: "National Master at chess. That's four hours a game of not playing the first move that looks right.",
+  hook: "National Master at chess. Volleyball player winning tournaments. Experimenting new hobbies.",
   readout: [
     { label: "Base", value: "St. Louis, MO" },
     { label: "Clearance", value: "Secret" },
@@ -196,25 +196,25 @@ export const capabilities: Capability[] = [
   {
     code: "01",
     title: "Real-time systems",
-    body: "Embedded and real-time work, where a late message counts as a wrong one. I spend most of my time a layer below the feature: the wire format, the SDK, the parts other teams shouldn't have to think about.",
+    body: "Embedded and real-time work, where a late message can affect life-altering decisions. I spend most of my time a layer below the feature. The wire format, the SDK, the parts other teams shouldn't have to think about.",
     tools: ["C++20", "TCP/UDP", "Linux", "Docker"],
   },
   {
     code: "02",
-    title: "Services under load",
-    body: "Worker pools, bounded queues, backpressure. The failure behavior interests me more than the happy path, so I tend to start by asking what happens when the queue fills up.",
+    title: "Backend and services",
+    body: "Everything I build is data-driven, and getting the data right is most of the work. I write the APIs that serve it, the pipelines that transform it, and the tests that verify it.",
     tools: ["REST", "GraphQL", "Kotlin", "Node.js", "PostgreSQL"],
   },
   {
     code: "03",
     title: "ML systems",
-    body: "The pipeline and the serving side more than the modeling. Streaming datasets, mixed precision, checkpoints that survive a crash, and an endpoint that answers /health honestly.",
+    body: "I build neural networks and work with computer vision libraries like MediaPipe and Ultralytics. I'm fascinated by machines that mimic human perception, and making that work at scale is the harder half.",
     tools: ["PyTorch", "CUDA", "Flask", "Hugging Face"],
   },
   {
     code: "04",
-    title: "Proving it works",
-    body: "Chemistry taught me to measure before claiming anything and I never really stopped. Sanitizers, test rigs, load tests, and CI that runs whether or not anyone is watching.",
+    title: "Iteration until imperfection",
+    body: "Nothing I build comes out perfect the first time, and waiting for perfect is how good work stalls. Chess taught me that early: you rarely get the best move and you still have to play one good enough to win. I ship when the tests, sanitizers, and load rigs let me defend the work and name the part I haven't proven yet.",
     tools: ["CMake/CTest", "ASan/UBSan", "GitHub Actions", "Jenkins"],
   },
 ];
@@ -263,7 +263,7 @@ export const profile = {
   offClock:
     "Away from work: chess, cooking, volleyball, and a questionable amount of time on Pokémon.",
   alsoBuilt:
-    "Built Exploding Chickens with a few friends, a real-time multiplayer card game on async Node.js and MongoDB. People have played 1,600+ games of it, which still surprises me.",
+    "Built Exploding Chickens with a few friends, a real-time multiplayer card game on async Node.js and MongoDB with 1600+ games played.",
   alsoBuiltHref: urls.chickensDemo,
 } as const;
 
