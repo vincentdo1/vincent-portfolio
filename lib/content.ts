@@ -27,13 +27,15 @@ export const site = {
   resume: "/resume.pdf",
 } as const;
 
-/** Outbound project destinations. */
+/** Outbound destinations. */
 const urls = {
   airportDemo: "https://vincentdo1.github.io/airports-paths/",
   airportRepo: "https://github.com/vincentdo1/airports-paths",
   chessDemo: "https://vincentdo1.github.io/playable-chess-AI/",
   chessRepo: "https://github.com/vincentdo1/playable-chess-AI",
   chickensDemo: "https://chickens.rakerman.com",
+  sropWriteup:
+    "https://cgsi.wisc.edu/2021/09/20/team-research-presents-a-new-approach-for-summer-undergraduate-research-programs/",
 } as const;
 
 /** A three-value instrument readout, rendered as a <dl> grid. */
@@ -121,6 +123,18 @@ export type Experience = {
   body: string;
   /** Second line, where it carries facts `body` does not. */
   note?: string;
+  /**
+   * One outbound citation, singular by design where `Project` carries an
+   * array.
+   *
+   * The bar is third-party evidence that names Vincent. A company homepage
+   * clears nothing: the reader already knows what Boeing is, and a link on
+   * every card turns the one row with real corroboration into a strip of
+   * logos the eye stops reading. Exactly one role having something to click
+   * is the signal. Keep it that way unless a second role earns it with a
+   * public page that names him.
+   */
+  link?: { label: string; href: string };
   readout: Readout[];
 };
 
@@ -169,7 +183,8 @@ export const experiences: Experience[] = [
     period: "May — Aug 2021",
     location: "Madison, WI",
     title: "Solving medicine through code",
-    body: "Biomedical research at UW–Madison. Extracted 2,893 papers out of AMELIE, Stanford's biomedical literature engine, before AI. Recursive traversal over the phenotype hierarchy to isolate Zellweger candidate genes.",
+    body: "Biomedical research with Professor Mark Craven at UW–Madison. Extracted 2,893 papers out of AMELIE, Stanford's biomedical literature engine, before AI. Recursive traversal over the phenotype hierarchy to isolate Zellweger candidate genes.",
+    link: { label: "UW–Madison write-up", href: urls.sropWriteup },
     readout: [
       { label: "Genes", value: "16,813" },
       { label: "Phenotypes", value: "169" },
@@ -208,13 +223,13 @@ export const capabilities: Capability[] = [
   {
     code: "03",
     title: "ML systems",
-    body: "I build neural networks and work with computer vision libraries like MediaPipe and Ultralytics. I'm fascinated by machines that mimic human perception, and making that work at scale is the harder half.",
+    body: "I build neural networks and work with computer vision libraries like MediaPipe and Ultralytics. I'm fascinated by machines that mimic human perception, and making that work at scale excites me.",
     tools: ["PyTorch", "CUDA", "Flask", "Hugging Face"],
   },
   {
     code: "04",
     title: "Iteration until imperfection",
-    body: "Nothing I build comes out perfect the first time, and waiting for perfect is how good work stalls. Chess taught me that early: you rarely get the best move and you still have to play one good enough to win. I ship when the tests, sanitizers, and load rigs let me defend the work and name the part I haven't proven yet.",
+    body: "Nothing I build comes out perfect the first time, and waiting for perfect is how good work stalls. Chess taught me that early. You may not find the best move but you still have to play one good enough to win. I ship when the tests, sanitizers, and local development environments let me defend my work.",
     tools: ["CMake/CTest", "ASan/UBSan", "GitHub Actions", "Jenkins"],
   },
 ];

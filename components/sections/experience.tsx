@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowUpRight } from "lucide-react";
 import { Readout } from "@/components/sections/readout";
 import { useFieldSection } from "@/lib/three/use-field-section";
 import { experiences, type Experience } from "@/lib/content";
@@ -69,6 +70,29 @@ function Role({ role, shape }: { role: Experience; shape: ShapeKey }) {
       {role.note && (
         <p className="text-sm text-muted-foreground leading-relaxed mt-2 max-w-prose">
           {role.note}
+        </p>
+      )}
+
+      {/* Quiet inline treatment, matching the profile links rather than the
+          project buttons: this is a citation, not a call to action, and it
+          must not compete with the Live demo / Source pair above it. */}
+      {role.link && (
+        <p className="mt-2">
+          <a
+            href={role.link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center min-h-11 py-1 text-sm text-primary hover:underline"
+          >
+            {role.link.label}
+            <ArrowUpRight
+              className="inline h-3 w-3 ml-0.5 align-baseline"
+              aria-hidden="true"
+            />
+            <span className="sr-only">
+              for {role.company} (opens in new tab)
+            </span>
+          </a>
         </p>
       )}
 
