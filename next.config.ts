@@ -21,6 +21,10 @@ const cspReportOnly = [
 ].join("; ");
 
 const securityHeaders = [
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=31536000; includeSubDomains",
+  },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-Frame-Options", value: "DENY" },
@@ -41,27 +45,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  // Only responses the Worker renders pass through here. Files in public/ and
+  // /_next/static are served by the Workers asset layer before Next runs, so
+  // their headers (these security headers, plus the résumé and project-media
+  // cache rules) live in public/_headers. Keep the two lists in step.
   async headers() {
-    return [
-      { source: "/(.*)", headers: securityHeaders },
-      {
-        // Project media reuses stable filenames (the WIP video will be
-        // replaced in place), so it must not be cached as immutable.
-        source: "/projects/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=86400" }],
-      },
-      {
-        // Résumé changes under a stable filename — never cache it as
-        // immutable or recruiters can see a year-stale version.
-        source: "/resume.pdf",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=3600, must-revalidate",
-          },
-        ],
-      },
-    ];
+    return [{ source: "/(.*)", headers: securityHeaders }];
   },
 };
 
