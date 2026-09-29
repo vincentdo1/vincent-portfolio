@@ -69,3 +69,6 @@ vincent_do_achievement_bank_2.json
 # personal source docs — not for deployment
 Vincent_Do_Resume_12_0.pdf
 vincent_do_headshot.png
+
+# Held-back project media (HeH+). Kept outside public/ so no build uploads it.
+/held-back/

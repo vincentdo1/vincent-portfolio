@@ -32,6 +32,61 @@ Structure went through two passes of Vincent's feedback on the same day:
 
 ---
 
+## 0000. Fifth pass, 2026-09-26 — security pass
+
+Branch `v3_security_fixes`, on top of `4d51d60`. Follows an outside-in and
+source-level audit of vmd306.com, its DNS, the public repo, and the two demo
+backends. Nothing here changes the page.
+
+### Fixed
+
+| Finding                                                                                                                                                         | Fix                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Next.js 16.2.6 in production, with 11 advisories published after it shipped, one critical                                                                       | `next` 16.3.6, `@opennextjs/cloudflare` 1.20.6 (now requires Next ≥ 16.3.3), `wrangler` 4.141 |
+| `*.workers.dev` served the same Worker outside the zone, skipping the `/api/contact` rate-limit rule and allowing TLS 1.0                                       | `workers_dev: false` and `preview_urls: false` in `wrangler.jsonc`                            |
+| Files in `public/` and `/_next/static` never reach `next.config.ts` `headers()`, so the résumé and JS had no security headers and hashed chunks had `max-age=0` | `public/_headers`, with hashed output `immutable`                                             |
+| No HSTS                                                                                                                                                         | `max-age=31536000; includeSubDomains`, in both places                                         |
+| `/favicon.ico` 404, visible when the résumé PDF is opened                                                                                                       | `public/favicon.ico`, rendered from `app/icon.svg`                                            |
+| A local build copied `public/projects/heh-*` into the deploy, and the 2026-08-18 local deploy published it                                                      | media moved to `held-back/projects/` (gitignored)                                             |
+
+**The Cloudflare rate-limit rule on `/api/contact` is live**, although §000 and
+`CODEX_STAGE_2_BRIEF.md` still list it as outstanding. Verified 2026-09-26: two
+requests per 10 s, then `error code: 1015` for 10 s. It only ever covered the
+zone, which is why the workers.dev hostname mattered.
+
+**Deploys now print `No targets deployed for vincentdo306-portfolio`.** That is
+expected. Wrangler only publishes routes listed in `wrangler.jsonc`, and the
+vmd306.com custom domain lives in the dashboard, which deploys leave alone.
+Check a deploy with `https://vmd306.com/?cb=<random>`, since the workers.dev
+URL is gone.
+
+### Verification
+
+Local `opennextjs-cloudflare preview` (workerd), `4d51d60` against this branch:
+
+- `npm run verify:ui` is 121/121 before and after, same checks, same outcomes.
+- A header matrix passes 130/130. Every response type (page, API, 404, JS, CSS,
+  font, PDF, favicon) carries HSTS and the security headers, hashed output is
+  `immutable`, no header is duplicated, and `/_headers` and `heh-*` return 404.
+- The contact route's 403, 415, 413, 400, 422 and 429 paths are unchanged, and
+  a valid message reaches the missing-key branch, so the outbound MX lookup
+  still works in workerd.
+- No RSC cache poisoning or forwarded-host reflection, and `/_next/image` still
+  refuses remote URLs.
+- `npm audit` went from 17 findings (1 critical) to 0.
+- **Bundle 2,509 KiB gzip** (was 2,451), 563 KiB under the free-plan limit.
+
+### Still open, outside this repo
+
+- Cloudflare dashboard: minimum TLS 1.2 (1.0 and 1.1 are still accepted), DMARC
+  and an apex SPF record, CAA, DNSSEC, and a `www` record.
+- The Airport demo's Fly backend is not serving, so Find Route shows "Service
+  offline".
+- The chess API on Railway allows the `null` origin. Set
+  `MAGNUS_ALLOWED_ORIGINS`.
+
+---
+
 ## 000. Fourth pass, 2026-08-16 — Codex stage-2 audit fixes
 
 Branch `v3_stage_1`, on top of commit `37ac1a5`. Implements

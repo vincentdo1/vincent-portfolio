@@ -18,7 +18,7 @@
     "clsx": "^2.1.1",
     "disposable-email-domains": "^1.0.62",
     "lucide-react": "^0.562.0",
-    "next": "^16.2.6",
+    "next": "^16.3.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "resend": "^6.12.3",
@@ -26,19 +26,19 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.19.10",
+    "@opennextjs/cloudflare": "^1.20.6",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.185.4",
     "eslint": "^9",
-    "eslint-config-next": "^16.2.6",
+    "eslint-config-next": "^16.3.6",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.7.4",
     "puppeteer-core": "^25.7.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "wrangler": "^4.92.0"
+    "wrangler": "^4.141.0"
   }
 }

@@ -5,6 +5,15 @@
   "compatibility_date": "2026-05-19",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 
+  // vmd306.com is the only public entry point. The *.workers.dev hostnames
+  // sit outside the zone, so they skip the rate-limit rule on /api/contact
+  // and the zone's TLS settings. With no routes listed here, wrangler turns
+  // workers.dev back on at every deploy unless this says false. The custom
+  // domain is attached in the dashboard, and deploys leave it alone.
+  // OpenNext skew protection would need preview_urls back on.
+  "workers_dev": false,
+  "preview_urls": false,
+
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"

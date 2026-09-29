@@ -290,7 +290,9 @@ export const education = {
 } as const;
 
 // Helium Hydride Visualizer — built and verified, held back until Vincent
-// wants to showcase it. Media still lives in /public/projects (heh-*).
+// wants to showcase it. Media lives in held-back/projects (heh-*, gitignored),
+// outside public/ so a local build never uploads it. Move it back into
+// public/projects when the card ships.
 // Reviving it means either a stage in `stages` (a molecule shape) or a line
 // alongside `profile.alsoBuilt`:
 //   https://helium-hydride-visualizer.vercel.app
